@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project Management App</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--navy:#1a3a6b;--navy2:#2a5298;--green:#27ae60;--red:#e74c3c;--yellow:#f39c12;--bg:#f0f2f5;--border:#d0d7e3;--text:#2c3e50;--muted:#7f8c8d;--sw:220px}
+body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;display:flex;flex-direction:column}
+
+/* LOGIN */
+#login-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;background:linear-gradient(135deg,#0a1628 0%,#1a3a6b 100%)}
+.login-logo{color:#fff;font-size:26px;font-weight:800;margin-bottom:6px}
+.login-sub{color:rgba(255,255,255,.4);font-size:12px;margin-bottom:36px}
+.login-card{background:#fff;border-radius:14px;padding:30px;width:380px;box-shadow:0 24px 60px rgba(0,0,0,.4)}
+.login-card h2{font-size:14px;color:var(--navy);margin-bottom:16px;font-weight:800}
+.user-list{display:flex;flex-direction:column;gap:8px;margin-bottom:18px}
+.user-btn{display:flex;align-items:center;gap:12px;padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s;background:#fff;text-align:left;width:100%}
+.user-btn:hover{border-color:var(--navy);background:#f0f4fb;transform:translateX(3px)}
+.u-avatar{border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;flex-shrink:0}
+.u-name{font-size:13px;font-weight:700;color:var(--text)}
+.u-role{font-size:11px;color:var(--muted);margin-top:1px}
+.login-div{text-align:center;color:var(--muted);font-size:11px;margin:14px 0}
+.new-user-link{text-align:center;font-size:12px;color:var(--navy);cursor:pointer;text-decoration:underline;font-weight:600}
+
+/* APP SHELL */
+#app{display:none;flex:1;overflow:hidden}
+.layout{display:flex;height:100vh}
+
+/* SIDEBAR */
+.sidebar{width:var(--sw);background:#0a1628;display:flex;flex-direction:column;flex-shrink:0}
+.sb-header{padding:16px;border-bottom:1px solid rgba(255,255,255,.07)}
+.app-name{color:#fff;font-size:14px;font-weight:800}.app-name span{color:#4a9eff}
+.sb-user{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.07)}
+.su-name{color:#fff;font-size:11px;font-weight:700}
+.su-role{color:rgba(255,255,255,.35);font-size:10px}
+.sb-nav{flex:1;padding:8px 0;overflow-y:auto}
+.nav-sec{padding:12px 16px 4px;font-size:9px;font-weight:700;color:rgba(255,255,255,.2);text-transform:uppercase;letter-spacing:1px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;color:rgba(255,255,255,.48);cursor:pointer;font-size:12px;font-weight:600;transition:all .15s;border-left:3px solid transparent}
+.nav-item:hover{color:#fff;background:rgba(255,255,255,.06)}
+.nav-item.active{color:#fff;background:rgba(255,255,255,.09);border-left-color:#4a9eff}
+.nav-icon{font-size:15px;width:20px;text-align:center}
+.sb-footer{padding:12px 16px;border-top:1px solid rgba(255,255,255,.07)}
+.logout-btn{display:flex;align-items:center;gap:8px;color:rgba(255,255,255,.3);font-size:11px;cursor:pointer;transition:color .15s}
+.logout-btn:hover{color:rgba(255,255,255,.7)}
+
+/* MAIN */
+.main{flex:1;overflow-y:auto;display:flex;flex-direction:column}
+.page{display:none;flex-direction:column;flex:1}
+.page.active{display:flex}
+.ph{background:#fff;padding:18px 28px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.pt{font-size:18px;font-weight:800;color:var(--navy)}
+.ps{font-size:11px;color:var(--muted);margin-top:2px}
+.pb{flex:1;padding:24px 28px;overflow-y:auto}
+
+/* BUTTONS */
+.btn{padding:9px 18px;border:none;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:var(--navy);color:#fff}.btn-primary:hover{background:var(--navy2);transform:translateY(-1px)}
+.btn-success{background:var(--green);color:#fff}.btn-success:hover{background:#219a52}
+.btn-ghost{background:#eef2fb;color:var(--navy);border:1px solid var(--border)}.btn-ghost:hover{background:#dde6f5}
+.btn-danger{background:#feecea;color:var(--red);border:1px solid #fccbc8}
+.btn-sm{padding:6px 12px;font-size:11px}
+.btn-warning{background:#fef3e2;color:#e67e22;border:1px solid #f5cba7}
+
+/* CARDS */
+.card{background:#fff;border-radius:10px;border:1.5px solid var(--border);padding:20px}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(2,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+
+/* STAT CARDS */
+.stat{background:#fff;border-radius:10px;border:1.5px solid var(--border);padding:20px;position:relative;overflow:hidden}
+.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--navy)}
+.stat-val{font-size:34px;font-weight:900;color:var(--navy);line-height:1}
+.stat-lbl{font-size:10px;color:var(--muted);font-weight:700;margin-top:8px;text-transform:uppercase;letter-spacing:.5px}
+.stat-ico{position:absolute;top:16px;right:16px;font-size:22px;opacity:.15}
+
+/* PROJECT CARDS */
+.proj-card{background:#fff;border-radius:10px;border:1.5px solid var(--border);padding:18px;cursor:pointer;transition:all .2s}
+.proj-card:hover{border-color:var(--navy);box-shadow:0 6px 20px rgba(26,58,107,.12);transform:translateY(-2px)}
+.proj-client{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.proj-name{font-size:14px;font-weight:800;color:var(--navy);margin-top:3px}
+.proj-ver{font-size:10px;background:#eef2fb;color:var(--navy);padding:2px 8px;border-radius:12px;font-weight:700}
+.rag{width:10px;height:10px;border-radius:50%;display:inline-block}
+.rg{background:var(--green)}.ry{background:var(--yellow)}.rr{background:var(--red)}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700}
+.ba{background:#edf9f1;color:var(--green)}
+.bp{background:#fef9ec;color:var(--yellow)}
+.bd{background:#eef2fb;color:var(--navy)}
+
+/* FILTERS */
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;align-items:center}
+.fsel{padding:8px 12px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;color:var(--text);background:#fff;cursor:pointer;font-family:inherit}
+.fsel:focus{outline:none;border-color:var(--navy)}
+.fsearch{padding:8px 14px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;color:var(--text);background:#fff;flex:1;min-width:200px;font-family:inherit}
+.fsearch:focus{outline:none;border-color:var(--navy)}
+
+/* TASKS */
+.task-row{display:flex;align-items:center;gap:12px;padding:13px 16px;background:#fff;border:1.5px solid var(--border);border-radius:9px;margin-bottom:8px;transition:all .15s}
+.task-row:hover{border-color:#b0c4de}
+.tcheck{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;font-size:11px;color:#fff}
+.tcheck.done{background:var(--green);border-color:var(--green)}
+.ttitle{flex:1;font-size:13px;font-weight:600}
+.ttitle.done{text-decoration:line-through;color:var(--muted)}
+.tdue{font-size:11px;font-weight:700;padding:3px 9px;border-radius:12px}
+.do{background:#feecea;color:var(--red)}.ds{background:#fef9ec;color:var(--yellow)}.dk{background:#edf9f1;color:var(--green)}
+.prio{font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px}
+.ph{background:#feecea;color:var(--red)}.pm{background:#fef9ec;color:var(--yellow)}.pl{background:#edf9f1;color:var(--green)}
+
+/* FORM */
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.fi{display:flex;flex-direction:column;gap:5px}
+.fi.full{grid-column:1/-1}
+.flbl{font-size:10px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.5px}
+.finput,.fsel2,.ftxt{padding:9px 12px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;color:var(--text);font-family:inherit;transition:border-color .15s;background:#fff}
+.finput:focus,.fsel2:focus,.ftxt:focus{outline:none;border-color:var(--navy)}
+.ftxt{resize:vertical;min-height:90px;line-height:1.6}
+.sec-title{font-size:11px;font-weight:800;color:var(--navy);margin-bottom:14px;text-transform:uppercase;letter-spacing:.5px;padding-bottom:8px;border-bottom:1.5px solid var(--border)}
+
+/* TIMELINE EDITOR */
+.tl-step{display:grid;grid-template-columns:2fr 80px 60px 120px 32px;gap:8px;align-items:center;padding:8px 10px;background:#f8f9fc;border-radius:8px;margin-bottom:6px;border:1px solid var(--border)}
+.tl-step input,.tl-step select{padding:5px 8px;border:1px solid var(--border);border-radius:5px;font-size:11px;font-family:inherit;background:#fff}
+.tl-step input:focus,.tl-step select:focus{outline:none;border-color:var(--navy)}
+.tl-headers{display:grid;grid-template-columns:2fr 80px 60px 120px 32px;gap:8px;padding:0 10px 6px;font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+
+/* ONE-PAGER VIEW */
+.op-page{background:#fff;max-width:1100px;margin:0 auto;padding:20px;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+.op-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;border-bottom:2px solid var(--navy);padding-bottom:10px}
+.op-client{font-size:15px;color:var(--navy);font-weight:800}
+.op-proj{font-size:15px;color:var(--navy);font-weight:800}
+.op-sub{font-size:11px;color:#666;margin-top:2px}
+.op-meta{display:flex;gap:12px;margin-top:8px;flex-wrap:wrap}
+.op-mf{display:flex;flex-direction:column;gap:1px}
+.op-ml{font-size:8px;font-weight:700;color:#999;text-transform:uppercase}
+.op-mv{font-size:11px;color:var(--navy);font-weight:700;background:#f0f4fb;padding:2px 8px;border-radius:4px}
+.op-rag-grp{display:flex;gap:16px;align-items:center}
+.op-rag-item{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10px;font-weight:600;color:#555}
+.op-rag-dot{width:22px;height:22px;border-radius:50%}
+.op-sec{border:1.5px solid var(--border);border-radius:6px;padding:12px;margin-bottom:10px}
+.op-sec-title{font-size:11px;font-weight:700;text-decoration:underline;color:var(--navy);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px}
+.op-mid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.op-bottom{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.op-txt{font-size:11px;color:#444;line-height:1.7;white-space:pre-wrap}
+
+/* CHEVRONS */
+.chev-wrap{display:grid;gap:4px}
+.chev-row{display:flex;gap:0}
+.chev{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:64px;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 50%,calc(100% - 10px) 100%,0 100%,10px 50%);color:#fff;font-weight:700;text-align:center;padding:6px 16px 10px 20px;position:relative;flex:1;cursor:default}
+.chev.first{clip-path:polygon(0 0,calc(100% - 10px) 0,100% 50%,calc(100% - 10px) 100%,0 100%)}
+.chev.cdone{background:#27ae60}.chev.ccurrent{background:#3a6abf}.chev.cwarning{background:#e74c3c}.chev.cupcoming{background:#95a5a6}
+.chev-name{font-size:9px;font-weight:700;line-height:1.3;max-width:100%;word-break:break-word}
+.chev-week{font-size:8px;text-decoration:underline;font-style:italic;margin-top:1px}
+.chev-prog{font-size:8px;opacity:.9;margin-top:1px}
+.chev-bar{position:absolute;bottom:5px;left:18px;right:14px;height:3px;background:rgba(255,255,255,.25);border-radius:2px}
+.chev-fill{height:100%;background:rgba(255,255,255,.85);border-radius:2px}
+.chev-legend{display:flex;gap:12px;font-size:9px;color:#666;margin-top:6px;flex-wrap:wrap}
+.chev-legend span{display:flex;align-items:center;gap:3px}
+.chev-legend .dot{width:9px;height:9px;border-radius:2px;flex-shrink:0}
+
+/* MEETING CARDS */
+.meeting-card{background:#fff;border-radius:10px;border:1.5px solid var(--border);padding:18px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:16px;margin-bottom:10px}
+.meeting-card:hover{border-color:var(--navy);box-shadow:0 4px 16px rgba(26,58,107,.1);transform:translateX(3px)}
+.meeting-date-box{background:var(--navy);color:#fff;border-radius:8px;padding:10px 14px;text-align:center;flex-shrink:0;min-width:56px}
+.mdb-day{font-size:22px;font-weight:900;line-height:1}
+.mdb-month{font-size:9px;font-weight:700;text-transform:uppercase;opacity:.7;margin-top:2px}
+.meeting-info{flex:1}
+.meeting-team{font-size:15px;font-weight:800;color:var(--navy)}
+.meeting-proj{font-size:11px;color:var(--muted);margin-top:3px}
+.meeting-counts{display:flex;gap:10px;margin-top:6px}
+.mcount{font-size:10px;font-weight:700;color:var(--muted);background:#f0f2f5;padding:2px 8px;border-radius:12px}
+
+/* MEETING VIEW */
+.mv-header{background:var(--navy);color:#fff;border-radius:10px;padding:24px;margin-bottom:20px}
+.mv-team{font-size:22px;font-weight:900;margin-bottom:6px}
+.mv-date{font-size:13px;opacity:.7}
+.mv-section{margin-bottom:20px}
+.mv-sec-title{font-size:12px;font-weight:800;color:var(--navy);margin-bottom:10px;display:flex;align-items:center;gap:8px;text-transform:uppercase;letter-spacing:.5px}
+.mv-content{font-size:13px;color:var(--text);line-height:1.8;white-space:pre-wrap;background:#f8f9fc;border-radius:8px;padding:14px;border:1px solid var(--border)}
+.action-item{display:flex;align-items:center;gap:12px;padding:11px 14px;background:#fff;border:1.5px solid var(--border);border-radius:8px;margin-bottom:7px}
+.action-num{width:24px;height:24px;border-radius:50%;background:var(--navy);color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.action-title{flex:1;font-size:12px;font-weight:600}
+.action-meta{font-size:10px;color:var(--muted)}
+
+/* MEETING FORM ACTIONS */
+.mm-action-row{display:grid;grid-template-columns:2fr 1fr 1fr 32px;gap:8px;align-items:center;padding:8px;background:#f8f9fc;border-radius:8px;margin-bottom:6px;border:1px solid var(--border)}
+.mm-action-row input,.mm-action-row select{padding:6px 8px;border:1px solid var(--border);border-radius:5px;font-size:11px;font-family:inherit;background:#fff}
+.mm-action-row input:focus,.mm-action-row select:focus{outline:none;border-color:var(--navy)}
+
+/* VERSION PILLS */
+.ver-pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.ver-pill{padding:5px 14px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;border:1.5px solid var(--border);background:#fff;color:var(--muted);transition:all .15s}
+.ver-pill:hover{border-color:var(--navy);color:var(--navy)}
+.ver-pill.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+
+/* PARTICIPANTS */
+.part-grid{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.part-chip{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:#fff;color:var(--muted);transition:all .15s;user-select:none}
+.part-chip:hover{border-color:var(--navy);color:var(--navy)}
+.part-chip.selected{border-color:var(--navy);background:var(--navy);color:#fff}
+.part-avatar{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:800;color:#fff;flex-shrink:0}
+
+/* USERS PAGE */
+.user-card{background:#fff;border-radius:10px;border:1.5px solid var(--border);padding:18px;display:flex;align-items:center;gap:14px}
+.uc-name{font-size:14px;font-weight:800;color:var(--navy)}
+.uc-role{font-size:12px;color:var(--muted);margin-top:2px}
+
+/* COLOR PICKER */
+.color-opt{width:28px;height:28px;border-radius:50%;cursor:pointer;transition:transform .15s}
+.color-opt:hover{transform:scale(1.15)}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:14px;padding:28px;width:500px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 24px 60px rgba(0,0,0,.25)}
+.modal-title{font-size:16px;font-weight:800;color:var(--navy);margin-bottom:20px}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:24px}
+
+/* EMPTY */
+.empty{text-align:center;padding:60px 20px}
+.empty-ico{font-size:48px;margin-bottom:14px}
+.empty-title{font-size:16px;font-weight:800;color:var(--navy);margin-bottom:8px}
+.empty-sub{font-size:13px;color:var(--muted);margin-bottom:22px}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:#0a1628;color:#fff;padding:12px 20px;border-radius:9px;font-size:12px;font-weight:700;opacity:0;transition:opacity .3s;z-index:9999;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.toast.show{opacity:1}
+
+/* LOADING */
+.loading{display:flex;align-items:center;justify-content:center;padding:60px}
+.spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--navy);border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media print{
+  @page{size:A4 landscape;margin:8mm}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  .sidebar,.ph,.btn,.ver-pills{display:none!important}
+  .op-page{max-width:100%;box-shadow:none;padding:4px}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════ LOGIN ═══════════ -->
+<div id="login-screen">
+  <div class="login-logo">📊 Project Management App</div>
+  <div class="login-sub">Gestion de projets · Usine</div>
+  <div class="login-card">
+    <h2>Qui es-tu ?</h2>
+    <div class="user-list" id="loginUserList"><div class="loading"><div class="spinner"></div></div></div>
+    <div class="login-div">— ou —</div>
+    <div class="new-user-link" onclick="showNewUserModal(true)">+ Ajouter un nouvel utilisateur</div>
+  </div>
+</div>
+
+<!-- ═══════════ APP ═══════════ -->
+<div id="app">
+<div class="layout">
+
+<aside class="sidebar">
+  <div class="sb-header"><div class="app-name">Project<span>Hub</span></div></div>
+  <div class="sb-user" id="sbUser"></div>
+  <nav class="sb-nav">
+    <div class="nav-sec">Principal</div>
+    <div class="nav-item active" data-page="home" onclick="nav('home',this)"><span class="nav-icon">🏠</span><span>Tableau de bord</span></div>
+    <div class="nav-item" data-page="projects" onclick="nav('projects',this)"><span class="nav-icon">📁</span><span>Projets</span></div>
+    <div class="nav-item" data-page="tasks" onclick="nav('tasks',this)"><span class="nav-icon">✅</span><span>Tâches</span></div>
+    <div class="nav-item" data-page="meetings" onclick="nav('meetings',this)"><span class="nav-icon">📝</span><span>Meeting Minutes</span></div>
+    <div class="nav-sec">Administration</div>
+    <div class="nav-item" data-page="users" onclick="nav('users',this)"><span class="nav-icon">👥</span><span>Utilisateurs</span></div>
+  </nav>
+  <div class="sb-footer"><div class="logout-btn" onclick="logout()"><span>🚪</span><span>Déconnexion</span></div></div>
+</aside>
+
+<main class="main">
+
+<!-- HOME -->
+<div id="page-home" class="page">
+  <div class="ph">
+    <div><div class="pt" id="greeting">Bonjour 👋</div><div class="ps">Vue d'ensemble</div></div>
+    <button class="btn btn-primary" onclick="nav('create-project',null)">+ Nouveau projet</button>
+  </div>
+  <div class="pb">
+    <div class="grid g4" style="margin-bottom:28px" id="homeStats"><div class="loading"><div class="spinner"></div></div></div>
+    <div style="font-size:12px;font-weight:800;color:var(--navy);margin-bottom:14px;text-transform:uppercase;letter-spacing:.5px">Projets récents</div>
+    <div id="homeRecent"></div>
+  </div>
+</div>
+
+<!-- PROJECTS -->
+<div id="page-projects" class="page">
+  <div class="ph">
+    <div><div class="pt">Projets</div><div class="ps">Tous les projets de l'équipe</div></div>
+    <button class="btn btn-primary" onclick="nav('create-project',null)">+ Nouveau projet</button>
+  </div>
+  <div class="pb">
+    <div class="filters">
+      <input class="fsearch" type="text" placeholder="🔍 Rechercher..." id="srch" oninput="filterProjects()">
+      <select class="fsel" id="fClient" onchange="filterProjects()"><option value="">Tous les clients</option></select>
+      <select class="fsel" id="fLead" onchange="filterProjects()"><option value="">Tous les chefs de projet</option></select>
+      <select class="fsel" id="fStatus" onchange="filterProjects()">
+        <option value="">Tous les statuts</option>
+        <option value="active">Actif</option><option value="paused">En pause</option><option value="done">Terminé</option>
+      </select>
+    </div>
+    <div class="grid g3" id="projGrid"><div class="loading" style="grid-column:1/-1"><div class="spinner"></div></div></div>
+  </div>
+</div>
+
+<!-- CREATE / EDIT PROJECT -->
+<div id="page-create-project" class="page">
+  <div class="ph">
+    <div><div class="pt" id="formTitle">Nouveau projet</div><div class="ps">Informations du one-pager</div></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-ghost" onclick="nav('projects',null)">Annuler</button>
+      <button class="btn btn-success" onclick="saveProject()">💾 Sauvegarder</button>
+    </div>
+  </div>
+  <div class="pb">
+    <!-- General -->
+    <div class="card" style="margin-bottom:16px">
+      <div class="sec-title">📋 Informations générales</div>
+      <div class="fg">
+        <div class="fi"><label class="flbl">Nom du client *</label><input class="finput" type="text" id="f_client" placeholder="ex: Heineken"></div>
+        <div class="fi"><label class="flbl">Nom du projet *</label><input class="finput" type="text" id="f_project" placeholder="ex: Lancement Produit X"></div>
+        <div class="fi"><label class="flbl">Version</label><input class="finput" type="text" id="f_version" value="v1"></div>
+        <div class="fi"><label class="flbl">Date de version</label><input class="finput" type="date" id="f_vdate"></div>
+        <div class="fi"><label class="flbl">Date de début</label><input class="finput" type="date" id="f_start"></div>
+        <div class="fi"><label class="flbl">Date de lancement</label><input class="finput" type="date" id="f_launch"></div>
+        <div class="fi"><label class="flbl">Statut</label>
+          <select class="fsel2" id="f_status"><option value="active">Actif</option><option value="paused">En pause</option><option value="done">Terminé</option></select>
+        </div>
+        <div class="fi"><label class="flbl">Priorité</label>
+          <select class="fsel2" id="f_priority"><option value="1">⭐ Basse</option><option value="2">⭐⭐ Moyenne</option><option value="3">⭐⭐⭐ Haute</option></select>
+        </div>
+      </div>
+    </div>
+    <!-- Team -->
+    <div class="card" style="margin-bottom:16px">
+      <div class="sec-title">👥 Équipe projet</div>
+      <div class="fg">
+        <div class="fi"><label class="flbl">🟢 Project Lead (centre)</label><input class="finput" type="text" id="f_lead" placeholder="Nom du chef de projet"></div>
+        <div class="fi"><label class="flbl">⚙️ Opérations</label><input class="finput" type="text" id="f_ops" placeholder="Nom du représentant"></div>
+        <div class="fi"><label class="flbl">🔧 Technique</label><input class="finput" type="text" id="f_tech" placeholder="Nom du représentant"></div>
+        <div class="fi"><label class="flbl">📈 Sales</label><input class="finput" type="text" id="f_sales" placeholder="Nom du représentant"></div>
+        <div class="fi"><label class="flbl">🚚 Supply Chain</label><input class="finput" type="text" id="f_supply" placeholder="Nom du représentant"></div>
+        <div class="fi"><label class="flbl">💰 Finance</label><input class="finput" type="text" id="f_finance" placeholder="Nom du représentant"></div>
+      </div>
+    </div>
+    <!-- Timeline -->
+    <div class="card" style="margin-bottom:16px">
+      <div class="sec-title">📅 Timeline du projet</div>
+      <div class="tl-headers"><span>Étape</span><span>Semaine</span><span>%</span><span>Statut</span><span></span></div>
+      <div id="tlSteps"></div>
+      <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="addTLStep('','',0,'upcoming')">+ Ajouter une étape</button>
+    </div>
+    <!-- Finance -->
+    <div class="card" style="margin-bottom:16px">
+      <div class="sec-title">💰 Finance</div>
+      <div class="fg">
+        <div class="fi"><label class="flbl">Revenue Forecast (k€)</label><input class="finput" type="number" id="f_fr" placeholder="700"></div>
+        <div class="fi"><label class="flbl">Revenue Budget (k€)</label><input class="finput" type="number" id="f_br" placeholder="480"></div>
+        <div class="fi"><label class="flbl">Marge Forecast (%)</label><input class="finput" type="number" id="f_fm" placeholder="32"></div>
+        <div class="fi"><label class="flbl">Marge Budget (%)</label><input class="finput" type="number" id="f_bm" placeholder="28"></div>
+      </div>
+    </div>
+    <!-- Risks & Actions -->
+    <div class="grid g2">
+      <div class="card">
+        <div class="sec-title">⚠️ Risques</div>
+        <textarea class="ftxt" id="f_risks" style="width:100%;min-height:110px" placeholder="1. Risque principal&#10;2. Risque secondaire&#10;..."></textarea>
+      </div>
+      <div class="card">
+        <div class="sec-title">✅ Actions</div>
+        <textarea class="ftxt" id="f_actions" style="width:100%;min-height:110px" placeholder="1. Action en cours&#10;2. Prochaine étape&#10;..."></textarea>
+      </div>
+    </div>
+    <input type="hidden" id="f_pid">
+  </div>
+</div>
+
+<!-- VIEW PROJECT (ONE-PAGER) -->
+<div id="page-view-project" class="page">
+  <div class="ph">
+    <div><div class="pt" id="vpTitle">One-Pager</div><div class="ps">Vue complète du projet</div></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-ghost" onclick="nav('projects',null)">← Retour</button>
+      <button class="btn btn-warning" id="btnEditProject" onclick="editFromView()">✏️ Modifier</button>
+      <button class="btn btn-ghost" onclick="window.print()">🖨️ Imprimer</button>
+    </div>
+  </div>
+  <div class="pb">
+    <div class="ver-pills" id="verPills"></div>
+    <div class="op-page" id="opContent"></div>
+  </div>
+</div>
+
+<!-- TASKS -->
+<div id="page-tasks" class="page">
+  <div class="ph">
+    <div><div class="pt">Tâches</div><div class="ps">Toutes les tâches de l'équipe</div></div>
+    <button class="btn btn-primary" onclick="openNewTaskModal()">+ Nouvelle tâche</button>
+  </div>
+  <div class="pb">
+    <div class="filters">
+      <select class="fsel" id="tfProj" onchange="loadTasks()"><option value="">Tous les projets</option></select>
+      <select class="fsel" id="tfAssign" onchange="loadTasks()"><option value="">Tous les membres</option></select>
+      <select class="fsel" id="tfStatus" onchange="loadTasks()">
+        <option value="">Tous les statuts</option><option value="todo">À faire</option><option value="in_progress">En cours</option><option value="done">Terminé</option>
+      </select>
+    </div>
+    <div id="tasksList"></div>
+  </div>
+</div>
+
+<!-- MEETINGS LIST -->
+<div id="page-meetings" class="page">
+  <div class="ph">
+    <div><div class="pt">Meeting Minutes</div><div class="ps">Comptes-rendus de réunion</div></div>
+    <button class="btn btn-primary" onclick="nav('create-meeting',null)">+ Nouveau CR</button>
+  </div>
+  <div class="pb">
+    <div class="filters">
+      <select class="fsel" id="mfProj" onchange="loadMeetings()"><option value="">Tous les projets</option></select>
+    </div>
+    <div id="meetingsList"></div>
+  </div>
+</div>
+
+<!-- CREATE / EDIT MEETING -->
+<div id="page-create-meeting" class="page">
+  <div class="ph">
+    <div><div class="pt" id="mFormTitle">Nouveau compte-rendu</div><div class="ps">Meeting minutes</div></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-ghost" onclick="nav('meetings',null)">Annuler</button>
+      <button class="btn btn-success" onclick="saveMeeting()">💾 Sauvegarder</button>
+    </div>
+  </div>
+  <div class="pb">
+    <div class="card" style="margin-bottom:16px">
+      <div class="sec-title">📋 Informations</div>
+      <div class="fg">
+        <div class="fi"><label class="flbl">Nom de l'équipe *</label><input class="finput" type="text" id="m_team" placeholder="ex: Equipe projet Charlotte"></div>
+        <div class="fi"><label class="flbl">Date de réunion *</label><input class="finput" type="date" id="m_date"></div>
+        <div class="fi full"><label class="flbl">Projet associé</label><select class="fsel2" id="m_proj" onchange="autoFillTeamName()"><option value="">— Aucun projet —</option></select></div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:16px">
+      <div class="sec-title">👥 Participants</div>
+      <div class="part-grid" id="partGrid"></div>
+    </div>
+    <div class="card" style="margin-bottom:16px">
+      <div class="sec-title">📋 Ordre du jour</div>
+      <textarea class="ftxt" id="m_agenda" style="width:100%;min-height:100px" placeholder="1. Point 1&#10;2. Point 2&#10;..."></textarea>
+    </div>
+    <div class="card" style="margin-bottom:16px">
+      <div class="sec-title">✅ Décisions prises</div>
+      <textarea class="ftxt" id="m_decisions" style="width:100%;min-height:100px" placeholder="1. Décision 1&#10;2. Décision 2&#10;..."></textarea>
+    </div>
+    <div class="card">
+      <div class="sec-title">🎯 Actions à suivre</div>
+      <div style="display:grid;grid-template-columns:2fr 1fr 1fr 32px;gap:8px;padding:0 8px 8px;font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px">
+        <span>Action</span><span>Responsable</span><span>Échéance</span><span></span>
+      </div>
+      <div id="actionRows"></div>
+      <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="addActionRow('','','')">+ Ajouter une action</button>
+    </div>
+    <input type="hidden" id="m_id">
+  </div>
+</div>
+
+<!-- VIEW MEETING -->
+<div id="page-view-meeting" class="page">
+  <div class="ph">
+    <div><div class="pt" id="vmTitle">Compte-rendu</div><div class="ps">Meeting minutes</div></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-ghost" onclick="nav('meetings',null)">← Retour</button>
+      <button class="btn btn-warning" id="btnEditMeeting">✏️ Modifier</button>
+      <button class="btn btn-ghost" onclick="window.print()">🖨️ Imprimer</button>
+    </div>
+  </div>
+  <div class="pb"><div id="meetingView"></div></div>
+</div>
+
+<!-- USERS -->
+<div id="page-users" class="page">
+  <div class="ph">
+    <div><div class="pt">Utilisateurs</div><div class="ps">Gestion de l'équipe</div></div>
+    <button class="btn btn-primary" onclick="showNewUserModal(false)">+ Ajouter</button>
+  </div>
+  <div class="pb"><div class="grid g3" id="usersGrid"></div></div>
+</div>
+
+</main>
+</div>
+</div>
+
+<!-- ═══════════ MODALS ═══════════ -->
+<div class="modal-overlay" id="newUserModal">
+  <div class="modal">
+    <div class="modal-title">Nouvel utilisateur</div>
+    <div class="fi" style="margin-bottom:14px"><label class="flbl">Nom complet *</label><input class="finput" type="text" id="nu_name" placeholder="ex: Charlotte Dupont"></div>
+    <div class="fi" style="margin-bottom:14px"><label class="flbl">Rôle / Fonction *</label><input class="finput" type="text" id="nu_role" placeholder="ex: Project Manager"></div>
+    <div class="fi" style="margin-bottom:14px"><label class="flbl">Email (optionnel)</label><input class="finput" type="email" id="nu_email" placeholder="charlotte@usine.be"></div>
+    <div class="fi"><label class="flbl">Couleur de profil</label>
+      <div style="display:flex;gap:8px;margin-top:6px">
+        <div class="color-opt" data-color="#1a3a6b" style="background:#1a3a6b;outline:3px solid #1a3a6b;outline-offset:2px" onclick="selColor(this)"></div>
+        <div class="color-opt" data-color="#27ae60" style="background:#27ae60" onclick="selColor(this)"></div>
+        <div class="color-opt" data-color="#e74c3c" style="background:#e74c3c" onclick="selColor(this)"></div>
+        <div class="color-opt" data-color="#f39c12" style="background:#f39c12" onclick="selColor(this)"></div>
+        <div class="color-opt" data-color="#8e44ad" style="background:#8e44ad" onclick="selColor(this)"></div>
+        <div class="color-opt" data-color="#16a085" style="background:#16a085" onclick="selColor(this)"></div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('newUserModal')">Annuler</button>
+      <button class="btn btn-primary" onclick="createUser()">Créer</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="newTaskModal">
+  <div class="modal">
+    <div class="modal-title">Nouvelle tâche</div>
+    <div class="fi" style="margin-bottom:14px"><label class="flbl">Titre *</label><input class="finput" type="text" id="nt_title" placeholder="ex: Valider les specs"></div>
+    <div class="fi" style="margin-bottom:14px"><label class="flbl">Projet</label><select class="fsel2" id="nt_proj"></select></div>
+    <div class="fi" style="margin-bottom:14px"><label class="flbl">Assigné à</label><select class="fsel2" id="nt_assign"></select></div>
+    <div class="fi" style="margin-bottom:14px"><label class="flbl">Échéance</label><input class="finput" type="date" id="nt_due"></div>
+    <div class="fi" style="margin-bottom:14px"><label class="flbl">Priorité</label>
+      <select class="fsel2" id="nt_prio"><option value="low">🟢 Basse</option><option value="medium" selected>🟡 Moyenne</option><option value="high">🔴 Haute</option></select>
+    </div>
+    <div class="fi"><label class="flbl">Description</label><textarea class="ftxt" id="nt_desc" placeholder="Détails optionnels..."></textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('newTaskModal')">Annuler</button>
+      <button class="btn btn-primary" onclick="createTask()">Créer la tâche</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="versionModal">
+  <div class="modal">
+    <div class="modal-title">💾 Sauvegarder</div>
+    <p style="font-size:13px;color:var(--text);margin-bottom:20px;line-height:1.6">Ce projet a déjà une version enregistrée. Que veux-tu faire ?</p>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <button class="btn btn-primary" style="justify-content:flex-start;padding:14px 18px;text-align:left" onclick="doSave(true)">
+        <span style="font-size:18px">🆕</span>
+        <div><div style="font-weight:800">Créer une nouvelle version</div><div style="font-size:11px;opacity:.7;font-weight:400;margin-top:2px">L'ancienne version reste accessible</div></div>
+      </button>
+      <button class="btn btn-ghost" style="justify-content:flex-start;padding:14px 18px;text-align:left" onclick="doSave(false)">
+        <span style="font-size:18px">✏️</span>
+        <div><div style="font-weight:800">Mettre à jour la version actuelle</div><div style="font-size:11px;opacity:.7;font-weight:400;margin-top:2px">Remplace les données existantes</div></div>
+      </button>
+    </div>
+    <div class="modal-actions"><button class="btn btn-ghost" onclick="closeModal('versionModal')">Annuler</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════
+//  CONFIG
+// ═══════════════════════════════════════════════
+const SURL = 'https://dzsfalclzidskhijrelq.supabase.co';
+const SKEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR6c2ZhbGNsemlkc2toaWpyZWxxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyOTA4ODEsImV4cCI6MjA5NDg2Njg4MX0.POXvXQLgZn8zc_qD-h7AEap_1ms2Qq0y0czb4WNJ4cs';
+const { createClient } = supabase;
+const db = createClient(SURL, SKEY);
+
+// ═══════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════
+let me = null, allUsers = [], allProjects = [], allTasks = [], allMeetings = [];
+let selColor = '#1a3a6b', loginMode = false;
+let pendingProjPayload = null, currentViewProjId = null, currentViewMeetId = null;
+let finChartInst = null;
+
+// ═══════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════
+const init2 = n => (n||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+function avHTML(u, sz=36) {
+  const bg = u?.avatar_color||'#1a3a6b', fs = Math.floor(sz*.35);
+  return `<div class="u-avatar" style="background:${bg};width:${sz}px;height:${sz}px;font-size:${fs}px">${init2(u?.name)}</div>`;
+}
+function toast(m) { const t=document.getElementById('toast'); t.textContent=m; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2800); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function fmtDate(d) {
+  if(!d) return '—';
+  return new Date(d+'T00:00:00').toLocaleDateString('fr-BE',{day:'2-digit',month:'short',year:'numeric'});
+}
+function fmtDateShort(d) {
+  if(!d) return '—';
+  const dt = new Date(d+'T00:00:00');
+  return dt.toLocaleDateString('fr-BE',{day:'2-digit',month:'short'});
+}
+function dueBadge(ds) {
+  if(!ds) return '';
+  const diff = Math.ceil((new Date(ds)-new Date())/86400000);
+  if(diff<0)  return `<span class="tdue do">En retard</span>`;
+  if(diff<=3) return `<span class="tdue ds">Dans ${diff}j</span>`;
+  return `<span class="tdue dk">${fmtDate(ds)}</span>`;
+}
+function statusBadge(s) {
+  const c={active:'ba',paused:'bp',done:'bd'}, l={active:'Actif',paused:'En pause',done:'Terminé'};
+  return `<span class="badge ${c[s]||''}">${l[s]||s}</span>`;
+}
+const getU = id => allUsers.find(u=>u.id===id);
+const getP = id => allProjects.find(p=>p.id===id);
+function selColor2(el) {
+  document.querySelectorAll('.color-opt').forEach(o=>{o.style.outline='none';o.style.outlineOffset='0'});
+  el.style.outline='3px solid '+el.dataset.color; el.style.outlineOffset='2px';
+  selColor=el.dataset.color;
+}
+function escH(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+
+// ═══════════════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════════════
+function nav(page, el) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const pg = document.getElementById('page-'+page);
+  if(pg) pg.classList.add('active');
+  if(el) el.classList.add('active');
+  else { const n=document.querySelector(`[data-page="${page}"]`); if(n) n.classList.add('active'); }
+  if(page==='home')           loadHome();
+  if(page==='projects')       loadProjects();
+  if(page==='tasks')          loadTasks();
+  if(page==='meetings')       loadMeetings();
+  if(page==='users')          loadUsers();
+  if(page==='create-project') prepareForm();
+  if(page==='create-meeting') prepareMeetingForm();
+}
+
+// ═══════════════════════════════════════════════
+//  LOGIN
+// ═══════════════════════════════════════════════
+async function loadLoginUsers() {
+  const {data} = await db.from('users').select('*').order('name');
+  allUsers = data||[];
+  const list = document.getElementById('loginUserList');
+  if(!allUsers.length) { list.innerHTML=`<div style="text-align:center;color:var(--muted);font-size:12px;padding:16px;line-height:1.7">Aucun utilisateur.<br>Commence par en créer un !</div>`; return; }
+  list.innerHTML = allUsers.map(u=>`
+    <button class="user-btn" onclick="loginAs('${u.id}')">
+      ${avHTML(u,36)}<div><div class="u-name">${escH(u.name)}</div><div class="u-role">${escH(u.role)}</div></div>
+    </button>`).join('');
+}
+function loginAs(id) {
+  me = allUsers.find(u=>u.id===id);
+  if(!me) return;
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('app').style.display='block';
+  document.getElementById('greeting').textContent=`Bonjour, ${me.name.split(' ')[0]} 👋`;
+  document.getElementById('sbUser').innerHTML=`${avHTML(me,30)}<div><div class="su-name">${escH(me.name)}</div><div class="su-role">${escH(me.role)}</div></div>`;
+  nav('home',null);
+}
+function logout() {
+  me=null;
+  document.getElementById('app').style.display='none';
+  document.getElementById('login-screen').style.display='flex';
+  loadLoginUsers();
+}
+
+// ═══════════════════════════════════════════════
+//  HOME
+// ═══════════════════════════════════════════════
+async function loadHome() {
+  const [{data:p},{data:t}] = await Promise.all([
+    db.from('projects').select('*').order('created_at',{ascending:false}),
+    db.from('tasks').select('*')
+  ]);
+  allProjects=p||[]; allTasks=t||[];
+  const active  = allProjects.filter(x=>x.status==='active').length;
+  const overdue = allTasks.filter(x=>x.due_date&&new Date(x.due_date)<new Date()&&x.status!=='done').length;
+  const open    = allTasks.filter(x=>x.status!=='done').length;
+  document.getElementById('homeStats').innerHTML=`
+    <div class="stat"><span class="stat-ico">📁</span><div class="stat-val">${allProjects.length}</div><div class="stat-lbl">Projets total</div></div>
+    <div class="stat"><span class="stat-ico">🟢</span><div class="stat-val">${active}</div><div class="stat-lbl">Projets actifs</div></div>
+    <div class="stat"><span class="stat-ico">✅</span><div class="stat-val">${open}</div><div class="stat-lbl">Tâches ouvertes</div></div>
+    <div class="stat"><span class="stat-ico">⚠️</span><div class="stat-val" style="color:var(--red)">${overdue}</div><div class="stat-lbl">Tâches en retard</div></div>`;
+  const recent = allProjects.slice(0,3);
+  document.getElementById('homeRecent').innerHTML = recent.length
+    ? `<div class="grid g3">${recent.map(projCardHTML).join('')}</div>`
+    : `<div class="empty"><div class="empty-ico">📋</div><div class="empty-title">Aucun projet</div><div class="empty-sub">Crée ton premier projet !</div><button class="btn btn-primary" onclick="nav('create-project',null)">+ Nouveau projet</button></div>`;
+}
+
+// ═══════════════════════════════════════════════
+//  PROJECTS
+// ═══════════════════════════════════════════════
+async function loadProjects() {
+  const {data} = await db.from('projects').select('*').order('created_at',{ascending:false});
+  allProjects=data||[];
+  const clients=[...new Set(allProjects.map(p=>p.client_name).filter(Boolean))];
+  document.getElementById('fClient').innerHTML=`<option value="">Tous les clients</option>`+clients.map(c=>`<option>${escH(c)}</option>`).join('');
+  document.getElementById('fLead').innerHTML=`<option value="">Tous les chefs de projet</option>`+allUsers.map(u=>`<option value="${u.id}">${escH(u.name)}</option>`).join('');
+  renderProjects(allProjects);
+}
+function filterProjects() {
+  const s=document.getElementById('srch').value.toLowerCase();
+  const c=document.getElementById('fClient').value;
+  const l=document.getElementById('fLead').value;
+  const st=document.getElementById('fStatus').value;
+  renderProjects(allProjects.filter(p=>
+    (!s||p.project_name?.toLowerCase().includes(s)||p.client_name?.toLowerCase().includes(s))&&
+    (!c||p.client_name===c)&&(!l||p.project_lead_id===l)&&(!st||p.status===st)));
+}
+function renderProjects(list) {
+  const g=document.getElementById('projGrid');
+  if(!list.length){g.innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="empty-ico">🔍</div><div class="empty-title">Aucun résultat</div><div class="empty-sub">Modifie les filtres</div></div>`;return;}
+  g.innerHTML=list.map(projCardHTML).join('');
+}
+function projCardHTML(p) {
+  const orgData = p.org_data||{};
+  const leadName = orgData.lead || '—';
+  return `
+    <div class="proj-card" onclick="viewProject('${p.id}')">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+        <div><div class="proj-client">${escH(p.client_name||'—')}</div><div class="proj-name">${escH(p.project_name)}</div></div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px">
+          <span class="proj-ver">${escH(p.version||'v1')}</span>${statusBadge(p.status)}
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;font-size:11px;color:var(--muted)">
+        <span>📅 ${p.launch_date?fmtDate(p.launch_date):'Pas de date'}</span>
+        <span><span class="rag rag-${p.rag_timeline||'green'}"></span><span class="rag rag-${p.rag_team||'green'}" style="margin-left:2px"></span><span class="rag rag-${p.rag_fin||'green'}" style="margin-left:2px"></span></span>
+      </div>
+      <div style="margin-top:10px;font-size:11px;color:var(--muted)">👤 ${escH(leadName)}</div>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════
+//  CREATE / EDIT PROJECT FORM
+// ═══════════════════════════════════════════════
+function prepareForm(proj) {
+  document.getElementById('formTitle').textContent = proj ? 'Modifier le projet' : 'Nouveau projet';
+  document.getElementById('f_pid').value = proj?.id||'';
+  document.getElementById('f_client').value  = proj?.client_name||'';
+  document.getElementById('f_project').value = proj?.project_name||'';
+  document.getElementById('f_version').value = proj?.version||'v1';
+  document.getElementById('f_vdate').value   = proj?.version_date||'';
+  document.getElementById('f_start').value   = proj?.start_date||'';
+  document.getElementById('f_launch').value  = proj?.launch_date||'';
+  document.getElementById('f_status').value  = proj?.status||'active';
+  document.getElementById('f_priority').value= String(proj?.priority||1);
+  document.getElementById('f_fr').value      = proj?.forecast_revenue||'';
+  document.getElementById('f_br').value      = proj?.budget_revenue||'';
+  document.getElementById('f_fm').value      = proj?.forecast_margin||'';
+  document.getElementById('f_bm').value      = proj?.budget_margin||'';
+  document.getElementById('f_risks').value   = proj?.risks||'';
+  document.getElementById('f_actions').value = proj?.actions||'';
+  // Team
+  const od = proj?.org_data||{};
+  document.getElementById('f_lead').value   = od.lead||'';
+  document.getElementById('f_ops').value    = od.operations||'';
+  document.getElementById('f_tech').value   = od.technique||'';
+  document.getElementById('f_sales').value  = od.sales||'';
+  document.getElementById('f_supply').value = od.supply_chain||'';
+  document.getElementById('f_finance').value= od.finance||'';
+  // Timeline
+  const steps = proj?.timeline_steps||[];
+  document.getElementById('tlSteps').innerHTML='';
+  if(steps.length) steps.forEach(s=>addTLStep(s.name,s.week,s.prog,s.status));
+  else addTLStep('Kick-Off','wk 1',100,'done');
+}
+function editFromView() {
+  const p = getP(currentViewProjId);
+  if(!p) return;
+  prepareForm(p);
+  nav('create-project',null);
+}
+function addTLStep(name,week,prog,status) {
+  const div=document.createElement('div');
+  div.className='tl-step';
+  div.innerHTML=`
+    <input type="text" value="${escH(name)}" placeholder="Nom de l'étape" class="tl-name">
+    <input type="text" value="${escH(week)}" placeholder="wk 6" class="tl-week">
+    <input type="number" value="${prog}" min="0" max="100" class="tl-prog">
+    <select class="tl-status">
+      <option value="done"${status==='done'?' selected':''}>✅ Done</option>
+      <option value="current"${status==='current'?' selected':''}>🔵 En cours</option>
+      <option value="warning"${status==='warning'?' selected':''}>🔴 À risque</option>
+      <option value="upcoming"${status==='upcoming'?' selected':''}>⚪ À venir</option>
+    </select>
+    <button onclick="this.parentNode.remove()" style="width:28px;height:28px;background:#feecea;border:1px solid #fcc;border-radius:5px;cursor:pointer;font-size:12px">✕</button>`;
+  document.getElementById('tlSteps').appendChild(div);
+}
+function getTLSteps() {
+  return [...document.querySelectorAll('.tl-step')].map(r=>({
+    name: r.querySelector('.tl-name').value,
+    week: r.querySelector('.tl-week').value,
+    prog: parseInt(r.querySelector('.tl-prog').value)||0,
+    status: r.querySelector('.tl-status').value
+  }));
+}
+async function saveProject() {
+  const name = document.getElementById('f_project').value.trim();
+  if(!name){toast('⚠️ Le nom du projet est obligatoire');return;}
+  const existId = document.getElementById('f_pid').value;
+  // Check if has versions
+  if(existId) {
+    const {data:vers} = await db.from('project_versions').select('id').eq('project_id',existId).limit(1);
+    if(vers&&vers.length>0) { openModal('versionModal'); return; }
+  }
+  doSave(false);
+}
+async function doSave(newVersion) {
+  closeModal('versionModal');
+  const existId = document.getElementById('f_pid').value;
+  const payload = {
+    client_name:      document.getElementById('f_client').value.trim()||null,
+    project_name:     document.getElementById('f_project').value.trim(),
+    version:          document.getElementById('f_version').value.trim()||'v1',
+    version_date:     document.getElementById('f_vdate').value||null,
+    start_date:       document.getElementById('f_start').value||null,
+    launch_date:      document.getElementById('f_launch').value||null,
+    status:           document.getElementById('f_status').value,
+    priority:         parseInt(document.getElementById('f_priority').value)||1,
+    risks:            document.getElementById('f_risks').value||null,
+    actions:          document.getElementById('f_actions').value||null,
+    forecast_revenue: parseFloat(document.getElementById('f_fr').value)||null,
+    budget_revenue:   parseFloat(document.getElementById('f_br').value)||null,
+    forecast_margin:  parseFloat(document.getElementById('f_fm').value)||null,
+    budget_margin:    parseFloat(document.getElementById('f_bm').value)||null,
+    timeline_steps:   getTLSteps(),
+    org_data: {
+      lead:        document.getElementById('f_lead').value.trim(),
+      operations:  document.getElementById('f_ops').value.trim(),
+      technique:   document.getElementById('f_tech').value.trim(),
+      sales:       document.getElementById('f_sales').value.trim(),
+      supply_chain:document.getElementById('f_supply').value.trim(),
+      finance:     document.getElementById('f_finance').value.trim()
+    },
+    updated_at: new Date().toISOString()
+  };
+  let projId = existId;
+  if(existId) {
+    const {error} = await db.from('projects').update(payload).eq('id',existId);
+    if(error){toast('❌ '+error.message);return;}
+  } else {
+    payload.created_by = me?.id||null;
+    const {data,error} = await db.from('projects').insert(payload).select().single();
+    if(error){toast('❌ '+error.message);return;}
+    projId = data.id;
+  }
+  // Save version snapshot
+  await db.from('project_versions').insert({
+    project_id: projId,
+    version_number: payload.version,
+    snapshot: payload,
+    created_by: me?.id||null
+  });
+  toast('✅ Projet sauvegardé !');
+  nav('projects',null);
+}
+
+// ═══════════════════════════════════════════════
+//  VIEW PROJECT (ONE-PAGER)
+// ═══════════════════════════════════════════════
+async function viewProject(id) {
+  currentViewProjId = id;
+  document.getElementById('btnEditProject').onclick = editFromView;
+  // Load versions
+  const {data:vers} = await db.from('project_versions').select('*').eq('project_id',id).order('created_at',{ascending:false});
+  const {data:proj} = await db.from('projects').select('*').eq('id',id).single();
+  if(!proj){toast('❌ Projet introuvable');return;}
+  document.getElementById('vpTitle').textContent = proj.project_name;
+  // Version pills
+  const pills = document.getElementById('verPills');
+  if(vers&&vers.length>1) {
+    pills.innerHTML = vers.map((v,i)=>`<div class="ver-pill ${i===0?'active':''}" onclick="showVersion('${v.id}',this,'${id}')">${escH(v.version_number)}<span style="font-size:9px;opacity:.6;margin-left:4px">${fmtDate(v.created_at?.split('T')[0])}</span></div>`).join('');
+  } else { pills.innerHTML=''; }
+  renderOnePager(proj);
+  nav('view-project',null);
+}
+function showVersion(verId,el,projId) {
+  document.querySelectorAll('.ver-pill').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  db.from('project_versions').select('*').eq('id',verId).single().then(({data})=>{
+    if(data) renderOnePager({...data.snapshot, id:projId, rag_timeline:data.snapshot.rag_timeline||'green', rag_team:data.snapshot.rag_team||'green', rag_fin:data.snapshot.rag_fin||'green'});
+  });
+}
+function renderOnePager(p) {
+  const od = p.org_data||{};
+  const steps = p.timeline_steps||[];
+  // Chevrons (2 rows max)
+  const half = Math.ceil(steps.length/2);
+  const row1 = steps.slice(0,half);
+  const row2 = steps.slice(half);
+  function chevHTML(s,i,first) {
+    const cls={done:'cdone',current:'ccurrent',warning:'cwarning',upcoming:'cupcoming'};
+    return `<div class="chev ${cls[s.status]||'cupcoming'} ${first?'first':''}" style="flex:1">
+      <div class="chev-name">${escH(s.name)}</div>
+      ${s.week?`<div class="chev-week">${escH(s.week)}</div>`:''}
+      ${s.prog>0?`<div class="chev-prog">${s.prog}%</div>`:''}
+      <div class="chev-bar"><div class="chev-fill" style="width:${s.prog}%"></div></div>
+    </div>`;
+  }
+  const timelineHTML = steps.length===0 ? '<div style="color:var(--muted);font-size:12px;padding:10px">Aucune étape définie</div>' : `
+    <div class="chev-wrap">
+      <div class="chev-row">${row1.map((s,i)=>chevHTML(s,i,i===0)).join('')}</div>
+      ${row2.length?`<div class="chev-row" style="margin-top:4px">${row2.map((s,i)=>chevHTML(s,i,i===0)).join('')}</div>`:''}
+    </div>
+    <div class="chev-legend">
+      <span><div class="dot" style="background:#27ae60"></div>Done</span>
+      <span><div class="dot" style="background:#3a6abf"></div>En cours</span>
+      <span><div class="dot" style="background:#e74c3c"></div>À risque</span>
+      <span><div class="dot" style="background:#95a5a6"></div>À venir</span>
+    </div>`;
+  // Org chart SVG
+  const depts=[
+    {key:'operations',label:'Opérations',name:od.operations||'—'},
+    {key:'technique',label:'Technique',name:od.technique||'—'},
+    {key:'sales',label:'Sales',name:od.sales||'—'},
+    {key:'supply_chain',label:'Supply Chain',name:od.supply_chain||'—'},
+    {key:'finance',label:'Finance',name:od.finance||'—'}
+  ];
+  const cx=120,cy=100,r=78,pm=36,dr=28;
+  let lines='',circles='';
+  depts.forEach((d,i)=>{
+    const a=(2*Math.PI/5)*i-Math.PI/2;
+    const x=Math.round(cx+r*Math.cos(a)), y=Math.round(cy+r*Math.sin(a));
+    lines+=`<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="#b0b8c8" stroke-width="1.5"/>`;
+    const nm = escH(d.name), lbl=escH(d.label);
+    circles+=`<circle cx="${x}" cy="${y}" r="${dr}" fill="#1a3a6b"/>
+      <circle cx="${x}" cy="${y}" r="${dr-4}" fill="#3a6abf"/>
+      <text x="${x}" y="${y-4}" text-anchor="middle" fill="#fff" font-size="7" font-weight="700" font-family="Segoe UI,Arial">${nm.length>12?nm.slice(0,11)+'…':nm}</text>
+      <text x="${x}" y="${y+7}" text-anchor="middle" fill="rgba(255,255,255,.7)" font-size="6" font-family="Segoe UI,Arial">${lbl.length>10?lbl.slice(0,9)+'…':lbl}</text>`;
+  });
+  const orgSVG=`<svg width="${cx*2}" height="${cy*2}" style="overflow:visible">
+    ${lines}
+    <circle cx="${cx}" cy="${cy}" r="${pm}" fill="#1a6b3a"/>
+    <circle cx="${cx}" cy="${cy}" r="${pm-4}" fill="#2ecc71"/>
+    <text x="${cx}" y="${cy-4}" text-anchor="middle" fill="#fff" font-size="8" font-weight="700" font-family="Segoe UI,Arial">${escH((od.lead||'—').length>12?(od.lead||'—').slice(0,11)+'…':od.lead||'—')}</text>
+    <text x="${cx}" y="${cy+8}" text-anchor="middle" fill="rgba(255,255,255,.8)" font-size="6.5" font-family="Segoe UI,Arial">Project Lead</text>
+    ${circles}
+  </svg>`;
+  // Finance chart placeholder (rendered after insert)
+  const stars='⭐'.repeat(p.priority||1);
+  const ragColor={green:'#27ae60',yellow:'#f39c12',red:'#e74c3c'};
+  document.getElementById('opContent').innerHTML=`
+    <div class="op-header">
+      <div>
+        <div style="display:flex;align-items:baseline;gap:8px">
+          <span class="op-client">${escH(p.client_name||'Client')}</span>
+          <span style="color:#b0b8c8;font-size:14px">—</span>
+          <span class="op-proj">${escH(p.project_name)}</span>
+        </div>
+        <div class="op-sub">One-Page Dashboard &nbsp;|&nbsp; Mis à jour le ${fmtDate(new Date().toISOString().split('T')[0])}</div>
+        <div class="op-meta">
+          <div class="op-mf"><span class="op-ml">Début</span><span class="op-mv">${fmtDate(p.start_date)}</span></div>
+          <div class="op-mf"><span class="op-ml">Lancement</span><span class="op-mv">${fmtDate(p.launch_date)}</span></div>
+          <div class="op-mf"><span class="op-ml">Version</span><span class="op-mv">${escH(p.version||'v1')}</span></div>
+          <div class="op-mf"><span class="op-ml">Priorité</span><span class="op-mv">${stars}</span></div>
+        </div>
+      </div>
+      <div class="op-rag-grp">
+        <div class="op-rag-item"><div class="op-rag-dot" style="background:${ragColor[p.rag_timeline||'green']}"></div>Timeline</div>
+        <div class="op-rag-item"><div class="op-rag-dot" style="background:${ragColor[p.rag_team||'green']}"></div>Équipe</div>
+        <div class="op-rag-item"><div class="op-rag-dot" style="background:${ragColor[p.rag_fin||'green']}"></div>Finance</div>
+      </div>
+    </div>
+    <div class="op-sec">
+      <div class="op-sec-title">Timeline</div>
+      ${timelineHTML}
+    </div>
+    <div class="op-mid">
+      <div class="op-sec" style="margin-bottom:0">
+        <div class="op-sec-title">Équipe projet</div>
+        <div style="display:flex;justify-content:center">${orgSVG}</div>
+      </div>
+      <div class="op-sec" style="margin-bottom:0">
+        <div class="op-sec-title">Finance</div>
+        <div style="display:flex;gap:12px;align-items:flex-start">
+          <div style="min-width:130px;font-size:11px">
+            <div style="margin-bottom:8px"><div style="color:var(--muted);font-size:9px;font-weight:700;text-transform:uppercase">Revenue Forecast</div><div style="font-weight:800;color:var(--navy)">${p.forecast_revenue||'—'} k€</div></div>
+            <div style="margin-bottom:8px"><div style="color:var(--muted);font-size:9px;font-weight:700;text-transform:uppercase">Revenue Budget</div><div style="font-weight:800;color:var(--navy)">${p.budget_revenue||'—'} k€</div></div>
+            <div style="margin-bottom:8px"><div style="color:var(--muted);font-size:9px;font-weight:700;text-transform:uppercase">Marge Forecast</div><div style="font-weight:800;color:var(--navy)">${p.forecast_margin||'—'}%</div></div>
+            <div><div style="color:var(--muted);font-size:9px;font-weight:700;text-transform:uppercase">Marge Budget</div><div style="font-weight:800;color:var(--navy)">${p.budget_margin||'—'}%</div></div>
+          </div>
+          <div style="flex:1;min-height:140px"><canvas id="finCanvas"></canvas></div>
+        </div>
+      </div>
+    </div>
+    <div class="op-bottom" style="margin-top:10px">
+      <div class="op-sec" style="margin-bottom:0">
+        <div class="op-sec-title">⚠️ Risques</div>
+        <div class="op-txt">${escH(p.risks||'Aucun risque enregistré')}</div>
+      </div>
+      <div class="op-sec" style="margin-bottom:0">
+        <div class="op-sec-title">✅ Actions</div>
+        <div class="op-txt">${escH(p.actions||'Aucune action enregistrée')}</div>
+      </div>
+    </div>`;
+  // Render finance chart
+  const canvas = document.getElementById('finCanvas');
+  if(canvas && (p.forecast_revenue||p.budget_revenue)) {
+    if(finChartInst){finChartInst.destroy();finChartInst=null;}
+    finChartInst = new Chart(canvas.getContext('2d'),{
+      data:{
+        labels:['Forecast','Budget'],
+        datasets:[
+          {type:'bar',label:'Revenue (k€)',data:[p.forecast_revenue||0,p.budget_revenue||0],backgroundColor:'#3a6abf',yAxisID:'y'},
+          {type:'line',label:'Marge %',data:[p.forecast_margin||0,p.budget_margin||0],borderColor:'#e74c3c',backgroundColor:'#e74c3c',pointRadius:5,yAxisID:'y2',tension:0}
+        ]
+      },
+      options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:9},boxWidth:10}}},scales:{
+        y:{beginAtZero:true,position:'left',ticks:{font:{size:9}},grid:{color:'#eee'}},
+        y2:{beginAtZero:true,position:'right',grid:{drawOnChartArea:false},ticks:{callback:v=>v+'%',font:{size:9}},max:60}
+      }}
+    });
+  }
+}
+
+// ═══════════════════════════════════════════════
+//  TASKS
+// ═══════════════════════════════════════════════
+async function loadTasks() {
+  document.getElementById('tfProj').innerHTML=`<option value="">Tous les projets</option>`+allProjects.map(p=>`<option value="${p.id}">${escH(p.project_name)}</option>`).join('');
+  document.getElementById('tfAssign').innerHTML=`<option value="">Tous les membres</option>`+allUsers.map(u=>`<option value="${u.id}">${escH(u.name)}</option>`).join('');
+  let q = db.from('tasks').select('*').order('due_date',{ascending:true,nullsFirst:false});
+  const pf=document.getElementById('tfProj').value, af=document.getElementById('tfAssign').value, sf=document.getElementById('tfStatus').value;
+  if(pf) q=q.eq('project_id',pf); if(af) q=q.eq('assignee_id',af); if(sf) q=q.eq('status',sf);
+  const {data}=await q; allTasks=data||[];
+  const list=document.getElementById('tasksList');
+  if(!allTasks.length){list.innerHTML=`<div class="empty"><div class="empty-ico">✅</div><div class="empty-title">Aucune tâche</div><div class="empty-sub">Crée ta première tâche !</div></div>`;return;}
+  const pc={'high':'ph','medium':'pm','low':'pl'}, pl={'high':'Haute','medium':'Moyenne','low':'Basse'};
+  list.innerHTML=allTasks.map(t=>{
+    const u=getU(t.assignee_id), p=getP(t.project_id), done=t.status==='done';
+    return `<div class="task-row">
+      <div class="tcheck ${done?'done':''}" onclick="toggleTask('${t.id}','${t.status}')">${done?'✓':''}</div>
+      <div style="flex:1"><div class="ttitle ${done?'done':''}">${escH(t.title)}</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:3px">${p?'📁 '+escH(p.project_name):''} ${u?'· 👤 '+escH(u.name):''}</div></div>
+      <span class="prio ${pc[t.priority]||'pm'}">${pl[t.priority]||'—'}</span>
+      ${dueBadge(t.due_date)}
+      <button class="btn btn-danger btn-sm" onclick="deleteTask('${t.id}')">✕</button>
+    </div>`;
+  }).join('');
+}
+async function toggleTask(id,cur){await db.from('tasks').update({status:cur==='done'?'todo':'done'}).eq('id',id);loadTasks();}
+async function deleteTask(id){if(!confirm('Supprimer ?'))return;await db.from('tasks').delete().eq('id',id);toast('🗑️ Supprimée');loadTasks();}
+function openNewTaskModal(){
+  ['nt_title','nt_desc'].forEach(i=>document.getElementById(i).value='');
+  document.getElementById('nt_due').value='';
+  document.getElementById('nt_prio').value='medium';
+  document.getElementById('nt_proj').innerHTML=`<option value="">— Aucun projet —</option>`+allProjects.map(p=>`<option value="${p.id}">${escH(p.project_name)}</option>`).join('');
+  document.getElementById('nt_assign').innerHTML=`<option value="">— Non assigné —</option>`+allUsers.map(u=>`<option value="${u.id}" ${u.id===me?.id?'selected':''}>${escH(u.name)}</option>`).join('');
+  openModal('newTaskModal');
+}
+async function createTask(){
+  const title=document.getElementById('n
