@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Project Management App</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%231a3a6b'/%3E%3Crect x='10' y='38' width='10' height='18' rx='2' fill='%234a9eff'/%3E%3Crect x='24' y='26' width='10' height='30' rx='2' fill='%2327ae60'/%3E%3Crect x='38' y='16' width='10' height='40' rx='2' fill='%234a9eff'/%3E%3Cpolyline points='10,30 27,18 44,10' stroke='%23e74c3c' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
@@ -1351,8 +1353,9 @@ async function deleteUser(id){
 // ═══════════════════════════════════════════════
 //  CALENDAR
 // ═══════════════════════════════════════════════
-let calYear = new Date().getFullYear();
-let calMonth = new Date().getMonth(); // 0-indexed
+const _now = new Date();
+let calYear  = _now.getFullYear();
+let calMonth = _now.getMonth(); // 0-indexed (0=Jan)
 
 function calToday() {
   calYear  = new Date().getFullYear();
@@ -1381,95 +1384,103 @@ async function loadCalendar() {
 }
 
 function renderCalendar() {
-  const today = new Date();
-  const label = new Date(calYear, calMonth, 1).toLocaleDateString('fr-BE',{month:'long',year:'numeric'});
-  document.getElementById('calMonthLabel').textContent = label.charAt(0).toUpperCase()+label.slice(1);
+  const today    = new Date();
+  const todayStr = today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');
 
-  // Build event map: key = "YYYY-MM-DD" -> [{type, label, sub, color}]
+  // Month label
+  const months = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+  document.getElementById('calMonthLabel').textContent = months[calMonth] + ' ' + calYear;
+
+  // Build event map
   const evMap = {};
   function addEv(dateStr, ev) {
     if(!dateStr) return;
-    const key = dateStr.slice(0,10);
-    if(!evMap[key]) evMap[key]=[];
+    const key = String(dateStr).slice(0,10);
+    if(!evMap[key]) evMap[key] = [];
     evMap[key].push(ev);
   }
 
-  // Projects — launch date
   allProjects.forEach(p => {
-    if(p.launch_date) addEv(p.launch_date, {
-      type:'proj', cls:'ev-proj',
-      label: '🚀 '+p.project_name,
-      sub: p.client_name||'',
-      id: p.id
-    });
+    if(p.launch_date) addEv(p.launch_date, {cls:'ev-proj', label:'🚀 '+p.project_name, sub:p.client_name||''});
   });
-
-  // Tasks — due date
-  const todayStr = today.toISOString().slice(0,10);
   allTasks.forEach(t => {
-    if(!t.due_date||t.status==='done') return;
-    const late = t.due_date < todayStr;
-    addEv(t.due_date, {
-      type:'task', cls: late?'ev-late':'ev-task',
-      label: (late?'⚠️ ':'✅ ')+t.title,
-      sub: getU(t.assignee_id)?.name||'Non assigné',
-      id: t.id
-    });
+    if(!t.due_date || t.status==='done') return;
+    const late = String(t.due_date).slice(0,10) < todayStr;
+    addEv(t.due_date, {cls: late?'ev-late':'ev-task', label:(late?'⚠️ ':'✅ ')+t.title, sub: (getU(t.assignee_id)||{}).name||''});
   });
-
-  // Meetings
   allMeetings.forEach(m => {
-    if(m.meeting_date) addEv(m.meeting_date, {
-      type:'meet', cls:'ev-meet',
-      label: '📝 '+m.team_name,
-      sub: getP(m.project_id)?.project_name||'',
-      id: m.id
-    });
+    if(m.meeting_date) addEv(m.meeting_date, {cls:'ev-meet', label:'📝 '+m.team_name, sub:(getP(m.project_id)||{}).project_name||''});
   });
 
-  // Grid
+  // Build grid HTML
   const firstDay = new Date(calYear, calMonth, 1);
   const lastDay  = new Date(calYear, calMonth+1, 0);
-  // Start from Monday
-  let startDow = firstDay.getDay(); // 0=Sun
-  startDow = startDow===0 ? 6 : startDow-1; // convert to Mon=0
+  let startDow   = firstDay.getDay();
+  startDow = startDow===0 ? 6 : startDow-1;
 
-  const days = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
-  let html = days.map(d=>`<div class="cal-day-hdr">${d}</div>`).join('');
+  const dayNames = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
 
-  // Previous month padding
+  // Use TABLE for guaranteed grid layout
+  let html = '<table style="width:100%;border-collapse:collapse;table-layout:fixed"><thead><tr>';
+  dayNames.forEach(d => {
+    html += `<th style="padding:10px 0;text-align:center;font-size:10px;font-weight:800;color:#7f8c8d;text-transform:uppercase;letter-spacing:.5px;background:#f8f9fc;border:1px solid #e0e6f0">${d}</th>`;
+  });
+  html += '</tr></thead><tbody><tr>';
+
+  let cellCount = 0;
+
+  // Empty cells before first day
   for(let i=0; i<startDow; i++){
-    const d = new Date(calYear, calMonth, 1-startDow+i);
-    html += `<div class="cal-day other-month"><div class="cal-dn">${d.getDate()}</div></div>`;
+    html += '<td style="background:#f8f9fc;min-height:90px;vertical-align:top;padding:6px;border:1px solid #e0e6f0;min-width:0"></td>';
+    cellCount++;
   }
 
-  // Current month days
+  // Days of month
   for(let d=1; d<=lastDay.getDate(); d++){
-    const dt = new Date(calYear, calMonth, d);
-    const key = dt.toISOString().slice(0,10);
+    if(cellCount>0 && cellCount%7===0) html += '</tr><tr>';
+    const y2 = calYear;
+    const m2 = String(calMonth+1).padStart(2,'0');
+    const d2 = String(d).padStart(2,'0');
+    const key = y2+'-'+m2+'-'+d2;
     const isToday = key===todayStr;
     const evs = evMap[key]||[];
-    const maxShow = 3;
-    const shown = evs.slice(0,maxShow);
-    const extra = evs.length - maxShow;
-
-    html += `<div class="cal-day${isToday?' today':''}">
-      <div class="cal-dn">${d}</div>
-      ${shown.map(e=>`<div class="cal-ev ${e.cls}" onclick="showDayPopup('${key}',event)" title="${escH(e.label)}">${escH(e.label)}</div>`).join('')}
-      ${extra>0?`<div class="cal-more" onclick="showDayPopup('${key}',event)">+${extra} autre${extra>1?'s':''}</div>`:''}
-    </div>`;
+    const shown = evs.slice(0,3);
+    const extra = evs.length-3;
+    const dnStyle = isToday
+      ? 'width:24px;height:24px;border-radius:50%;background:#1a3a6b;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;margin-bottom:4px'
+      : 'width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#2c3e50;margin-bottom:4px';
+    const bgColor = isToday ? '#f0f4ff' : '#ffffff';
+    html += `<td style="background:${bgColor};vertical-align:top;padding:6px;border:1px solid #e0e6f0;min-width:0">`;
+    html += `<div style="${dnStyle}">${d}</div>`;
+    shown.forEach(e => {
+      const colors = {
+        'ev-proj':'background:#dbeafe;color:#1e40af',
+        'ev-task':'background:#dcfce7;color:#166534',
+        'ev-late':'background:#fee2e2;color:#991b1b',
+        'ev-meet':'background:#f3e8ff;color:#6b21a8'
+      };
+      const st = colors[e.cls]||'background:#eee;color:#333';
+      html += `<div onclick="showDayPopup('${key}',event)" style="font-size:10px;font-weight:600;padding:2px 5px;border-radius:4px;margin-bottom:3px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;${st}">${escH(e.label)}</div>`;
+    });
+    if(extra>0) html += `<div onclick="showDayPopup('${key}',event)" style="font-size:10px;color:#7f8c8d;font-weight:700;cursor:pointer">+${extra} autre${extra>1?'s':''}</div>`;
+    html += '</td>';
+    cellCount++;
   }
 
-  // Next month padding to complete grid
-  const totalCells = startDow + lastDay.getDate();
-  const remaining = totalCells%7===0 ? 0 : 7-(totalCells%7);
-  for(let i=1; i<=remaining; i++){
-    html += `<div class="cal-day other-month"><div class="cal-dn">${i}</div></div>`;
+  // Fill remaining cells
+  const remaining = cellCount%7===0 ? 0 : 7-(cellCount%7);
+  for(let i=0; i<remaining; i++){
+    html += '<td style="background:#f8f9fc;vertical-align:top;padding:6px;border:1px solid #e0e6f0"></td>';
   }
+  html += '</tr></tbody></table>';
 
   document.getElementById('calGrid').innerHTML = html;
+  document.getElementById('calGrid').style.display = 'block';
+  document.getElementById('calGrid').style.background = 'transparent';
+  document.getElementById('calGrid').style.border = 'none';
+  document.getElementById('calGrid').style.borderRadius = '10px';
+  document.getElementById('calGrid').style.overflow = 'hidden';
 
-  // Store evMap for popup
   window._calEvMap = evMap;
 }
 
