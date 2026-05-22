@@ -390,6 +390,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--te
     <div><div class="pt" id="vpTitle">One-Pager</div><div class="ps">Vue complète du projet</div></div>
     <div style="display:flex;gap:8px">
       <button class="btn btn-ghost" onclick="nav('projects',null)">← Retour</button>
+      <button class="btn btn-ghost" onclick="newVersionFromView()">🆕 Nouvelle version</button>
       <button class="btn btn-warning" id="btnEditProject" onclick="editFromView()">✏️ Modifier</button>
       <button class="btn btn-ghost" onclick="window.print()">🖨️ Imprimer</button>
     </div>
@@ -768,11 +769,27 @@ function prepareForm(proj) {
   if(steps.length) steps.forEach(s=>addTLStep(s.name,s.week,s.prog,s.status));
   else addTLStep('Kick-Off','wk 1',100,'done');
 }
-function editFromView() {
-  const p = getP(currentViewProjId);
-  if(!p) return;
+async function editFromView() {
+  const {data:p, error} = await db.from('projects').select('*').eq('id', currentViewProjId).single();
+  if(error||!p){ toast('❌ Impossible de charger le projet'); return; }
+  // Sync cache
+  const idx = allProjects.findIndex(x=>x.id===p.id);
+  if(idx>=0) allProjects[idx]=p; else allProjects.push(p);
   prepareForm(p);
-  nav('create-project',null);
+  nav('create-project', null);
+}
+
+async function newVersionFromView() {
+  const {data:p, error} = await db.from('projects').select('*').eq('id', currentViewProjId).single();
+  if(error||!p){ toast('❌ Impossible de charger le projet'); return; }
+  // Auto-increment version number (v1 -> v2, v2 -> v3, etc.)
+  const curVer = p.version||'v1';
+  const num = parseInt(curVer.replace(/[^0-9]/g,''))||1;
+  const newVer = 'v'+(num+1);
+  prepareForm({...p, version: newVer, version_date: new Date().toISOString().split('T')[0]});
+  // Show a hint
+  toast('📋 Données copiées — modifie et sauvegarde la '+newVer);
+  nav('create-project', null);
 }
 function addTLStep(name,week,prog,status) {
   const div=document.createElement('div');
