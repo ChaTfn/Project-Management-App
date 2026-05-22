@@ -1166,11 +1166,39 @@ function getActions(){return [...document.querySelectorAll('.mm-action-row')].ma
 async function saveMeeting(){
   const team=document.getElementById('m_team').value.trim(), date=document.getElementById('m_date').value;
   if(!team||!date){toast('⚠️ Nom et date obligatoires');return;}
-  const payload={team_name:team,meeting_date:date,project_id:document.getElementById('m_proj').value||null,agenda:document.getElementById('m_agenda').value||null,decisions:document.getElementById('m_decisions').value||null,participants:getParticipants(),actions:getActions()};
+  const actions=getActions();
+  const projectId=document.getElementById('m_proj').value||null;
+  const payload={team_name:team,meeting_date:date,project_id:projectId,agenda:document.getElementById('m_agenda').value||null,decisions:document.getElementById('m_decisions').value||null,participants:getParticipants(),actions};
   const mid=document.getElementById('m_id').value;
-  const {error}=mid?await db.from('meeting_minutes').update(payload).eq('id',mid):await db.from('meeting_minutes').insert({...payload,created_by:me?.id||null});
+
+  // Sauvegarde du meeting
+  const {data:savedMeeting, error}=mid
+    ? await db.from('meeting_minutes').update(payload).eq('id',mid).select().single()
+    : await db.from('meeting_minutes').insert({...payload,created_by:me?.id||null}).select().single();
   if(error){toast('❌ '+error.message);return;}
-  toast('✅ Compte-rendu sauvegardé !');nav('meetings',null);
+  const meetingId = savedMeeting?.id || mid;
+
+  // Création automatique des tâches pour chaque action avec un responsable
+  const actionsWithAssignee = actions.filter(a=>a.title.trim()&&a.assignee_id);
+  if(actionsWithAssignee.length>0){
+    // Si modification : on supprime les anciennes tâches liées pour éviter doublons
+    if(mid) await db.from('tasks').delete().eq('meeting_ref', mid);
+    const tasksToInsert = actionsWithAssignee.map(a=>({
+      title:       '['+team+'] '+a.title,
+      project_id:  projectId||null,
+      assignee_id: a.assignee_id,
+      due_date:    a.due_date||null,
+      priority:    'medium',
+      status:      'todo',
+      description: 'Action issue du meeting : '+team+' du '+fmtDate(date),
+      meeting_ref: meetingId||null
+    }));
+    await db.from('tasks').insert(tasksToInsert);
+    toast('✅ CR sauvegardé + '+actionsWithAssignee.length+' tâche(s) créée(s) !');
+  } else {
+    toast('✅ Compte-rendu sauvegardé !');
+  }
+  nav('meetings',null);
 }
 
 async function viewMeeting(id){
