@@ -283,7 +283,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--te
 <div id="page-home" class="page">
   <div class="ph">
     <div><div class="pt" id="greeting">Bonjour 👋</div><div class="ps">Vue d'ensemble</div></div>
-    <button class="btn btn-primary" onclick="nav('create-project',null)">+ Nouveau projet</button>
+    <button class="btn btn-primary" onclick="newProject()">+ Nouveau projet</button>
   </div>
   <div class="pb">
     <div class="grid g4" style="margin-bottom:28px" id="homeStats"><div class="loading"><div class="spinner"></div></div></div>
@@ -296,7 +296,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--te
 <div id="page-projects" class="page">
   <div class="ph">
     <div><div class="pt">Projets</div><div class="ps">Tous les projets de l'équipe</div></div>
-    <button class="btn btn-primary" onclick="nav('create-project',null)">+ Nouveau projet</button>
+    <button class="btn btn-primary" onclick="newProject()">+ Nouveau projet</button>
   </div>
   <div class="pb">
     <div class="filters">
@@ -423,7 +423,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--te
 <div id="page-meetings" class="page">
   <div class="ph">
     <div><div class="pt">Meeting Minutes</div><div class="ps">Comptes-rendus de réunion</div></div>
-    <button class="btn btn-primary" onclick="nav('create-meeting',null)">+ Nouveau CR</button>
+    <button class="btn btn-primary" onclick="newMeeting()">+ Nouveau CR</button>
   </div>
   <div class="pb">
     <div class="filters">
@@ -623,6 +623,14 @@ function escH(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replac
 // ═══════════════════════════════════════════════
 //  NAVIGATION
 // ═══════════════════════════════════════════════
+function newProject() {
+  prepareForm(null);
+  nav('create-project', null);
+}
+function newMeeting() {
+  prepareMeetingForm(null);
+  nav('create-meeting', null);
+}
 function nav(page, el) {
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
@@ -635,8 +643,8 @@ function nav(page, el) {
   if(page==='tasks')          loadTasks();
   if(page==='meetings')       loadMeetings();
   if(page==='users')          loadUsers();
-  if(page==='create-project') prepareForm();
-  if(page==='create-meeting') prepareMeetingForm();
+  // create-project et create-meeting : le formulaire est préparé
+  // explicitement par les fonctions qui appellent nav(), pas ici.
 }
 
 // ═══════════════════════════════════════════════
@@ -688,7 +696,7 @@ async function loadHome() {
   const recent = allProjects.slice(0,3);
   document.getElementById('homeRecent').innerHTML = recent.length
     ? `<div class="grid g3">${recent.map(projCardHTML).join('')}</div>`
-    : `<div class="empty"><div class="empty-ico">📋</div><div class="empty-title">Aucun projet</div><div class="empty-sub">Crée ton premier projet !</div><button class="btn btn-primary" onclick="nav('create-project',null)">+ Nouveau projet</button></div>`;
+    : `<div class="empty"><div class="empty-ico">📋</div><div class="empty-title">Aucun projet</div><div class="empty-sub">Crée ton premier projet !</div><button class="btn btn-primary" onclick="newProject()">+ Nouveau projet</button></div>`;
 }
 
 // ═══════════════════════════════════════════════
@@ -1087,7 +1095,7 @@ async function loadMeetings() {
   if(pf) q=q.eq('project_id',pf);
   const {data}=await q; allMeetings=data||[];
   const list=document.getElementById('meetingsList');
-  if(!allMeetings.length){list.innerHTML=`<div class="empty"><div class="empty-ico">📝</div><div class="empty-title">Aucun compte-rendu</div><div class="empty-sub">Crée le premier meeting minutes !</div><button class="btn btn-primary" onclick="nav('create-meeting',null)">+ Nouveau CR</button></div>`;return;}
+  if(!allMeetings.length){list.innerHTML=`<div class="empty"><div class="empty-ico">📝</div><div class="empty-title">Aucun compte-rendu</div><div class="empty-sub">Crée le premier meeting minutes !</div><button class="btn btn-primary" onclick="newMeeting()">+ Nouveau CR</button></div>`;return;}
   list.innerHTML=allMeetings.map(m=>{
     const dt=new Date(m.meeting_date+'T00:00:00');
     const day=dt.getDate(), month=dt.toLocaleDateString('fr-BE',{month:'short'});
