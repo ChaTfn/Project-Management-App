@@ -509,12 +509,12 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--te
     <div class="fi" style="margin-bottom:14px"><label class="flbl">Email (optionnel)</label><input class="finput" type="email" id="nu_email" placeholder="charlotte@usine.be"></div>
     <div class="fi"><label class="flbl">Couleur de profil</label>
       <div style="display:flex;gap:8px;margin-top:6px">
-        <div class="color-opt" data-color="#1a3a6b" style="background:#1a3a6b;outline:3px solid #1a3a6b;outline-offset:2px" onclick="selColor(this)"></div>
-        <div class="color-opt" data-color="#27ae60" style="background:#27ae60" onclick="selColor(this)"></div>
-        <div class="color-opt" data-color="#e74c3c" style="background:#e74c3c" onclick="selColor(this)"></div>
-        <div class="color-opt" data-color="#f39c12" style="background:#f39c12" onclick="selColor(this)"></div>
-        <div class="color-opt" data-color="#8e44ad" style="background:#8e44ad" onclick="selColor(this)"></div>
-        <div class="color-opt" data-color="#16a085" style="background:#16a085" onclick="selColor(this)"></div>
+        <div class="color-opt" data-color="#1a3a6b" style="background:#1a3a6b;outline:3px solid #1a3a6b;outline-offset:2px" onclick="showNewUserModal_color(this)"></div>
+        <div class="color-opt" data-color="#27ae60" style="background:#27ae60" onclick="showNewUserModal_color(this)"></div>
+        <div class="color-opt" data-color="#e74c3c" style="background:#e74c3c" onclick="showNewUserModal_color(this)"></div>
+        <div class="color-opt" data-color="#f39c12" style="background:#f39c12" onclick="showNewUserModal_color(this)"></div>
+        <div class="color-opt" data-color="#8e44ad" style="background:#8e44ad" onclick="showNewUserModal_color(this)"></div>
+        <div class="color-opt" data-color="#16a085" style="background:#16a085" onclick="showNewUserModal_color(this)"></div>
       </div>
     </div>
     <div class="modal-actions">
@@ -612,7 +612,7 @@ function statusBadge(s) {
 }
 const getU = id => allUsers.find(u=>u.id===id);
 const getP = id => allProjects.find(p=>p.id===id);
-function selColor2(el) {
+function showNewUserModal_color(el) {
   document.querySelectorAll('.color-opt').forEach(o=>{o.style.outline='none';o.style.outlineOffset='0'});
   el.style.outline='3px solid '+el.dataset.color; el.style.outlineOffset='2px';
   selColor=el.dataset.color;
@@ -1053,4 +1053,186 @@ function openNewTaskModal(){
   openModal('newTaskModal');
 }
 async function createTask(){
-  const title=document.getElementById('n
+  const title=document.getElementById('nt_title').value.trim();
+  if(!title){toast('⚠️ Titre obligatoire');return;}
+  const {error}=await db.from('tasks').insert({title,project_id:document.getElementById('nt_proj').value||null,assignee_id:document.getElementById('nt_assign').value||null,due_date:document.getElementById('nt_due').value||null,priority:document.getElementById('nt_prio').value,description:document.getElementById('nt_desc').value||null,status:'todo'});
+  if(error){toast('❌ '+error.message);return;}
+  toast('✅ Tâche créée !');closeModal('newTaskModal');loadTasks();
+}
+
+// ═══════════════════════════════════════════════
+//  MEETING MINUTES
+// ═══════════════════════════════════════════════
+async function loadMeetings() {
+  document.getElementById('mfProj').innerHTML=`<option value="">Tous les projets</option>`+allProjects.map(p=>`<option value="${p.id}">${escH(p.project_name)}</option>`).join('');
+  let q = db.from('meeting_minutes').select('*').order('meeting_date',{ascending:false});
+  const pf=document.getElementById('mfProj').value;
+  if(pf) q=q.eq('project_id',pf);
+  const {data}=await q; allMeetings=data||[];
+  const list=document.getElementById('meetingsList');
+  if(!allMeetings.length){list.innerHTML=`<div class="empty"><div class="empty-ico">📝</div><div class="empty-title">Aucun compte-rendu</div><div class="empty-sub">Crée le premier meeting minutes !</div><button class="btn btn-primary" onclick="nav('create-meeting',null)">+ Nouveau CR</button></div>`;return;}
+  list.innerHTML=allMeetings.map(m=>{
+    const dt=new Date(m.meeting_date+'T00:00:00');
+    const day=dt.getDate(), month=dt.toLocaleDateString('fr-BE',{month:'short'});
+    const proj=getP(m.project_id);
+    const acts=(m.actions||[]).length, parts=(m.participants||[]).length;
+    return `<div class="meeting-card" onclick="viewMeeting('${m.id}')">
+      <div class="meeting-date-box"><div class="mdb-day">${day}</div><div class="mdb-month">${month}</div></div>
+      <div class="meeting-info">
+        <div class="meeting-team">${escH(m.team_name)}</div>
+        <div class="meeting-proj">${proj?'📁 '+escH(proj.project_name):''}</div>
+        <div class="meeting-counts">
+          ${parts?`<span class="mcount">👥 ${parts} participants</span>`:''}
+          ${acts?`<span class="mcount">🎯 ${acts} actions</span>`:''}
+        </div>
+      </div>
+      <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deleteMeeting('${m.id}')">✕</button>
+    </div>`;
+  }).join('');
+}
+
+function prepareMeetingForm(meet) {
+  document.getElementById('mFormTitle').textContent = meet?'Modifier le CR':'Nouveau compte-rendu';
+  document.getElementById('m_id').value = meet?.id||'';
+  document.getElementById('m_team').value = meet?.team_name||'';
+  document.getElementById('m_date').value = meet?.meeting_date||new Date().toISOString().split('T')[0];
+  document.getElementById('m_agenda').value = meet?.agenda||'';
+  document.getElementById('m_decisions').value = meet?.decisions||'';
+  document.getElementById('m_proj').innerHTML=`<option value="">— Aucun projet —</option>`+allProjects.map(p=>`<option value="${p.id}" ${p.id===meet?.project_id?'selected':''}>${escH(p.project_name)}</option>`).join('');
+  const selected = meet?.participants||[];
+  document.getElementById('partGrid').innerHTML=allUsers.map(u=>`
+    <div class="part-chip ${selected.includes(u.id)?'selected':''}" onclick="toggleParticipant(this,'${u.id}')" data-uid="${u.id}">
+      <div class="part-avatar" style="background:${u.avatar_color||'#1a3a6b'}">${init2(u.name)}</div>${escH(u.name)}
+    </div>`).join('');
+  document.getElementById('actionRows').innerHTML='';
+  const actions=meet?.actions||[];
+  if(actions.length) actions.forEach(a=>addActionRow(a.title,a.assignee_id,a.due_date));
+  else addActionRow('','','');
+}
+
+function toggleParticipant(el,uid){el.classList.toggle('selected');}
+
+function autoFillTeamName() {
+  const pid=document.getElementById('m_proj').value;
+  const proj=getP(pid);
+  if(proj){
+    const lead=proj.org_data?.lead||'';
+    if(lead) document.getElementById('m_team').value=`Equipe projet ${lead}`;
+  }
+}
+
+function addActionRow(title,assigneeId,due) {
+  const div=document.createElement('div');
+  div.className='mm-action-row';
+  div.innerHTML=`
+    <input type="text" value="${escH(title||'')}" placeholder="Description de l'action" class="ma-title">
+    <select class="ma-assign">
+      <option value="">— Responsable —</option>
+      ${allUsers.map(u=>`<option value="${u.id}" ${u.id===assigneeId?'selected':''}>${escH(u.name)}</option>`).join('')}
+    </select>
+    <input type="date" value="${due||''}" class="ma-due">
+    <button onclick="this.parentNode.remove()" style="width:28px;height:28px;background:#feecea;border:1px solid #fcc;border-radius:5px;cursor:pointer;font-size:12px">✕</button>`;
+  document.getElementById('actionRows').appendChild(div);
+}
+
+function getParticipants(){return [...document.querySelectorAll('.part-chip.selected')].map(el=>el.dataset.uid);}
+function getActions(){return [...document.querySelectorAll('.mm-action-row')].map(r=>({title:r.querySelector('.ma-title').value,assignee_id:r.querySelector('.ma-assign').value||null,due_date:r.querySelector('.ma-due').value||null})).filter(a=>a.title.trim());}
+
+async function saveMeeting(){
+  const team=document.getElementById('m_team').value.trim(), date=document.getElementById('m_date').value;
+  if(!team||!date){toast('⚠️ Nom et date obligatoires');return;}
+  const payload={team_name:team,meeting_date:date,project_id:document.getElementById('m_proj').value||null,agenda:document.getElementById('m_agenda').value||null,decisions:document.getElementById('m_decisions').value||null,participants:getParticipants(),actions:getActions()};
+  const mid=document.getElementById('m_id').value;
+  const {error}=mid?await db.from('meeting_minutes').update(payload).eq('id',mid):await db.from('meeting_minutes').insert({...payload,created_by:me?.id||null});
+  if(error){toast('❌ '+error.message);return;}
+  toast('✅ Compte-rendu sauvegardé !');nav('meetings',null);
+}
+
+async function viewMeeting(id){
+  currentViewMeetId=id;
+  const {data:m}=await db.from('meeting_minutes').select('*').eq('id',id).single();
+  if(!m){toast('❌ Introuvable');return;}
+  document.getElementById('vmTitle').textContent=m.team_name;
+  document.getElementById('btnEditMeeting').onclick=()=>editMeeting(id);
+  const proj=getP(m.project_id);
+  const parts=(m.participants||[]).map(uid=>{const u=getU(uid);return u?`<span style="display:inline-flex;align-items:center;gap:6px;background:#f0f4fb;border:1px solid var(--border);padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600"><div class="part-avatar" style="background:${u.avatar_color||'#1a3a6b'};width:20px;height:20px;font-size:8px">${init2(u.name)}</div>${escH(u.name)}</span>`:''}).filter(Boolean).join('');
+  const actions=(m.actions||[]).map((a,i)=>{
+    const u=getU(a.assignee_id);
+    return `<div class="action-item">
+      <div class="action-num">${i+1}</div>
+      <div style="flex:1"><div class="action-title">${escH(a.title)}</div>${u?`<div class="action-meta">👤 ${escH(u.name)}</div>`:''}</div>
+      ${a.due_date?`<div class="action-meta">📅 ${fmtDate(a.due_date)}</div>`:''}
+    </div>`;
+  }).join('');
+  document.getElementById('meetingView').innerHTML=`
+    <div class="mv-header">
+      <div class="mv-team">${escH(m.team_name)}</div>
+      <div class="mv-date">📅 ${fmtDate(m.meeting_date)}${proj?' &nbsp;·&nbsp; 📁 '+escH(proj.project_name):''}</div>
+    </div>
+    ${parts?`<div class="mv-section"><div class="mv-sec-title">👥 Participants</div><div style="display:flex;flex-wrap:wrap;gap:8px">${parts}</div></div>`:''}
+    ${m.agenda?`<div class="mv-section"><div class="mv-sec-title">📋 Ordre du jour</div><div class="mv-content">${escH(m.agenda)}</div></div>`:''}
+    ${m.decisions?`<div class="mv-section"><div class="mv-sec-title">✅ Décisions prises</div><div class="mv-content">${escH(m.decisions)}</div></div>`:''}
+    ${actions?`<div class="mv-section"><div class="mv-sec-title">🎯 Actions à suivre</div>${actions}</div>`:''}`;
+  nav('view-meeting',null);
+}
+
+async function editMeeting(id){
+  const {data:m}=await db.from('meeting_minutes').select('*').eq('id',id).single();
+  if(!m) return;
+  prepareMeetingForm(m);
+  nav('create-meeting',null);
+}
+async function deleteMeeting(id){if(!confirm('Supprimer ce CR ?'))return;await db.from('meeting_minutes').delete().eq('id',id);toast('🗑️ Supprimé');loadMeetings();}
+
+// ═══════════════════════════════════════════════
+//  USERS
+// ═══════════════════════════════════════════════
+async function loadUsers(){
+  const {data}=await db.from('users').select('*').order('name');
+  allUsers=data||[];
+  const g=document.getElementById('usersGrid');
+  if(!allUsers.length){g.innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="empty-ico">👥</div><div class="empty-title">Aucun utilisateur</div></div>`;return;}
+  g.innerHTML=allUsers.map(u=>`
+    <div class="user-card">
+      ${avHTML(u,48)}
+      <div style="flex:1"><div class="uc-name">${escH(u.name)}</div><div class="uc-role">${escH(u.role)}</div>${u.email?`<div style="font-size:11px;color:var(--muted);margin-top:2px">✉️ ${escH(u.email)}</div>`:''}</div>
+      <button class="btn btn-danger btn-sm" onclick="deleteUser('${u.id}')">✕</button>
+    </div>`).join('');
+}
+
+function showNewUserModal(fromLogin){
+  loginMode=fromLogin;
+  ['nu_name','nu_role','nu_email'].forEach(i=>document.getElementById(i).value='');
+  selColor='#1a3a6b';
+  document.querySelectorAll('.color-opt').forEach((o,i)=>{o.style.outline=i===0?'3px solid #1a3a6b':'none';o.style.outlineOffset=i===0?'2px':'0';});
+  openModal('newUserModal');
+}
+
+async function createUser(){
+  const name=document.getElementById('nu_name').value.trim(), role=document.getElementById('nu_role').value.trim();
+  if(!name||!role){toast('⚠️ Nom et rôle obligatoires');return;}
+  const {error}=await db.from('users').insert({name,role,email:document.getElementById('nu_email').value.trim()||null,avatar_color:selColor});
+  if(error){toast('❌ '+error.message);return;}
+  toast('✅ Utilisateur créé !');closeModal('newUserModal');
+  const {data}=await db.from('users').select('*').order('name');
+  allUsers=data||[];
+  if(loginMode) loadLoginUsers(); else loadUsers();
+}
+
+async function deleteUser(id){
+  if(!confirm('Supprimer cet utilisateur ?'))return;
+  await db.from('users').delete().eq('id',id);
+  toast('🗑️ Supprimé');loadUsers();
+}
+
+// ═══════════════════════════════════════════════
+//  CLOSE MODALS ON BACKDROP + INIT
+// ═══════════════════════════════════════════════
+document.querySelectorAll('.modal-overlay').forEach(m=>{
+  m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');});
+});
+
+loadLoginUsers();
+</script>
+</body>
+</html>
