@@ -281,6 +281,323 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--te
 .dp-label{font-size:12px;font-weight:600;color:#2c3e50}
 .dp-sub{font-size:10px;color:#7f8c8d;margin-top:2px}
 
+
+/* ═══════════════════════════════════════════════════
+   GLASSMORPHISM OVERRIDE — Appliqué sur tout le design
+═══════════════════════════════════════════════════ */
+
+/* Fond global gradient fixe */
+body {
+  background: linear-gradient(135deg, #0d1b3e 0%, #1a1a5e 25%, #16213e 55%, #0d2137 80%, #1a0533 100%) !important;
+  background-attachment: fixed !important;
+  min-height: 100vh;
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  background: rgba(10, 15, 40, 0.55) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border-right: 1px solid rgba(255,255,255,0.08) !important;
+}
+.sb-header { border-bottom: 1px solid rgba(255,255,255,0.07) !important; }
+.sb-user   { border-bottom: 1px solid rgba(255,255,255,0.07) !important; }
+.sb-footer { border-top:    1px solid rgba(255,255,255,0.07) !important; }
+.nav-item:hover { background: rgba(255,255,255,0.08) !important; }
+.nav-item.active {
+  background: rgba(74,158,255,0.18) !important;
+  border-left-color: #4a9eff !important;
+}
+.app-name { letter-spacing: -0.5px; }
+
+/* ── MAIN AREA ── */
+.main { background: transparent !important; }
+
+/* ── PAGE HEADER ── */
+.ph {
+  background: rgba(255,255,255,0.06) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-bottom: 1px solid rgba(255,255,255,0.1) !important;
+}
+.pt  { color: #ffffff !important; text-shadow: 0 1px 8px rgba(0,0,0,0.3); }
+.ps  { color: rgba(255,255,255,0.5) !important; }
+
+/* ── GLASS CARDS ── */
+.card, .stat, .proj-card, .task-row, .user-card, .meeting-card, .section-box {
+  background: rgba(255,255,255,0.07) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.1) !important;
+  color: #ffffff !important;
+}
+.proj-card:hover, .task-row:hover, .meeting-card:hover {
+  background: rgba(255,255,255,0.12) !important;
+  border-color: rgba(255,255,255,0.22) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.15) !important;
+}
+
+/* ── STAT CARDS ── */
+.stat::before { background: linear-gradient(90deg, #4a9eff, #7c5cfc) !important; }
+.stat-val  { color: #ffffff !important; }
+.stat-lbl  { color: rgba(255,255,255,0.55) !important; }
+.stat-ico  { opacity: 0.2; }
+
+/* ── TYPOGRAPHY ── */
+.proj-client  { color: rgba(255,255,255,0.5) !important; }
+.proj-name    { color: #ffffff !important; }
+.proj-ver     { background: rgba(74,158,255,0.25) !important; color: #7ec8ff !important; border: none !important; }
+.ttitle       { color: #ffffff !important; }
+.ttitle.done  { color: rgba(255,255,255,0.4) !important; }
+.uc-name      { color: #ffffff !important; }
+.uc-role      { color: rgba(255,255,255,0.55) !important; }
+.meeting-team { color: #ffffff !important; }
+.meeting-proj { color: rgba(255,255,255,0.55) !important; }
+.mcount       { background: rgba(255,255,255,0.1) !important; color: rgba(255,255,255,0.7) !important; }
+
+/* ── SECTION TITLES ── */
+.sec-title     { color: rgba(255,255,255,0.9) !important; border-bottom-color: rgba(255,255,255,0.12) !important; }
+.op-sec-title  { color: #ffffff !important; }
+
+/* ── FILTERS BAR ── */
+.filters, div[style*="background:#fff"][style*="padding:14px"] {
+  background: rgba(255,255,255,0.07) !important;
+  backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+}
+.fsel, .fsearch, .filter-select {
+  background: rgba(255,255,255,0.1) !important;
+  border: 1px solid rgba(255,255,255,0.15) !important;
+  color: #ffffff !important;
+}
+.fsel option, .fsearch option { background: #1a1a5e; color: #fff; }
+
+/* ── FORM INPUTS ── */
+.finput, .fsel2, .ftxt, .form-input, .form-select, .form-textarea {
+  background: rgba(255,255,255,0.1) !important;
+  border: 1px solid rgba(255,255,255,0.15) !important;
+  color: #ffffff !important;
+}
+.finput::placeholder, .ftxt::placeholder { color: rgba(255,255,255,0.35) !important; }
+.finput:focus, .fsel2:focus, .ftxt:focus {
+  border-color: rgba(74,158,255,0.7) !important;
+  background: rgba(255,255,255,0.14) !important;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(74,158,255,0.15) !important;
+}
+.fsel2 option { background: #16213e; color: #fff; }
+.flbl, .form-label { color: rgba(255,255,255,0.6) !important; }
+
+/* ── BUTTONS ── */
+.btn-primary {
+  background: linear-gradient(135deg, #4a9eff 0%, #7c5cfc 100%) !important;
+  border: none !important;
+  box-shadow: 0 4px 16px rgba(74,158,255,0.35) !important;
+  color: #fff !important;
+}
+.btn-primary:hover {
+  background: linear-gradient(135deg, #5aaeff 0%, #8c6cff 100%) !important;
+  box-shadow: 0 8px 24px rgba(74,158,255,0.5) !important;
+  transform: translateY(-1px);
+}
+.btn-success {
+  background: linear-gradient(135deg, #27ae60 0%, #1abc9c 100%) !important;
+  box-shadow: 0 4px 16px rgba(39,174,96,0.35) !important;
+  border: none !important;
+}
+.btn-ghost {
+  background: rgba(255,255,255,0.1) !important;
+  border: 1px solid rgba(255,255,255,0.18) !important;
+  color: #ffffff !important;
+}
+.btn-ghost:hover {
+  background: rgba(255,255,255,0.17) !important;
+  border-color: rgba(255,255,255,0.3) !important;
+}
+.btn-danger {
+  background: rgba(231,76,60,0.2) !important;
+  border: 1px solid rgba(231,76,60,0.35) !important;
+  color: #ff8080 !important;
+}
+.btn-warning {
+  background: rgba(230,126,34,0.2) !important;
+  border: 1px solid rgba(230,126,34,0.35) !important;
+  color: #ffb366 !important;
+}
+
+/* ── BADGES ── */
+.badge.ba { background: rgba(39,174,96,0.2) !important; color: #5ce89e !important; }
+.badge.bp { background: rgba(243,156,18,0.2) !important; color: #ffd166 !important; }
+.badge.bd { background: rgba(74,158,255,0.2) !important; color: #7ec8ff !important; }
+.prio.ph  { background: rgba(231,76,60,0.2) !important; color: #ff8080 !important; }
+.prio.pm  { background: rgba(243,156,18,0.2) !important; color: #ffd166 !important; }
+.prio.pl  { background: rgba(39,174,96,0.2) !important; color: #5ce89e !important; }
+
+/* ── TASK CHECK ── */
+.tcheck      { border-color: rgba(255,255,255,0.25) !important; }
+.tcheck.done { background: #27ae60 !important; border-color: #27ae60 !important; }
+
+/* ── EMPTY STATES ── */
+.empty-title { color: rgba(255,255,255,0.85) !important; }
+.empty-sub   { color: rgba(255,255,255,0.45) !important; }
+
+/* ── MODALS ── */
+.modal-overlay { background: rgba(0,0,0,0.65) !important; backdrop-filter: blur(8px); }
+.modal {
+  background: rgba(16,24,64,0.85) !important;
+  backdrop-filter: blur(32px) !important;
+  -webkit-backdrop-filter: blur(32px) !important;
+  border: 1px solid rgba(255,255,255,0.14) !important;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.5) !important;
+  color: #ffffff !important;
+}
+.modal-title { color: #ffffff !important; }
+.modal p     { color: rgba(255,255,255,0.75) !important; }
+
+/* ── LOGIN ── */
+#login-screen {
+  background: linear-gradient(135deg, #0d1b3e 0%, #1a1a5e 30%, #16213e 65%, #1a0533 100%) !important;
+}
+.login-logo { color: #ffffff !important; text-shadow: 0 2px 20px rgba(74,158,255,0.5); }
+.login-sub  { color: rgba(255,255,255,0.4) !important; }
+.login-card {
+  background: rgba(255,255,255,0.08) !important;
+  backdrop-filter: blur(32px) !important;
+  -webkit-backdrop-filter: blur(32px) !important;
+  border: 1px solid rgba(255,255,255,0.14) !important;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.45) !important;
+}
+.login-card h2 { color: #ffffff !important; }
+.login-div     { color: rgba(255,255,255,0.3) !important; }
+.new-user-link { color: #7ec8ff !important; }
+.user-btn {
+  background: rgba(255,255,255,0.07) !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+  color: #ffffff !important;
+  transition: all .2s;
+}
+.user-btn:hover {
+  background: rgba(74,158,255,0.15) !important;
+  border-color: rgba(74,158,255,0.4) !important;
+  transform: translateX(4px);
+}
+.u-name { color: #ffffff !important; }
+.u-role { color: rgba(255,255,255,0.5) !important; }
+
+/* ── CALENDAR ── */
+#dayPopup, .day-popup {
+  background: rgba(16,24,64,0.9) !important;
+  backdrop-filter: blur(24px) !important;
+  border: 1px solid rgba(255,255,255,0.14) !important;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.4) !important;
+}
+.dp-title  { color: #ffffff !important; border-bottom-color: rgba(255,255,255,0.1) !important; }
+.dp-label  { color: rgba(255,255,255,0.9) !important; }
+.dp-sub    { color: rgba(255,255,255,0.5) !important; }
+.dp-close  { color: rgba(255,255,255,0.45) !important; }
+.dp-ev     { border-bottom-color: rgba(255,255,255,0.07) !important; }
+.cal-month { color: #ffffff !important; }
+.cal-nav-btn {
+  background: rgba(255,255,255,0.08) !important;
+  border: 1px solid rgba(255,255,255,0.14) !important;
+  color: #ffffff !important;
+}
+.cal-nav-btn:hover { background: rgba(255,255,255,0.15) !important; }
+.cal-leg   { color: rgba(255,255,255,0.6) !important; }
+div[style*="display:flex"][style*="gap:10px"][style*="flex-wrap:wrap"][style*="margin-bottom:16px"] {
+  background: rgba(255,255,255,0.07) !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+}
+
+/* ── ONE-PAGER ── */
+.op-page {
+  background: rgba(255,255,255,0.07) !important;
+  backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3) !important;
+}
+.op-client, .op-proj { color: #ffffff !important; }
+.op-sub    { color: rgba(255,255,255,0.5) !important; }
+.op-ml     { color: rgba(255,255,255,0.45) !important; }
+.op-mv     { background: rgba(255,255,255,0.1) !important; color: #ffffff !important; }
+.op-sec    { border: 1px solid rgba(255,255,255,0.1) !important; }
+.op-sec-title { color: rgba(255,255,255,0.85) !important; }
+.op-txt    { color: rgba(255,255,255,0.8) !important; }
+.op-header { border-bottom-color: rgba(255,255,255,0.15) !important; }
+
+/* ── VERSION PILLS ── */
+.ver-pill {
+  background: rgba(255,255,255,0.08) !important;
+  border: 1px solid rgba(255,255,255,0.14) !important;
+  color: rgba(255,255,255,0.6) !important;
+}
+.ver-pill:hover  { border-color: rgba(74,158,255,0.5) !important; color: #7ec8ff !important; }
+.ver-pill.active { background: linear-gradient(135deg,#4a9eff,#7c5cfc) !important; color: #fff !important; border-color: transparent !important; }
+
+/* ── PARTICIPANTS CHIPS ── */
+.part-chip {
+  background: rgba(255,255,255,0.08) !important;
+  border: 1px solid rgba(255,255,255,0.14) !important;
+  color: rgba(255,255,255,0.65) !important;
+}
+.part-chip:hover  { border-color: rgba(74,158,255,0.4) !important; color: #7ec8ff !important; }
+.part-chip.selected { background: linear-gradient(135deg,rgba(74,158,255,0.35),rgba(124,92,252,0.35)) !important; border-color: rgba(74,158,255,0.5) !important; color: #ffffff !important; }
+
+/* ── TL STEPS ── */
+.tl-step { background: rgba(255,255,255,0.06) !important; border: 1px solid rgba(255,255,255,0.1) !important; }
+.tl-step input, .tl-step select {
+  background: rgba(255,255,255,0.1) !important;
+  border: 1px solid rgba(255,255,255,0.15) !important;
+  color: #ffffff !important;
+}
+.tl-headers { color: rgba(255,255,255,0.45) !important; }
+
+/* ── MEETING DATE BOX ── */
+.meeting-date-box { background: linear-gradient(135deg,#4a9eff,#7c5cfc) !important; }
+
+/* ── MEETING VIEW ── */
+.mv-header { background: linear-gradient(135deg, rgba(74,158,255,0.3), rgba(124,92,252,0.3)) !important; border: 1px solid rgba(255,255,255,0.12) !important; }
+.mv-team   { color: #ffffff !important; }
+.mv-date   { color: rgba(255,255,255,0.65) !important; }
+.mv-content { background: rgba(255,255,255,0.07) !important; border: 1px solid rgba(255,255,255,0.1) !important; color: rgba(255,255,255,0.85) !important; }
+.mv-sec-title { color: rgba(255,255,255,0.85) !important; }
+.action-item { background: rgba(255,255,255,0.07) !important; border: 1px solid rgba(255,255,255,0.1) !important; }
+.action-title { color: rgba(255,255,255,0.9) !important; }
+.action-meta  { color: rgba(255,255,255,0.5) !important; }
+.action-num   { background: linear-gradient(135deg,#4a9eff,#7c5cfc) !important; }
+
+/* ── MM ACTION ROWS ── */
+.mm-action-row { background: rgba(255,255,255,0.06) !important; border: 1px solid rgba(255,255,255,0.1) !important; }
+.mm-action-row input, .mm-action-row select {
+  background: rgba(255,255,255,0.1) !important;
+  border: 1px solid rgba(255,255,255,0.15) !important;
+  color: #ffffff !important;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: rgba(255,255,255,0.03); }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.28); }
+
+/* ── TOAST ── */
+.toast {
+  background: rgba(16,24,64,0.95) !important;
+  backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(255,255,255,0.14) !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4) !important;
+}
+
+/* ── SPINNER ── */
+.spinner { border-color: rgba(255,255,255,0.15) !important; border-top-color: #4a9eff !important; }
+
+/* ── MISC ── */
+input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1) opacity(0.5); }
+input[type="checkbox"] { accent-color: #4a9eff; }
+input[type="radio"]    { accent-color: #4a9eff; }
+
 </style>
 </head>
 <body>
@@ -535,17 +852,41 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--te
     <button class="btn btn-ghost btn-sm" onclick="calToday()">Aujourd'hui</button>
   </div>
   <div class="pb">
-    <div class="cal-legend">
-      <div class="cal-leg"><div class="cal-leg-dot" style="background:#dbeafe"></div>Lancement projet</div>
-      <div class="cal-leg"><div class="cal-leg-dot" style="background:#dcfce7"></div>Échéance tâche</div>
-      <div class="cal-leg"><div class="cal-leg-dot" style="background:#fee2e2"></div>Tâche en retard</div>
-      <div class="cal-leg"><div class="cal-leg-dot" style="background:#f3e8ff"></div>Meeting</div>
+    <!-- Filtres -->
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;align-items:center;background:#fff;padding:14px 16px;border-radius:10px;border:1.5px solid #d0d7e3">
+      <span style="font-size:11px;font-weight:800;color:#1a3a6b;text-transform:uppercase;letter-spacing:.5px;margin-right:4px">Filtres</span>
+      <select class="fsel" id="calFPerson" onchange="renderCalendar()" style="font-size:11px">
+        <option value="">👤 Toutes les personnes</option>
+      </select>
+      <select class="fsel" id="calFProject" onchange="renderCalendar()" style="font-size:11px">
+        <option value="">📁 Tous les projets</option>
+      </select>
+      <div style="display:flex;gap:8px;margin-left:auto;flex-wrap:wrap">
+        <label style="display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#7f8c8d;cursor:pointer">
+          <input type="checkbox" id="calShowProj" checked onchange="renderCalendar()"> 🚀 Projets
+        </label>
+        <label style="display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#7f8c8d;cursor:pointer">
+          <input type="checkbox" id="calShowTask" checked onchange="renderCalendar()"> ✅ Tâches
+        </label>
+        <label style="display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#7f8c8d;cursor:pointer">
+          <input type="checkbox" id="calShowMeet" checked onchange="renderCalendar()"> 📝 Meetings
+        </label>
+      </div>
     </div>
-    <div class="cal-header">
-      <div class="cal-month" id="calMonthLabel"></div>
-      <div class="cal-nav">
-        <button class="cal-nav-btn" onclick="calMove(-1)">&#8249;</button>
-        <button class="cal-nav-btn" onclick="calMove(1)">&#8250;</button>
+    <!-- Légende + navigation -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+      <div class="cal-legend" style="margin-bottom:0">
+        <div class="cal-leg"><div class="cal-leg-dot" style="background:#dbeafe;display:inline-block"></div>Lancement projet</div>
+        <div class="cal-leg"><div class="cal-leg-dot" style="background:#dcfce7;display:inline-block"></div>Échéance tâche</div>
+        <div class="cal-leg"><div class="cal-leg-dot" style="background:#fee2e2;display:inline-block"></div>Tâche en retard</div>
+        <div class="cal-leg"><div class="cal-leg-dot" style="background:#f3e8ff;display:inline-block"></div>Meeting</div>
+      </div>
+      <div class="cal-header" style="margin-bottom:0">
+        <div class="cal-month" id="calMonthLabel"></div>
+        <div class="cal-nav" style="margin-left:16px">
+          <button class="cal-nav-btn" onclick="calMove(-1)">&#8249;</button>
+          <button class="cal-nav-btn" onclick="calMove(1)">&#8250;</button>
+        </div>
       </div>
     </div>
     <div class="cal-grid" id="calGrid"></div>
@@ -628,6 +969,43 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--te
       </button>
     </div>
     <div class="modal-actions"><button class="btn btn-ghost" onclick="closeModal('versionModal')">Annuler</button></div>
+  </div>
+</div>
+
+
+<!-- QUICK CREATE MODAL (from calendar) -->
+<div class="modal-overlay" id="quickCreateModal">
+  <div class="modal" style="width:420px">
+    <div class="modal-title" id="qcTitle">Créer un événement</div>
+    <div class="fi" style="margin-bottom:14px">
+      <label class="flbl">Type</label>
+      <div style="display:flex;gap:8px;margin-top:6px">
+        <label style="flex:1;display:flex;align-items:center;gap:8px;padding:10px 14px;border:1.5px solid #d0d7e3;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600">
+          <input type="radio" name="qc_type_r" value="task" id="qc_type_task" checked onchange="document.getElementById('qc_type').value='task'"> ✅ Tâche
+        </label>
+        <label style="flex:1;display:flex;align-items:center;gap:8px;padding:10px 14px;border:1.5px solid #d0d7e3;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600">
+          <input type="radio" name="qc_type_r" value="meeting" id="qc_type_meet" onchange="document.getElementById('qc_type').value='meeting'"> 📝 Meeting
+        </label>
+      </div>
+    </div>
+    <input type="hidden" id="qc_type" value="task">
+    <input type="hidden" id="qc_date">
+    <div class="fi" style="margin-bottom:14px">
+      <label class="flbl">Titre *</label>
+      <input class="finput" type="text" id="qc_title" placeholder="Nom de la tâche ou du meeting">
+    </div>
+    <div class="fi" style="margin-bottom:14px">
+      <label class="flbl">Projet</label>
+      <select class="fsel2" id="qc_project"></select>
+    </div>
+    <div class="fi" style="margin-bottom:14px">
+      <label class="flbl">Assigné à</label>
+      <select class="fsel2" id="qc_assign"></select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('quickCreateModal')">Annuler</button>
+      <button class="btn btn-primary" onclick="quickCreate()">Créer</button>
+    </div>
   </div>
 </div>
 
@@ -1371,15 +1749,27 @@ function calMove(dir) {
 }
 
 async function loadCalendar() {
-  // Fetch fresh data if needed
   const [{data:p},{data:t},{data:m}] = await Promise.all([
     db.from('projects').select('id,project_name,client_name,launch_date,status'),
     db.from('tasks').select('id,title,due_date,status,assignee_id,project_id'),
     db.from('meeting_minutes').select('id,team_name,meeting_date,project_id')
   ]);
-  allProjects  = p||[];
-  allTasks     = t||[];
-  allMeetings  = m||[];
+  allProjects = p||[];
+  allTasks    = t||[];
+  allMeetings = m||[];
+
+  // Populate person filter
+  const fp = document.getElementById('calFPerson');
+  const curPerson = fp.value;
+  fp.innerHTML = '<option value="">👤 Toutes les personnes</option>' +
+    allUsers.map(u=>`<option value="${u.id}" ${u.id===curPerson?'selected':''}>${escH(u.name)}</option>`).join('');
+
+  // Populate project filter
+  const fpr = document.getElementById('calFProject');
+  const curProj = fpr.value;
+  fpr.innerHTML = '<option value="">📁 Tous les projets</option>' +
+    allProjects.map(p=>`<option value="${p.id}" ${p.id===curProj?'selected':''}>${escH(p.project_name)}</option>`).join('');
+
   renderCalendar();
 }
 
@@ -1391,6 +1781,13 @@ function renderCalendar() {
   const months = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
   document.getElementById('calMonthLabel').textContent = months[calMonth] + ' ' + calYear;
 
+  // Read active filters
+  const filterPerson  = (document.getElementById('calFPerson')||{}).value  || '';
+  const filterProject = (document.getElementById('calFProject')||{}).value || '';
+  const showProj = (document.getElementById('calShowProj')||{checked:true}).checked;
+  const showTask = (document.getElementById('calShowTask')||{checked:true}).checked;
+  const showMeet = (document.getElementById('calShowMeet')||{checked:true}).checked;
+
   // Build event map
   const evMap = {};
   function addEv(dateStr, ev) {
@@ -1400,16 +1797,27 @@ function renderCalendar() {
     evMap[key].push(ev);
   }
 
-  allProjects.forEach(p => {
-    if(p.launch_date) addEv(p.launch_date, {cls:'ev-proj', label:'🚀 '+p.project_name, sub:p.client_name||''});
+  // Projects
+  if(showProj) allProjects.forEach(p => {
+    if(!p.launch_date) return;
+    if(filterProject && p.id !== filterProject) return;
+    addEv(p.launch_date, {cls:'ev-proj', label:'🚀 '+p.project_name, sub:p.client_name||''});
   });
-  allTasks.forEach(t => {
+
+  // Tasks
+  if(showTask) allTasks.forEach(t => {
     if(!t.due_date || t.status==='done') return;
+    if(filterPerson  && t.assignee_id !== filterPerson)  return;
+    if(filterProject && t.project_id  !== filterProject) return;
     const late = String(t.due_date).slice(0,10) < todayStr;
-    addEv(t.due_date, {cls: late?'ev-late':'ev-task', label:(late?'⚠️ ':'✅ ')+t.title, sub: (getU(t.assignee_id)||{}).name||''});
+    addEv(t.due_date, {cls: late?'ev-late':'ev-task', label:(late?'⚠️ ':'✅ ')+t.title, sub:(getU(t.assignee_id)||{}).name||''});
   });
-  allMeetings.forEach(m => {
-    if(m.meeting_date) addEv(m.meeting_date, {cls:'ev-meet', label:'📝 '+m.team_name, sub:(getP(m.project_id)||{}).project_name||''});
+
+  // Meetings
+  if(showMeet) allMeetings.forEach(m => {
+    if(!m.meeting_date) return;
+    if(filterProject && m.project_id !== filterProject) return;
+    addEv(m.meeting_date, {cls:'ev-meet', label:'📝 '+m.team_name, sub:(getP(m.project_id)||{}).project_name||''});
   });
 
   // Build grid HTML
@@ -1450,7 +1858,7 @@ function renderCalendar() {
       ? 'width:24px;height:24px;border-radius:50%;background:#1a3a6b;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;margin-bottom:4px'
       : 'width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#2c3e50;margin-bottom:4px';
     const bgColor = isToday ? '#f0f4ff' : '#ffffff';
-    html += `<td style="background:${bgColor};vertical-align:top;padding:6px;border:1px solid #e0e6f0;min-width:0">`;
+    html += `<td style="background:${bgColor};vertical-align:top;padding:6px;border:1px solid #e0e6f0;min-width:0;cursor:pointer" onclick="calDayClick('${key}',event)">`;
     html += `<div style="${dnStyle}">${d}</div>`;
     shown.forEach(e => {
       const colors = {
@@ -1509,6 +1917,48 @@ function showDayPopup(dateKey, e) {
 
 function closeDayPopup() {
   document.getElementById('dayPopup').classList.remove('open');
+}
+
+function calDayClick(dateKey, e) {
+  // If click was on an event, show popup instead
+  if(e.target.closest && (e.target.closest('.cal-ev')||e.target.closest('.cal-more'))) return;
+  // Open quick create modal
+  document.getElementById('qc_date').value = dateKey;
+  document.getElementById('qc_title').value = '';
+  document.getElementById('qc_type').value = 'task';
+  document.getElementById('qc_assign').innerHTML =
+    '<option value="">— Non assigné —</option>' +
+    allUsers.map(u=>`<option value="${u.id}" ${u.id===me?.id?'selected':''}>${escH(u.name)}</option>`).join('');
+  document.getElementById('qc_project').innerHTML =
+    '<option value="">— Aucun projet —</option>' +
+    allProjects.map(p=>`<option value="${p.id}">${escH(p.project_name)}</option>`).join('');
+  // Show date in modal title
+  const dt = new Date(dateKey+'T00:00:00');
+  const months2 = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+  document.getElementById('qcTitle').textContent = 'Créer le '+dt.getDate()+' '+months2[dt.getMonth()]+' '+dt.getFullYear();
+  openModal('quickCreateModal');
+}
+
+async function quickCreate() {
+  const title   = document.getElementById('qc_title').value.trim();
+  const type    = document.getElementById('qc_type').value;
+  const date    = document.getElementById('qc_date').value;
+  const assign  = document.getElementById('qc_assign').value||null;
+  const project = document.getElementById('qc_project').value||null;
+  if(!title){toast('⚠️ Titre obligatoire');return;}
+
+  if(type==='task'){
+    const {error}=await db.from('tasks').insert({title,project_id:project,assignee_id:assign,due_date:date,priority:'medium',status:'todo'});
+    if(error){toast('❌ '+error.message);return;}
+    toast('✅ Tâche créée !');
+  } else {
+    // Meeting
+    const {error}=await db.from('meeting_minutes').insert({team_name:title,meeting_date:date,project_id:project,created_by:me?.id||null,participants:assign?[assign]:[],actions:[]});
+    if(error){toast('❌ '+error.message);return;}
+    toast('✅ Meeting créé !');
+  }
+  closeModal('quickCreateModal');
+  loadCalendar();
 }
 
 // Close popup on click outside
