@@ -947,7 +947,7 @@ input[type="radio"]    { accent-color: #4a9eff; }
   <div class="pb">
     <div class="analytics-grid">
       <div class="analytics-card">
-        <div class="analytics-title">Charge par personne</div>
+        <div class="analytics-title">Lancements par Project Lead</div>
         <div id="anPersonLoad"></div>
       </div>
       <div class="analytics-card">
@@ -2222,22 +2222,30 @@ async function loadAnalytics() {
 
   const today = new Date().toISOString().slice(0,10);
 
-  // 1. Charge par personne (tâches ouvertes)
-  const loadMap = {};
-  allTasks.filter(t=>t.status!=='done'&&t.assignee_id).forEach(t=>{
-    loadMap[t.assignee_id] = (loadMap[t.assignee_id]||0)+1;
+  // 1. Lancements par personne (project lead)
+  const launchMap = {};
+  allProjects.forEach(p => {
+    const lead = p.org_data?.lead||'';
+    if(!lead) return;
+    // Match lead name to user
+    const u = allUsers.find(u => u.name.toLowerCase() === lead.toLowerCase());
+    const key = u ? u.id : lead;
+    if(!launchMap[key]) launchMap[key] = {name: u?u.name:lead, count:0};
+    launchMap[key].count++;
   });
-  const maxLoad = Math.max(...Object.values(loadMap),1);
-  document.getElementById('anPersonLoad').innerHTML = allUsers.map(u=>{
-    const count = loadMap[u.id]||0;
-    const pct   = Math.round(count/maxLoad*100);
-    const col   = count>5?'#ff8080':count>2?'#ffd166':'#5ce89e';
-    return `<div class="person-bar">
-      <div class="person-bar-name">${escH(u.name)}</div>
-      <div class="person-bar-track"><div class="person-bar-fill" style="width:${pct}%;background:${col}"></div></div>
-      <div class="person-bar-count">${count}</div>
-    </div>`;
-  }).join('') || '<div style="color:rgba(255,255,255,0.35);font-size:12px">Aucune donnée</div>';
+  const launchEntries = Object.values(launchMap).sort((a,b)=>b.count-a.count);
+  const maxLaunch = Math.max(...launchEntries.map(e=>e.count),1);
+  document.getElementById('anPersonLoad').innerHTML = launchEntries.length
+    ? launchEntries.map(e=>{
+        const pct = Math.round(e.count/maxLaunch*100);
+        const col = e.count>=3?'#7ec8ff':e.count>=2?'#ffd166':'#5ce89e';
+        return `<div class="person-bar">
+          <div class="person-bar-name">${escH(e.name)}</div>
+          <div class="person-bar-track"><div class="person-bar-fill" style="width:${pct}%;background:${col}"></div></div>
+          <div class="person-bar-count">${e.count}</div>
+        </div>`;
+      }).join('')
+    : '<div style="color:rgba(255,255,255,0.35);font-size:12px">Aucune donnée</div>';
 
   // 2. Tâches en retard par personne
   const overdueMap = {};
