@@ -254,7 +254,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--te
 .cal-legend{display:flex;gap:14px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
 .cal-leg{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;color:#7f8c8d}
 .cal-leg-dot{width:11px;height:11px;border-radius:3px;flex-shrink:0;display:inline-block}
-#calGrid{display:grid !important;grid-template-columns:repeat(7,1fr) !important;gap:1px;background:#d0d7e3;border-radius:10px;overflow:hidden;border:1.5px solid #d0d7e3}
+#calGrid{display:block !important;width:100% !important;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,0.1) !important;background:transparent !important;box-shadow:0 8px 32px rgba(0,0,0,0.25)}
 .cal-day-hdr{background:#f8f9fc;padding:10px 0;text-align:center;font-size:10px;font-weight:800;color:#7f8c8d;text-transform:uppercase;letter-spacing:.5px}
 .cal-day{background:#ffffff;min-height:100px;padding:7px;box-sizing:border-box}
 .cal-day:hover{background:#fafbff}
@@ -876,10 +876,10 @@ input[type="radio"]    { accent-color: #4a9eff; }
     <!-- Légende + navigation -->
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
       <div class="cal-legend" style="margin-bottom:0">
-        <div class="cal-leg"><div class="cal-leg-dot" style="background:#dbeafe;display:inline-block"></div>Lancement projet</div>
-        <div class="cal-leg"><div class="cal-leg-dot" style="background:#dcfce7;display:inline-block"></div>Échéance tâche</div>
-        <div class="cal-leg"><div class="cal-leg-dot" style="background:#fee2e2;display:inline-block"></div>Tâche en retard</div>
-        <div class="cal-leg"><div class="cal-leg-dot" style="background:#f3e8ff;display:inline-block"></div>Meeting</div>
+        <div class="cal-leg"><div class="cal-leg-dot" style="background:rgba(74,158,255,0.5);border:1px solid rgba(74,158,255,0.6);display:inline-block"></div>Lancement projet</div>
+        <div class="cal-leg"><div class="cal-leg-dot" style="background:rgba(39,174,96,0.5);border:1px solid rgba(39,174,96,0.6);display:inline-block"></div>Échéance tâche</div>
+        <div class="cal-leg"><div class="cal-leg-dot" style="background:rgba(231,76,60,0.5);border:1px solid rgba(231,76,60,0.6);display:inline-block"></div>Tâche en retard</div>
+        <div class="cal-leg"><div class="cal-leg-dot" style="background:rgba(155,89,182,0.5);border:1px solid rgba(155,89,182,0.6);display:inline-block"></div>Meeting</div>
       </div>
       <div class="cal-header" style="margin-bottom:0">
         <div class="cal-month" id="calMonthLabel"></div>
@@ -1829,9 +1829,9 @@ function renderCalendar() {
   const dayNames = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
 
   // Use TABLE for guaranteed grid layout
-  let html = '<table style="width:100%;border-collapse:collapse;table-layout:fixed"><thead><tr>';
+  let html = '<table style="width:100%;border-collapse:collapse;table-layout:fixed;border-radius:12px;overflow:hidden"><thead><tr>';
   dayNames.forEach(d => {
-    html += `<th style="padding:10px 0;text-align:center;font-size:10px;font-weight:800;color:#7f8c8d;text-transform:uppercase;letter-spacing:.5px;background:#f8f9fc;border:1px solid #e0e6f0">${d}</th>`;
+    html += `<th style="padding:12px 4px;text-align:center;font-size:11px;font-weight:800;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:.5px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08)">${d}</th>`;
   });
   html += '</tr></thead><tbody><tr>';
 
@@ -1839,7 +1839,7 @@ function renderCalendar() {
 
   // Empty cells before first day
   for(let i=0; i<startDow; i++){
-    html += '<td style="background:#f8f9fc;min-height:90px;vertical-align:top;padding:6px;border:1px solid #e0e6f0;min-width:0"></td>';
+    html += '<td style="background:rgba(255,255,255,0.02);height:110px;vertical-align:top;padding:8px;border:1px solid rgba(255,255,255,0.07)"></td>';
     cellCount++;
   }
 
@@ -1855,17 +1855,18 @@ function renderCalendar() {
     const shown = evs.slice(0,3);
     const extra = evs.length-3;
     const dnStyle = isToday
-      ? 'width:24px;height:24px;border-radius:50%;background:#1a3a6b;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;margin-bottom:4px'
-      : 'width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#2c3e50;margin-bottom:4px';
-    const bgColor = isToday ? '#f0f4ff' : '#ffffff';
-    html += `<td style="background:${bgColor};vertical-align:top;padding:6px;border:1px solid #e0e6f0;min-width:0;cursor:pointer" onclick="calDayClick('${key}',event)">`;
+      ? 'width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#4a9eff,#7c5cfc);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;margin-bottom:5px;box-shadow:0 2px 12px rgba(74,158,255,0.5)'
+      : 'width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:rgba(255,255,255,0.75);margin-bottom:5px';
+    const bgColor = isToday ? 'rgba(74,158,255,0.12)' : 'rgba(255,255,255,0.04)';
+    const bgHover = isToday ? 'rgba(74,158,255,0.18)' : 'rgba(255,255,255,0.08)';
+    html += `<td style="background:${bgColor};height:110px;vertical-align:top;padding:8px;border:1px solid rgba(255,255,255,0.08);cursor:pointer;transition:background .15s" onmouseover="this.style.background='${bgHover}'" onmouseout="this.style.background='${bgColor}'" onclick="calDayClick('${key}',event)">`;
     html += `<div style="${dnStyle}">${d}</div>`;
     shown.forEach(e => {
       const colors = {
-        'ev-proj':'background:#dbeafe;color:#1e40af',
-        'ev-task':'background:#dcfce7;color:#166534',
-        'ev-late':'background:#fee2e2;color:#991b1b',
-        'ev-meet':'background:#f3e8ff;color:#6b21a8'
+        'ev-proj':'background:rgba(74,158,255,0.25);color:#7ec8ff;border:1px solid rgba(74,158,255,0.3)',
+        'ev-task':'background:rgba(39,174,96,0.25);color:#5ce89e;border:1px solid rgba(39,174,96,0.3)',
+        'ev-late':'background:rgba(231,76,60,0.25);color:#ff8080;border:1px solid rgba(231,76,60,0.3)',
+        'ev-meet':'background:rgba(155,89,182,0.25);color:#d4a8ff;border:1px solid rgba(155,89,182,0.3)'
       };
       const st = colors[e.cls]||'background:#eee;color:#333';
       html += `<div onclick="showDayPopup('${key}',event)" style="font-size:10px;font-weight:600;padding:2px 5px;border-radius:4px;margin-bottom:3px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;${st}">${escH(e.label)}</div>`;
@@ -1878,16 +1879,19 @@ function renderCalendar() {
   // Fill remaining cells
   const remaining = cellCount%7===0 ? 0 : 7-(cellCount%7);
   for(let i=0; i<remaining; i++){
-    html += '<td style="background:#f8f9fc;vertical-align:top;padding:6px;border:1px solid #e0e6f0"></td>';
+    html += '<td style="background:rgba(255,255,255,0.02);height:110px;vertical-align:top;padding:8px;border:1px solid rgba(255,255,255,0.07)"></td>';
   }
   html += '</tr></tbody></table>';
 
   document.getElementById('calGrid').innerHTML = html;
-  document.getElementById('calGrid').style.display = 'block';
-  document.getElementById('calGrid').style.background = 'transparent';
-  document.getElementById('calGrid').style.border = 'none';
-  document.getElementById('calGrid').style.borderRadius = '10px';
-  document.getElementById('calGrid').style.overflow = 'hidden';
+  const cg = document.getElementById('calGrid');
+  cg.style.display = 'block';
+  cg.style.width = '100%';
+  cg.style.background = 'transparent';
+  cg.style.border = '1px solid rgba(255,255,255,0.1)';
+  cg.style.borderRadius = '12px';
+  cg.style.overflow = 'hidden';
+  cg.style.boxShadow = '0 8px 32px rgba(0,0,0,0.25)';
 
   window._calEvMap = evMap;
 }
