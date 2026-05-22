@@ -271,6 +271,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--te
     <div class="nav-item" data-page="projects" onclick="nav('projects',this)"><span class="nav-icon">📁</span><span>Projets</span></div>
     <div class="nav-item" data-page="tasks" onclick="nav('tasks',this)"><span class="nav-icon">✅</span><span>Tâches</span></div>
     <div class="nav-item" data-page="meetings" onclick="nav('meetings',this)"><span class="nav-icon">📝</span><span>Meeting Minutes</span></div>
+    <div class="nav-item" data-page="calendar" onclick="nav('calendar',this)"><span class="nav-icon">📅</span><span>Calendrier</span></div>
     <div class="nav-sec">Administration</div>
     <div class="nav-item" data-page="users" onclick="nav('users',this)"><span class="nav-icon">👥</span><span>Utilisateurs</span></div>
   </nav>
@@ -488,6 +489,36 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--te
   <div class="pb"><div id="meetingView"></div></div>
 </div>
 
+<!-- CALENDAR -->
+<div id="page-calendar" class="page">
+  <div class="ph">
+    <div><div class="pt">Calendrier</div><div class="ps">Projets · Tâches · Meetings</div></div>
+    <button class="btn btn-ghost btn-sm" onclick="calToday()">Aujourd'hui</button>
+  </div>
+  <div class="pb">
+    <div class="cal-legend">
+      <div class="cal-leg"><div class="cal-leg-dot" style="background:#dbeafe"></div>Lancement projet</div>
+      <div class="cal-leg"><div class="cal-leg-dot" style="background:#dcfce7"></div>Échéance tâche</div>
+      <div class="cal-leg"><div class="cal-leg-dot" style="background:#fee2e2"></div>Tâche en retard</div>
+      <div class="cal-leg"><div class="cal-leg-dot" style="background:#f3e8ff"></div>Meeting</div>
+    </div>
+    <div class="cal-header">
+      <div class="cal-month" id="calMonthLabel"></div>
+      <div class="cal-nav">
+        <button class="cal-nav-btn" onclick="calMove(-1)">&#8249;</button>
+        <button class="cal-nav-btn" onclick="calMove(1)">&#8250;</button>
+      </div>
+    </div>
+    <div class="cal-grid" id="calGrid"></div>
+  </div>
+</div>
+
+<div class="day-popup" id="dayPopup">
+  <div class="dp-close" onclick="closeDayPopup()">&#x2715;</div>
+  <div class="dp-title" id="dpTitle"></div>
+  <div id="dpContent"></div>
+</div>
+
 <!-- USERS -->
 <div id="page-users" class="page">
   <div class="ph">
@@ -642,6 +673,7 @@ function nav(page, el) {
   if(page==='projects')       loadProjects();
   if(page==='tasks')          loadTasks();
   if(page==='meetings')       loadMeetings();
+  if(page==='calendar')       loadCalendar();
   if(page==='users')          loadUsers();
   // create-project et create-meeting : le formulaire est préparé
   // explicitement par les fonctions qui appellent nav(), pas ici.
@@ -1277,6 +1309,165 @@ async function deleteUser(id){
   await db.from('users').delete().eq('id',id);
   toast('🗑️ Supprimé');loadUsers();
 }
+
+
+// ═══════════════════════════════════════════════
+//  CALENDAR
+// ═══════════════════════════════════════════════
+let calYear = new Date().getFullYear();
+let calMonth = new Date().getMonth(); // 0-indexed
+
+function calToday() {
+  calYear  = new Date().getFullYear();
+  calMonth = new Date().getMonth();
+  renderCalendar();
+}
+
+function calMove(dir) {
+  calMonth += dir;
+  if(calMonth > 11){ calMonth=0; calYear++; }
+  if(calMonth < 0 ){ calMonth=11; calYear--; }
+  renderCalendar();
+}
+
+async function loadCalendar() {
+  // Fetch fresh data if needed
+  const [{data:p},{data:t},{data:m}] = await Promise.all([
+    db.from('projects').select('id,project_name,client_name,launch_date,status'),
+    db.from('tasks').select('id,title,due_date,status,assignee_id,project_id'),
+    db.from('meeting_minutes').select('id,team_name,meeting_date,project_id')
+  ]);
+  allProjects  = p||[];
+  allTasks     = t||[];
+  allMeetings  = m||[];
+  renderCalendar();
+}
+
+function renderCalendar() {
+  const today = new Date();
+  const label = new Date(calYear, calMonth, 1).toLocaleDateString('fr-BE',{month:'long',year:'numeric'});
+  document.getElementById('calMonthLabel').textContent = label.charAt(0).toUpperCase()+label.slice(1);
+
+  // Build event map: key = "YYYY-MM-DD" -> [{type, label, sub, color}]
+  const evMap = {};
+  function addEv(dateStr, ev) {
+    if(!dateStr) return;
+    const key = dateStr.slice(0,10);
+    if(!evMap[key]) evMap[key]=[];
+    evMap[key].push(ev);
+  }
+
+  // Projects — launch date
+  allProjects.forEach(p => {
+    if(p.launch_date) addEv(p.launch_date, {
+      type:'proj', cls:'ev-proj',
+      label: '🚀 '+p.project_name,
+      sub: p.client_name||'',
+      id: p.id
+    });
+  });
+
+  // Tasks — due date
+  const todayStr = today.toISOString().slice(0,10);
+  allTasks.forEach(t => {
+    if(!t.due_date||t.status==='done') return;
+    const late = t.due_date < todayStr;
+    addEv(t.due_date, {
+      type:'task', cls: late?'ev-late':'ev-task',
+      label: (late?'⚠️ ':'✅ ')+t.title,
+      sub: getU(t.assignee_id)?.name||'Non assigné',
+      id: t.id
+    });
+  });
+
+  // Meetings
+  allMeetings.forEach(m => {
+    if(m.meeting_date) addEv(m.meeting_date, {
+      type:'meet', cls:'ev-meet',
+      label: '📝 '+m.team_name,
+      sub: getP(m.project_id)?.project_name||'',
+      id: m.id
+    });
+  });
+
+  // Grid
+  const firstDay = new Date(calYear, calMonth, 1);
+  const lastDay  = new Date(calYear, calMonth+1, 0);
+  // Start from Monday
+  let startDow = firstDay.getDay(); // 0=Sun
+  startDow = startDow===0 ? 6 : startDow-1; // convert to Mon=0
+
+  const days = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+  let html = days.map(d=>`<div class="cal-day-hdr">${d}</div>`).join('');
+
+  // Previous month padding
+  for(let i=0; i<startDow; i++){
+    const d = new Date(calYear, calMonth, 1-startDow+i);
+    html += `<div class="cal-day other-month"><div class="cal-dn">${d.getDate()}</div></div>`;
+  }
+
+  // Current month days
+  for(let d=1; d<=lastDay.getDate(); d++){
+    const dt = new Date(calYear, calMonth, d);
+    const key = dt.toISOString().slice(0,10);
+    const isToday = key===todayStr;
+    const evs = evMap[key]||[];
+    const maxShow = 3;
+    const shown = evs.slice(0,maxShow);
+    const extra = evs.length - maxShow;
+
+    html += `<div class="cal-day${isToday?' today':''}">
+      <div class="cal-dn">${d}</div>
+      ${shown.map(e=>`<div class="cal-ev ${e.cls}" onclick="showDayPopup('${key}',event)" title="${escH(e.label)}">${escH(e.label)}</div>`).join('')}
+      ${extra>0?`<div class="cal-more" onclick="showDayPopup('${key}',event)">+${extra} autre${extra>1?'s':''}</div>`:''}
+    </div>`;
+  }
+
+  // Next month padding to complete grid
+  const totalCells = startDow + lastDay.getDate();
+  const remaining = totalCells%7===0 ? 0 : 7-(totalCells%7);
+  for(let i=1; i<=remaining; i++){
+    html += `<div class="cal-day other-month"><div class="cal-dn">${i}</div></div>`;
+  }
+
+  document.getElementById('calGrid').innerHTML = html;
+
+  // Store evMap for popup
+  window._calEvMap = evMap;
+}
+
+function showDayPopup(dateKey, e) {
+  e.stopPropagation();
+  const evs = window._calEvMap?.[dateKey]||[];
+  if(!evs.length) return;
+  const dt = new Date(dateKey+'T00:00:00');
+  const label = dt.toLocaleDateString('fr-BE',{weekday:'long',day:'numeric',month:'long'});
+
+  document.getElementById('dpTitle').textContent = label.charAt(0).toUpperCase()+label.slice(1);
+  document.getElementById('dpContent').innerHTML = evs.map(ev=>`
+    <div class="dp-ev">
+      <div class="dp-dot ${ev.cls}"></div>
+      <div><div class="dp-label">${escH(ev.label)}</div>${ev.sub?`<div class="dp-sub">${escH(ev.sub)}</div>`:''}</div>
+    </div>`).join('');
+
+  const popup = document.getElementById('dayPopup');
+  // Position near click
+  const x = Math.min(e.clientX, window.innerWidth-310);
+  const y = Math.min(e.clientY+10, window.innerHeight-300);
+  popup.style.left = x+'px';
+  popup.style.top  = y+'px';
+  popup.classList.add('open');
+}
+
+function closeDayPopup() {
+  document.getElementById('dayPopup').classList.remove('open');
+}
+
+// Close popup on click outside
+document.addEventListener('click', e=>{
+  const popup = document.getElementById('dayPopup');
+  if(popup&&!popup.contains(e.target)) popup.classList.remove('open');
+});
 
 // ═══════════════════════════════════════════════
 //  CLOSE MODALS ON BACKDROP + INIT
