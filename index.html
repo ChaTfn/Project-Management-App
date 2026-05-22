@@ -1386,33 +1386,56 @@ function renderOnePager(p) {
       <span><div class="dot" style="background:#e74c3c"></div>À risque</span>
       <span><div class="dot" style="background:#95a5a6"></div>À venir</span>
     </div>`;
-  // Org chart SVG
+  // Org chart — cartes rectangulaires lisibles
   const depts=[
-    {key:'operations',label:'Opérations',name:od.operations||'—'},
-    {key:'technique',label:'Technique',name:od.technique||'—'},
-    {key:'sales',label:'Sales',name:od.sales||'—'},
-    {key:'supply_chain',label:'Supply Chain',name:od.supply_chain||'—'},
-    {key:'finance',label:'Finance',name:od.finance||'—'}
+    {key:'operations',  label:'Opérations',   name:od.operations||'—',  icon:'⚙️',  accent:'#f39c12'},
+    {key:'technique',   label:'Technique',    name:od.technique||'—',   icon:'🔧',  accent:'#3498db'},
+    {key:'sales',       label:'Sales',        name:od.sales||'—',       icon:'📈',  accent:'#2ecc71'},
+    {key:'supply_chain',label:'Supply Chain', name:od.supply_chain||'—',icon:'🚚',  accent:'#9b59b6'},
+    {key:'finance',     label:'Finance',      name:od.finance||'—',     icon:'💰',  accent:'#e74c3c'}
   ];
-  const cx=120,cy=100,r=78,pm=36,dr=28;
-  let lines='',circles='';
+  // Dimensions
+  const svgW=520, svgH=220;
+  const cardW=88, cardH=64, gap=10;
+  const totalW = depts.length*(cardW+gap)-gap;
+  const startX = (svgW-totalW)/2;
+  // Lead card
+  const lcW=140, lcH=56, lcX=(svgW-lcW)/2, lcY=8;
+  const lcCX=svgW/2, lcCY=lcY+lcH/2;
+  // Dept row Y
+  const deptY=lcY+lcH+32;
+  let svgParts='';
+  // Connector lines from lead to each dept
   depts.forEach((d,i)=>{
-    const a=(2*Math.PI/5)*i-Math.PI/2;
-    const x=Math.round(cx+r*Math.cos(a)), y=Math.round(cy+r*Math.sin(a));
-    lines+=`<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="#b0b8c8" stroke-width="1.5"/>`;
-    const nm = escH(d.name), lbl=escH(d.label);
-    circles+=`<circle cx="${x}" cy="${y}" r="${dr}" fill="#1a3a6b"/>
-      <circle cx="${x}" cy="${y}" r="${dr-4}" fill="#3a6abf"/>
-      <text x="${x}" y="${y-4}" text-anchor="middle" fill="#fff" font-size="7" font-weight="700" font-family="Segoe UI,Arial">${nm.length>12?nm.slice(0,11)+'…':nm}</text>
-      <text x="${x}" y="${y+7}" text-anchor="middle" fill="rgba(255,255,255,.7)" font-size="6" font-family="Segoe UI,Arial">${lbl.length>10?lbl.slice(0,9)+'…':lbl}</text>`;
+    const cx2=startX+i*(cardW+gap)+cardW/2;
+    const cy2=deptY;
+    svgParts+=`<line x1="${lcCX}" y1="${lcY+lcH}" x2="${lcCX}" y2="${lcY+lcH+16}" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+      <line x1="${lcCX}" y1="${lcY+lcH+16}" x2="${cx2}" y2="${lcY+lcH+16}" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+      <line x1="${cx2}" y1="${lcY+lcH+16}" x2="${cx2}" y2="${deptY}" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>`;
   });
-  const orgSVG=`<svg width="${cx*2}" height="${cy*2}" style="overflow:visible">
-    ${lines}
-    <circle cx="${cx}" cy="${cy}" r="${pm}" fill="#1a6b3a"/>
-    <circle cx="${cx}" cy="${cy}" r="${pm-4}" fill="#2ecc71"/>
-    <text x="${cx}" y="${cy-4}" text-anchor="middle" fill="#fff" font-size="8" font-weight="700" font-family="Segoe UI,Arial">${escH((od.lead||'—').length>12?(od.lead||'—').slice(0,11)+'…':od.lead||'—')}</text>
-    <text x="${cx}" y="${cy+8}" text-anchor="middle" fill="rgba(255,255,255,.8)" font-size="6.5" font-family="Segoe UI,Arial">Project Lead</text>
-    ${circles}
+  // Lead card
+  const leadName = escH(od.lead||'—');
+  svgParts+=`
+    <rect x="${lcX}" y="${lcY}" width="${lcW}" height="${lcH}" rx="10" fill="rgba(39,174,96,0.25)" stroke="rgba(39,174,96,0.6)" stroke-width="1.5"/>
+    <rect x="${lcX}" y="${lcY}" width="4" height="${lcH}" rx="2" fill="#2ecc71"/>
+    <text x="${lcX+18}" y="${lcY+22}" font-family="Segoe UI,Arial" font-size="9" font-weight="800" fill="#ffffff">${leadName.length>16?leadName.slice(0,15)+'…':leadName}</text>
+    <text x="${lcX+18}" y="${lcY+36}" font-family="Segoe UI,Arial" font-size="8" fill="rgba(255,255,255,0.55)">Project Lead</text>
+    <text x="${lcX+lcW-14}" y="${lcY+lcH/2+5}" font-family="Segoe UI,Arial" font-size="16" text-anchor="middle">👑</text>`;
+  // Dept cards
+  depts.forEach((d,i)=>{
+    const cx2=startX+i*(cardW+gap);
+    const cy2=deptY;
+    const nm=escH(d.name);
+    const lb=escH(d.label);
+    svgParts+=`
+      <rect x="${cx2}" y="${cy2}" width="${cardW}" height="${cardH}" rx="8" fill="rgba(255,255,255,0.07)" stroke="${d.accent}55" stroke-width="1.5"/>
+      <rect x="${cx2}" y="${cy2}" width="3" height="${cardH}" rx="1.5" fill="${d.accent}"/>
+      <text x="${cx2+12}" y="${cy2+18}" font-family="Segoe UI,Arial" font-size="10">${d.icon}</text>
+      <text x="${cx2+10}" y="${cy2+32}" font-family="Segoe UI,Arial" font-size="7" font-weight="700" fill="rgba(255,255,255,0.5)">${lb}</text>
+      <text x="${cx2+10}" y="${cy2+46}" font-family="Segoe UI,Arial" font-size="8" font-weight="700" fill="#ffffff">${nm.length>10?nm.slice(0,9)+'…':nm}</text>`;
+  });
+  const orgSVG=`<svg width="${svgW}" height="${svgH}" style="overflow:visible;max-width:100%">
+    ${svgParts}
   </svg>`;
   // Finance chart placeholder (rendered after insert)
   const stars='⭐'.repeat(p.priority||1);
@@ -1446,7 +1469,7 @@ function renderOnePager(p) {
     <div class="op-mid">
       <div class="op-sec" style="margin-bottom:0">
         <div class="op-sec-title">Équipe projet</div>
-        <div style="display:flex;justify-content:center">${orgSVG}</div>
+        <div style="display:flex;justify-content:center;width:100%;overflow-x:auto">${orgSVG}</div>
       </div>
       <div class="op-sec" style="margin-bottom:0">
         <div class="op-sec-title">Finance</div>
