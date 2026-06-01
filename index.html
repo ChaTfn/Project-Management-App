@@ -1371,6 +1371,9 @@ async function loadHome(){
   document.getElementById('homeRecent').innerHTML=recent.length
     ?'<div class="grid g3">'+recent.map(projCardHTML).join('')+'</div>'
     :'<div class="empty"><div class="empty-ico">📋</div><div class="empty-title">Aucun projet</div><div class="empty-sub">Cree ton premier projet !</div><button class="btn btn-primary" onclick="newProject()">+ Nouveau projet</button></div>';
+  document.getElementById('homeRecent').querySelectorAll('.proj-card').forEach(function(card){
+    card.addEventListener('click',function(e){if(e.target.closest('[data-del-pid]'))return;viewProject(this.dataset.pid);});
+  });
 }
 
 // ═══════════════════════════════════════════════
@@ -1757,7 +1760,7 @@ function kbCardHTML(t){
   const dueStyle=late?'background:rgba(231,76,60,0.25);color:#ff8080':'background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.5)';
   const prioColors={high:'#ff8080',medium:'#ffd166',low:'#5ce89e'};
   const pc=prioColors[t.priority]||'#aaa';
-  return '<div class="kanban-card" draggable="true" ondragstart="kbDragStart(event,\'"+t.id+"\')" ondragend="kbDragEnd(event)">'+
+  return '<div class="kanban-card" draggable="true" data-task-id="'+t.id+'">'+
     '<div style="position:absolute;top:10px;right:10px;width:8px;height:8px;border-radius:50%;background:'+pc+'"></div>'+
     '<div class="kc-title">'+escH(t.title)+'</div>'+
     '<div class="kc-meta">'+
@@ -1856,14 +1859,21 @@ async function loadMeetings(){
     const day=dt.getDate(),month=dt.toLocaleDateString('fr-BE',{month:'short'});
     const proj=getP(m.project_id);
     const acts=(m.actions||[]).length,parts=(m.participants||[]).length;
-    return '<div class="meeting-card" onclick="viewMeeting(\'"+m.id+"\')">'+
+    return '<div class="meeting-card" data-mid="'+m.id+'">'+
       '<div class="meeting-date-box"><div class="mdb-day">'+day+'</div><div class="mdb-month">'+month+'</div></div>'+
       '<div class="meeting-info">'+
       '<div class="meeting-team">'+escH(m.team_name)+'</div>'+
       '<div class="meeting-proj">'+(proj?'📁 '+escH(proj.project_name):'')+'</div>'+
       '<div class="meeting-counts">'+(parts?'<span class="mcount">'+parts+' participants</span>':'')+( acts?'<span class="mcount">'+acts+' actions</span>':'')+'</div></div>'+
-      '<button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deleteMeeting(\'"+m.id+"\')">✕</button></div>';
+      '<button class="btn btn-danger btn-sm" data-del-mid="'+m.id+'">✕</button></div>';
   }).join('');
+  list.querySelectorAll('.meeting-card').forEach(function(card){
+    card.addEventListener('click',function(e){
+      var delBtn=e.target.closest('[data-del-mid]');
+      if(delBtn){deleteMeeting(delBtn.dataset.delMid);return;}
+      viewMeeting(this.dataset.mid);
+    });
+  });
 }
 
 function prepareMeetingForm(meet){
