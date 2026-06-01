@@ -1413,7 +1413,7 @@ function projCardHTML(p){
     '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px"><span class="proj-ver">'+escH(p.version||'v1')+'</span>'+statusBadge(p.status)+'</div></div>'+
     '<div style="display:flex;align-items:center;gap:12px;font-size:11px;color:rgba(255,255,255,0.5)">'+
     '<span>📅 '+(p.launch_date?fmtDate(p.launch_date):'Pas de date')+'</span>'+
-    '<span><span class="rag r'+((p.rag_timeline||'green')[0])+'"></span><span class="rag r'+((p.rag_team||'green')[0])+'" style="margin-left:2px"></span><span class="rag r'+((p.rag_fin||'green')[0])+'" style="margin-left:2px"></span></span></div>'+
+    '<span><span class="rag r'+((p.rag_timeline||'green').charAt(0))+'"></span><span class="rag r'+((p.rag_team||'green').charAt(0))+'" style="margin-left:2px"></span><span class="rag r'+((p.rag_fin||'green').charAt(0))+'" style="margin-left:2px"></span></span></div>'+
     '<div style="margin-top:10px;font-size:11px;color:rgba(255,255,255,0.5)">👤 '+escH(leadName)+'</div></div>';
 }
 
@@ -1558,7 +1558,7 @@ async function doSave(newVersion){
 // ═══════════════════════════════════════════════
 //  VIEW PROJECT (ONE-PAGER)
 // ═══════════════════════════════════════════════
-async function viewProject(id){
+async function viewProject(id){if(!id){toast('Projet introuvable');return;}
   currentViewProjId=id;
   const[{data:vers},{data:proj}]=await Promise.all([
     db.from('project_versions').select('*').eq('project_id',id).order('created_at',{ascending:false}),
@@ -1568,7 +1568,12 @@ async function viewProject(id){
   document.getElementById('vpTitle').textContent=proj.project_name;
   const pills=document.getElementById('verPills');
   if(vers&&vers.length>1){
-    pills.innerHTML=vers.map((v,i)=>'<div class="ver-pill '+(i===0?'active':'')+'" onclick="showVersion(\'"+v.id+"\',this,\'"+id+"\')">'+escH(v.version_number)+' <span style="font-size:9px;opacity:.6">'+fmtDate(v.created_at?.split('T')[0])+'</span></div>').join('');
+  pills.innerHTML=vers.map(function(v,i){
+    return '<div class="ver-pill '+(i===0?'active':'')+'" data-ver="'+v.id+'" data-proj="'+id+'">'+escH(v.version_number)+' <span style="font-size:9px;opacity:.6">'+fmtDate(v.created_at?v.created_at.split('T')[0]:'')+'</span></div>';
+  }).join('');
+  pills.querySelectorAll('.ver-pill').forEach(function(pill){
+    pill.addEventListener('click',function(){showVersion(this.dataset.ver,this,this.dataset.proj);});
+  });
   } else { pills.innerHTML=''; }
   renderOnePager(proj);
   nav('view-project',null);
@@ -1933,7 +1938,7 @@ async function saveMeeting(){
   nav('meetings',null);
 }
 
-async function viewMeeting(id){
+async function viewMeeting(id){if(!id){toast('Meeting introuvable');return;}
   currentViewMeetId=id;
   const{data:m}=await db.from('meeting_minutes').select('*').eq('id',id).single();
   if(!m){toast('❌ Introuvable');return;}
