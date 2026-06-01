@@ -1322,9 +1322,16 @@ async function loadLoginUsers(){
   const{data}=await db.from('users').select('*').order('name');
   allUsers=data||[];
   const list=document.getElementById('loginUserList');
-  if(!allUsers.length){list.innerHTML='<div style="text-align:center;color:rgba(255,255,255,0.5);font-size:12px;padding:16px;line-height:1.7">Aucun utilisateur.<br>Commence par en creer un !</div>';return;}
-  list.innerHTML=allUsers.map(u=>'<button class="user-btn" onclick="loginAs(''+u.id+'')">'
-    +avHTML(u,36)+'<div><div class="u-name">'+escH(u.name)+'</div><div class="u-role">'+escH(u.role)+'</div></div></button>').join('');
+  if(!allUsers.length){
+    list.innerHTML='<div style="text-align:center;color:rgba(255,255,255,0.5);font-size:12px;padding:16px;line-height:1.7">Aucun utilisateur.<br>Commence par en creer un !</div>';
+    return;
+  }
+  list.innerHTML=allUsers.map(function(u){
+    return '<button class="user-btn" data-uid="'+u.id+'">'+avHTML(u,36)+'<div><div class="u-name">'+escH(u.name)+'</div><div class="u-role">'+escH(u.role)+'</div></div></button>';
+  }).join('');
+  list.querySelectorAll('.user-btn').forEach(function(btn){
+    btn.addEventListener('click',function(){ loginAs(this.dataset.uid); });
+  });
 }
 
 function loginAs(id){
@@ -1397,7 +1404,7 @@ function renderProjects(list){
 function projCardHTML(p){
   const od=p.org_data||{};
   const leadName=od.lead||'—';
-  return '<div class="proj-card" onclick="viewProject(''+p.id+'')">'+
+  return '<div class="proj-card" onclick="viewProject(\'"+p.id+"\')">'+
     '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">'+
     '<div><div class="proj-client">'+escH(p.client_name||'—')+'</div><div class="proj-name">'+escH(p.project_name)+'</div></div>'+
     '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px"><span class="proj-ver">'+escH(p.version||'v1')+'</span>'+statusBadge(p.status)+'</div></div>'+
@@ -1558,7 +1565,7 @@ async function viewProject(id){
   document.getElementById('vpTitle').textContent=proj.project_name;
   const pills=document.getElementById('verPills');
   if(vers&&vers.length>1){
-    pills.innerHTML=vers.map((v,i)=>'<div class="ver-pill '+(i===0?'active':'')+'" onclick="showVersion(''+v.id+'',this,''+id+'')">'+escH(v.version_number)+' <span style="font-size:9px;opacity:.6">'+fmtDate(v.created_at?.split('T')[0])+'</span></div>').join('');
+    pills.innerHTML=vers.map((v,i)=>'<div class="ver-pill '+(i===0?'active':'')+'" onclick="showVersion(\'"+v.id+"\',this,\'"+id+"\')">'+escH(v.version_number)+' <span style="font-size:9px;opacity:.6">'+fmtDate(v.created_at?.split('T')[0])+'</span></div>').join('');
   } else { pills.innerHTML=''; }
   renderOnePager(proj);
   nav('view-project',null);
@@ -1696,12 +1703,12 @@ async function loadTasks(){
   list.innerHTML=allTasks.map(t=>{
     const u=getU(t.assignee_id),p=getP(t.project_id),done=t.status==='done';
     return '<div class="task-row">'+
-      '<div class="tcheck '+(done?'done':'')+'" onclick="toggleTask(''+t.id+'',''+t.status+'')">'+(done?'✓':'')+'</div>'+
+      '<div class="tcheck '+(done?'done':'')+'" onclick="toggleTask(\'"+t.id+"\',\'"+t.status+"\')">'+(done?'✓':'')+'</div>'+
       '<div style="flex:1"><div class="ttitle '+(done?'done':'')+'">'+escH(t.title)+'</div>'+
       '<div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:3px">'+(p?'📁 '+escH(p.project_name):'')+' '+(u?'· 👤 '+escH(u.name):'')+'</div></div>'+
       '<span class="prio '+(pc[t.priority]||'pm')+'">'+(pl[t.priority]||'—')+'</span>'+
       dueBadge(t.due_date)+
-      '<button class="btn btn-danger btn-sm" onclick="deleteTask(''+t.id+'')">✕</button></div>';
+      '<button class="btn btn-danger btn-sm" onclick="deleteTask(\'"+t.id+"\')">✕</button></div>';
   }).join('');
 }
 
@@ -1750,7 +1757,7 @@ function kbCardHTML(t){
   const dueStyle=late?'background:rgba(231,76,60,0.25);color:#ff8080':'background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.5)';
   const prioColors={high:'#ff8080',medium:'#ffd166',low:'#5ce89e'};
   const pc=prioColors[t.priority]||'#aaa';
-  return '<div class="kanban-card" draggable="true" ondragstart="kbDragStart(event,''+t.id+'')" ondragend="kbDragEnd(event)">'+
+  return '<div class="kanban-card" draggable="true" ondragstart="kbDragStart(event,\'"+t.id+"\')" ondragend="kbDragEnd(event)">'+
     '<div style="position:absolute;top:10px;right:10px;width:8px;height:8px;border-radius:50%;background:'+pc+'"></div>'+
     '<div class="kc-title">'+escH(t.title)+'</div>'+
     '<div class="kc-meta">'+
@@ -1849,13 +1856,13 @@ async function loadMeetings(){
     const day=dt.getDate(),month=dt.toLocaleDateString('fr-BE',{month:'short'});
     const proj=getP(m.project_id);
     const acts=(m.actions||[]).length,parts=(m.participants||[]).length;
-    return '<div class="meeting-card" onclick="viewMeeting(''+m.id+'')">'+
+    return '<div class="meeting-card" onclick="viewMeeting(\'"+m.id+"\')">'+
       '<div class="meeting-date-box"><div class="mdb-day">'+day+'</div><div class="mdb-month">'+month+'</div></div>'+
       '<div class="meeting-info">'+
       '<div class="meeting-team">'+escH(m.team_name)+'</div>'+
       '<div class="meeting-proj">'+(proj?'📁 '+escH(proj.project_name):'')+'</div>'+
       '<div class="meeting-counts">'+(parts?'<span class="mcount">'+parts+' participants</span>':'')+( acts?'<span class="mcount">'+acts+' actions</span>':'')+'</div></div>'+
-      '<button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deleteMeeting(''+m.id+'')">✕</button></div>';
+      '<button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deleteMeeting(\'"+m.id+"\')">✕</button></div>';
   }).join('');
 }
 
@@ -1868,7 +1875,7 @@ function prepareMeetingForm(meet){
   document.getElementById('m_decisions').value=meet?.decisions||'';
   document.getElementById('m_proj').innerHTML='<option value="">— Aucun projet —</option>'+allProjects.map(p=>'<option value="'+p.id+'" '+(p.id===meet?.project_id?'selected':'')+'>'+escH(p.project_name)+'</option>').join('');
   const selected=meet?.participants||[];
-  document.getElementById('partGrid').innerHTML=allUsers.map(u=>'<div class="part-chip '+(selected.includes(u.id)?'selected':'')+'" onclick="toggleParticipant(this,''+u.id+'')" data-uid="'+u.id+'"><div class="part-avatar" style="background:'+(u.avatar_color||'#1a3a6b')+'">'+init2(u.name)+'</div>'+escH(u.name)+'</div>').join('');
+  document.getElementById('partGrid').innerHTML=allUsers.map(u=>'<div class="part-chip '+(selected.includes(u.id)?'selected':'')+'" onclick="toggleParticipant(this,\'"+u.id+"\')" data-uid="'+u.id+'"><div class="part-avatar" style="background:'+(u.avatar_color||'#1a3a6b')+'">'+init2(u.name)+'</div>'+escH(u.name)+'</div>').join('');
   document.getElementById('actionRows').innerHTML='';
   const actions=meet?.actions||[];
   if(actions.length)actions.forEach(a=>addActionRow(a.title,a.assignee_id,a.due_date));
@@ -2002,11 +2009,11 @@ function renderCalendar(){
     const bgColor=isToday?'rgba(74,158,255,0.12)':'rgba(255,255,255,0.04)';
     const bgHover=isToday?'rgba(74,158,255,0.18)':'rgba(255,255,255,0.08)';
     const dnStyle=isToday?'width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#4a9eff,#7c5cfc);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;margin-bottom:5px;box-shadow:0 2px 12px rgba(74,158,255,0.5)':'width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:rgba(255,255,255,0.75);margin-bottom:5px';
-    html+='<td style="background:'+bgColor+';height:110px;vertical-align:top;padding:8px;border:1px solid rgba(255,255,255,0.08);cursor:pointer;transition:background .15s" onmouseover="this.style.background=''+bgHover+''" onmouseout="this.style.background=''+bgColor+''" onclick="calDayClick(''+key+'',event)">';
+    html+='<td style="background:'+bgColor+';height:110px;vertical-align:top;padding:8px;border:1px solid rgba(255,255,255,0.08);cursor:pointer;transition:background .15s" onmouseover="this.style.background=\"'+bgHover+'\"" onmouseout="this.style.background=\"'+bgColor+'\"" onclick="calDayClick(\"'+key+'\",event)">';
     html+='<div style="'+dnStyle+'">'+d+'</div>';
     const colors={'ev-proj':'background:rgba(74,158,255,0.25);color:#7ec8ff;border:1px solid rgba(74,158,255,0.3)','ev-task':'background:rgba(39,174,96,0.25);color:#5ce89e;border:1px solid rgba(39,174,96,0.3)','ev-late':'background:rgba(231,76,60,0.25);color:#ff8080;border:1px solid rgba(231,76,60,0.3)','ev-meet':'background:rgba(155,89,182,0.25);color:#d4a8ff;border:1px solid rgba(155,89,182,0.3)'};
-    shown.forEach(e=>{const st=colors[e.cls]||'background:#eee;color:#333';html+='<div onclick="showDayPopup(''+key+'',event)" style="font-size:10px;font-weight:600;padding:2px 5px;border-radius:4px;margin-bottom:3px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;'+st+'">'+escH(e.label)+'</div>';});
-    if(extra>0)html+='<div onclick="showDayPopup(''+key+'',event)" style="font-size:10px;color:rgba(255,255,255,0.4);font-weight:700;cursor:pointer">+'+extra+' autre'+(extra>1?'s':'')+'</div>';
+    shown.forEach(e=>{const st=colors[e.cls]||'background:#eee;color:#333';html+='<div onclick="showDayPopup(\""+key+"\",event)" style="font-size:10px;font-weight:600;padding:2px 5px;border-radius:4px;margin-bottom:3px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;'+st+'">'+escH(e.label)+'</div>';});
+    if(extra>0)html+='<div onclick="showDayPopup(\""+key+"\",event)" style="font-size:10px;color:rgba(255,255,255,0.4);font-weight:700;cursor:pointer">+'+extra+' autre'+(extra>1?'s':'')+'</div>';
     html+='</td>';cellCount++;
   }
   const remaining=cellCount%7===0?0:7-(cellCount%7);
@@ -2118,7 +2125,7 @@ async function loadUsers(){
   const{data}=await db.from('users').select('*').order('name');allUsers=data||[];
   const g=document.getElementById('usersGrid');
   if(!allUsers.length){g.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-ico">👥</div><div class="empty-title">Aucun utilisateur</div></div>';return;}
-  g.innerHTML=allUsers.map(u=>'<div class="user-card">'+avHTML(u,48)+'<div style="flex:1"><div class="uc-name">'+escH(u.name)+'</div><div class="uc-role">'+escH(u.role)+'</div>'+(u.email?'<div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:2px">✉️ '+escH(u.email)+'</div>':'')+'</div><button class="btn btn-danger btn-sm" onclick="deleteUser(''+u.id+'')">✕</button></div>').join('');
+  g.innerHTML=allUsers.map(u=>'<div class="user-card">'+avHTML(u,48)+'<div style="flex:1"><div class="uc-name">'+escH(u.name)+'</div><div class="uc-role">'+escH(u.role)+'</div>'+(u.email?'<div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:2px">✉️ '+escH(u.email)+'</div>':'')+'</div><button class="btn btn-danger btn-sm" onclick="deleteUser(\'"+u.id+"\')">✕</button></div>').join('');
 }
 
 function showNewUserModal(fromLogin){
