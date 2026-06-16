@@ -1372,7 +1372,11 @@ async function loadHome(){
     ?'<div class="grid g3">'+recent.map(projCardHTML).join('')+'</div>'
     :'<div class="empty"><div class="empty-ico">📋</div><div class="empty-title">Aucun projet</div><div class="empty-sub">Cree ton premier projet !</div><button class="btn btn-primary" onclick="newProject()">+ Nouveau projet</button></div>';
   document.getElementById('homeRecent').querySelectorAll('.proj-card').forEach(function(card){
-    card.addEventListener('click',function(e){if(e.target.closest('[data-del-pid]'))return;viewProject(this.dataset.pid);});
+    card.addEventListener('click',function(e){
+      const delBtn=e.target.closest('[data-del-pid]');
+      if(delBtn){deleteProject(delBtn.dataset.delPid);return;}
+      viewProject(this.dataset.pid);
+    });
   });
 }
 
@@ -1402,6 +1406,13 @@ function renderProjects(list){
   const g=document.getElementById('projGrid');
   if(!list.length){g.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-ico">🔍</div><div class="empty-title">Aucun resultat</div><div class="empty-sub">Modifie les filtres</div></div>';return;}
   g.innerHTML=list.map(projCardHTML).join('');
+  g.querySelectorAll('.proj-card').forEach(function(card){
+    card.addEventListener('click', function(e){
+      const delBtn=e.target.closest('[data-del-pid]');
+      if(delBtn){deleteProject(delBtn.dataset.delPid);return;}
+      viewProject(this.dataset.pid);
+    });
+  });
 }
 
 function projCardHTML(p){
@@ -1414,7 +1425,10 @@ function projCardHTML(p){
     '<div style="display:flex;align-items:center;gap:12px;font-size:11px;color:rgba(255,255,255,0.5)">'+
     '<span>📅 '+(p.launch_date?fmtDate(p.launch_date):'Pas de date')+'</span>'+
     '<span><span class="rag r'+((p.rag_timeline||'green').charAt(0))+'"></span><span class="rag r'+((p.rag_team||'green').charAt(0))+'" style="margin-left:2px"></span><span class="rag r'+((p.rag_fin||'green').charAt(0))+'" style="margin-left:2px"></span></span></div>'+
-    '<div style="margin-top:10px;font-size:11px;color:rgba(255,255,255,0.5)">👤 '+escH(leadName)+'</div></div>';
+    '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px">'+
+    '<div style="font-size:11px;color:rgba(255,255,255,0.5)">👤 '+escH(leadName)+'</div>'+
+    '<button class="btn btn-danger btn-sm" data-del-pid="'+p.id+'" style="padding:4px 9px;font-size:10px">Supprimer</button>'+
+    '</div></div>';
 }
 
 // ═══════════════════════════════════════════════
@@ -1553,6 +1567,18 @@ async function doSave(newVersion){
   await db.from('project_versions').insert({project_id:projId,version_number:payload.version,snapshot:payload,created_by:me?.id||null});
   toast('✅ Projet sauvegarde !');
   nav('projects',null);
+}
+
+async function deleteProject(id){
+  if(!id){toast('❌ Projet introuvable');return;}
+  if(!confirm('Supprimer ce projet ? Cette action est irreversible.')) return;
+  await db.from('project_versions').delete().eq('project_id',id);
+  await db.from('tasks').update({project_id:null}).eq('project_id',id);
+  await db.from('meeting_minutes').update({project_id:null}).eq('project_id',id);
+  const{error}=await db.from('projects').delete().eq('id',id);
+  if(error){toast('❌ '+error.message);return;}
+  toast('🗑️ Projet supprime !');
+  loadProjects();
 }
 
 // ═══════════════════════════════════════════════
