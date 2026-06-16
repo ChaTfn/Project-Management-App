@@ -1407,7 +1407,7 @@ function renderProjects(list){
 function projCardHTML(p){
   const od=p.org_data||{};
   const leadName=od.lead||'—';
-  return '<div class="proj-card" onclick="viewProject(\'"+p.id+"\')">'+
+  return '<div class="proj-card" data-pid="'+p.id+'">'+
     '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">'+
     '<div><div class="proj-client">'+escH(p.client_name||'—')+'</div><div class="proj-name">'+escH(p.project_name)+'</div></div>'+
     '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px"><span class="proj-ver">'+escH(p.version||'v1')+'</span>'+statusBadge(p.status)+'</div></div>'+
@@ -1710,14 +1710,20 @@ async function loadTasks(){
   const pc={high:'ph',medium:'pm',low:'pl'},pl={high:'Haute',medium:'Moyenne',low:'Basse'};
   list.innerHTML=allTasks.map(t=>{
     const u=getU(t.assignee_id),p=getP(t.project_id),done=t.status==='done';
-    return '<div class="task-row">'+
-      '<div class="tcheck '+(done?'done':'')+'" onclick="toggleTask(\'"+t.id+"\',\'"+t.status+"\')">'+(done?'✓':'')+'</div>'+
+    return '<div class="task-row" data-task-id="'+t.id+'" data-task-status="'+t.status+'">'+
+      '<div class="tcheck '+(done?'done':'')+'" data-toggle-task="'+t.id+'" data-cur-status="'+t.status+'">'+(done?'✓':'')+'</div>'+
       '<div style="flex:1"><div class="ttitle '+(done?'done':'')+'">'+escH(t.title)+'</div>'+
       '<div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:3px">'+(p?'📁 '+escH(p.project_name):'')+' '+(u?'· 👤 '+escH(u.name):'')+'</div></div>'+
       '<span class="prio '+(pc[t.priority]||'pm')+'">'+(pl[t.priority]||'—')+'</span>'+
       dueBadge(t.due_date)+
-      '<button class="btn btn-danger btn-sm" onclick="deleteTask(\'"+t.id+"\')">✕</button></div>';
+      '<button class="btn btn-danger btn-sm" data-del-task="'+t.id+'">✕</button></div>';
   }).join('');
+  list.querySelectorAll('[data-toggle-task]').forEach(function(el){
+    el.addEventListener('click',function(){toggleTask(this.dataset.toggleTask,this.dataset.curStatus);});
+  });
+  list.querySelectorAll('[data-del-task]').forEach(function(el){
+    el.addEventListener('click',function(){deleteTask(this.dataset.delTask);});
+  });
 }
 
 async function toggleTask(id,cur){await db.from('tasks').update({status:cur==='done'?'todo':'done'}).eq('id',id);loadTasks();}
@@ -1890,7 +1896,12 @@ function prepareMeetingForm(meet){
   document.getElementById('m_decisions').value=meet?.decisions||'';
   document.getElementById('m_proj').innerHTML='<option value="">— Aucun projet —</option>'+allProjects.map(p=>'<option value="'+p.id+'" '+(p.id===meet?.project_id?'selected':'')+'>'+escH(p.project_name)+'</option>').join('');
   const selected=meet?.participants||[];
-  document.getElementById('partGrid').innerHTML=allUsers.map(u=>'<div class="part-chip '+(selected.includes(u.id)?'selected':'')+'" onclick="toggleParticipant(this,\'"+u.id+"\')" data-uid="'+u.id+'"><div class="part-avatar" style="background:'+(u.avatar_color||'#1a3a6b')+'">'+init2(u.name)+'</div>'+escH(u.name)+'</div>').join('');
+  document.getElementById('partGrid').innerHTML=allUsers.map(function(u){
+    return '<div class="part-chip '+(selected.includes(u.id)?'selected':'')+'" data-uid="'+u.id+'"><div class="part-avatar" style="background:'+(u.avatar_color||'#1a3a6b')+'">'+init2(u.name)+'</div>'+escH(u.name)+'</div>';
+  }).join('');
+  document.getElementById('partGrid').querySelectorAll('.part-chip').forEach(function(chip){
+    chip.addEventListener('click',function(){toggleParticipant(this);});
+  });
   document.getElementById('actionRows').innerHTML='';
   const actions=meet?.actions||[];
   if(actions.length)actions.forEach(a=>addActionRow(a.title,a.assignee_id,a.due_date));
@@ -2140,7 +2151,12 @@ async function loadUsers(){
   const{data}=await db.from('users').select('*').order('name');allUsers=data||[];
   const g=document.getElementById('usersGrid');
   if(!allUsers.length){g.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-ico">👥</div><div class="empty-title">Aucun utilisateur</div></div>';return;}
-  g.innerHTML=allUsers.map(u=>'<div class="user-card">'+avHTML(u,48)+'<div style="flex:1"><div class="uc-name">'+escH(u.name)+'</div><div class="uc-role">'+escH(u.role)+'</div>'+(u.email?'<div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:2px">✉️ '+escH(u.email)+'</div>':'')+'</div><button class="btn btn-danger btn-sm" onclick="deleteUser(\'"+u.id+"\')">✕</button></div>').join('');
+  g.innerHTML=allUsers.map(function(u){
+    return '<div class="user-card">'+avHTML(u,48)+'<div style="flex:1"><div class="uc-name">'+escH(u.name)+'</div><div class="uc-role">'+escH(u.role)+'</div>'+(u.email?'<div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:2px">✉️ '+escH(u.email)+'</div>':'')+'</div><button class="btn btn-danger btn-sm" data-del-uid="'+u.id+'">✕</button></div>';
+  }).join('');
+  g.querySelectorAll('[data-del-uid]').forEach(function(btn){
+    btn.addEventListener('click',function(){deleteUser(this.dataset.delUid);});
+  });
 }
 
 function showNewUserModal(fromLogin){
