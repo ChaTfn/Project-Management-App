@@ -662,6 +662,302 @@ input[type="radio"]    { accent-color: #4a9eff; }
 .sri-badge{margin-left:auto;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;flex-shrink:0}
 .search-empty{text-align:center;padding:40px 20px;color:rgba(255,255,255,0.35);font-size:13px}
 
+
+/* ═══ THEME SYSTEM ═══════════════════════════════════════ */
+:root {
+  --accent: #FF9620;
+  --accent-h: #e6841a;
+  --accent-soft: rgba(255,150,32,0.15);
+  --accent-border: rgba(255,150,32,0.35);
+}
+
+/* Dark mode (default) */
+body {
+  --bg-body: #0a0a0f;
+  --bg-sidebar: rgba(10,10,20,0.7);
+  --bg-card: rgba(255,255,255,0.05);
+  --bg-card-h: rgba(255,255,255,0.09);
+  --bg-input: rgba(255,255,255,0.07);
+  --border-col: rgba(255,255,255,0.09);
+  --text-pri: #f0f0f0;
+  --text-sec: rgba(255,255,255,0.45);
+  --text-ter: rgba(255,255,255,0.25);
+}
+/* Light mode */
+body.light {
+  --bg-body: #f2f2f5;
+  --bg-sidebar: #1a1a2e;
+  --bg-card: #ffffff;
+  --bg-card-h: #f7f7fa;
+  --bg-input: #ffffff;
+  --border-col: #e0e0ea;
+  --text-pri: #111118;
+  --text-sec: #5a5a72;
+  --text-ter: #9090a8;
+  background: var(--bg-body) !important;
+}
+
+/* ── Apply theme vars to all elements ─────────── */
+body { background: var(--bg-body) !important; }
+
+.card, .stat, .proj-card, .task-row, .user-card,
+.meeting-card, .analytics-card, .kanban-col, .kanban-card {
+  background: var(--bg-card) !important;
+  border-color: var(--border-col) !important;
+  color: var(--text-pri) !important;
+}
+.proj-card:hover,.task-row:hover,.meeting-card:hover,.kanban-card:hover {
+  background: var(--bg-card-h) !important;
+}
+.ph {
+  background: var(--bg-card) !important;
+  border-bottom-color: var(--border-col) !important;
+}
+.pt { color: var(--text-pri) !important; }
+.ps,.proj-client,.uc-role,.meeting-proj,.su-role { color: var(--text-sec) !important; }
+.proj-name,.uc-name,.meeting-team,.ttitle { color: var(--text-pri) !important; }
+.stat-val { color: var(--text-pri) !important; }
+.stat-lbl { color: var(--text-sec) !important; }
+.stat::before { background: var(--accent) !important; }
+.analytics-title { color: var(--text-sec) !important; }
+.sec-title { color: var(--text-pri) !important; border-bottom-color: var(--border-col) !important; }
+.flbl,.form-label { color: var(--text-sec) !important; }
+.finput,.fsel2,.ftxt,.fsel,.fsearch {
+  background: var(--bg-input) !important;
+  border-color: var(--border-col) !important;
+  color: var(--text-pri) !important;
+}
+.finput:focus,.fsel2:focus,.ftxt:focus,.fsel:focus,.fsearch:focus {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 3px rgba(255,150,32,0.15) !important;
+}
+.modal {
+  background: var(--bg-card) !important;
+  border-color: var(--border-col) !important;
+  color: var(--text-pri) !important;
+}
+.modal-title { color: var(--text-pri) !important; }
+
+/* ── ACCENT COLOR everywhere blue was ─────────── */
+.btn-primary {
+  background: var(--accent) !important;
+  color: #fff !important;
+  box-shadow: 0 4px 16px rgba(255,150,32,0.3) !important;
+  border: none !important;
+}
+.btn-primary:hover {
+  background: var(--accent-h) !important;
+  box-shadow: 0 8px 24px rgba(255,150,32,0.45) !important;
+}
+.nav-item.active {
+  background: rgba(255,150,32,0.12) !important;
+  border-left-color: var(--accent) !important;
+  color: var(--accent) !important;
+}
+.nav-item.active .nav-icon { color: var(--accent); }
+.nav-item:hover { background: rgba(255,255,255,0.05) !important; }
+.app-name span { color: var(--accent) !important; }
+.proj-ver {
+  background: var(--accent-soft) !important;
+  color: var(--accent) !important;
+  border: 1px solid var(--accent-border) !important;
+}
+.ver-pill.active {
+  background: var(--accent) !important;
+  color: #fff !important;
+  border-color: var(--accent) !important;
+}
+.ver-pill { background: var(--bg-card) !important; border-color: var(--border-col) !important; color: var(--text-sec) !important; }
+.meeting-date-box { background: var(--accent) !important; }
+.action-num { background: var(--accent) !important; }
+.tcheck.done { background: var(--accent) !important; border-color: var(--accent) !important; }
+.user-btn:hover { border-color: var(--accent) !important; background: var(--accent-soft) !important; }
+.day-popup, #dayPopup {
+  background: var(--bg-card) !important;
+  border-color: var(--border-col) !important;
+}
+
+/* ── CLICKABLE STAT CARD ──────────────────────── */
+.stat-clickable {
+  cursor: pointer;
+  transition: all .2s;
+}
+.stat-clickable:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(255,150,32,0.2) !important;
+  border-color: var(--accent) !important;
+}
+
+/* ── LAUNCH CHART CONTAINER ───────────────────── */
+.chart-container {
+  position: relative;
+  height: 200px;
+}
+.chart-filter-bar {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.chart-filter-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-sec);
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.filter-chip {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid var(--border-col);
+  background: var(--bg-card);
+  color: var(--text-sec);
+  transition: all .15s;
+}
+.filter-chip.active, .filter-chip:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.chart-filter-panel {
+  display: none;
+  margin-top: 12px;
+  padding: 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-col);
+  border-radius: 8px;
+}
+.chart-filter-panel.open { display: block; }
+
+/* ── NEXT LAUNCHES LIST ───────────────────────── */
+.launch-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-col);
+}
+.launch-item:last-child { border-bottom: none; }
+.launch-num {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-border);
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.launch-name { font-size: 13px; font-weight: 700; color: var(--text-pri); }
+.launch-client { font-size: 11px; color: var(--text-sec); margin-top: 1px; }
+.launch-date {
+  margin-left: auto;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent);
+  background: var(--accent-soft);
+  padding: 3px 10px;
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+
+/* ── THEME TOGGLE ─────────────────────────────── */
+.theme-toggle {
+  width: 34px;
+  height: 18px;
+  border-radius: 9px;
+  background: rgba(255,255,255,0.15);
+  position: relative;
+  cursor: pointer;
+  transition: background .2s;
+  flex-shrink: 0;
+  border: none;
+}
+body.light .theme-toggle { background: var(--accent); }
+.theme-toggle::after {
+  content: '';
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  top: 2px;
+  left: 2px;
+  transition: transform .2s;
+}
+body.light .theme-toggle::after { transform: translateX(16px); }
+.theme-toggle-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.theme-icon { font-size: 12px; color: rgba(255,255,255,0.5); }
+
+/* ── MODAL LIST ITEMS ─────────────────────────── */
+.modal-list-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-col);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all .15s;
+}
+.modal-list-item:hover { border-color: var(--accent); background: var(--accent-soft); }
+.mli-name { font-size: 13px; font-weight: 700; color: var(--text-pri); }
+.mli-sub { font-size: 11px; color: var(--text-sec); margin-top: 2px; }
+
+/* ── LIGHT MODE OVERRIDES ─────────────────────── */
+body.light .sidebar { background: #1a1a2e !important; }
+body.light .login-card { background: #fff !important; box-shadow: 0 16px 48px rgba(0,0,0,.1) !important; }
+body.light .login-card h2 { color: #111 !important; }
+body.light .u-name { color: #111 !important; }
+body.light .u-role { color: #666 !important; }
+body.light .login-div { color: #aaa !important; }
+body.light .modal { box-shadow: 0 16px 48px rgba(0,0,0,.15) !important; }
+body.light .fsel2 option { background: #fff; color: #111; }
+body.light #dayPopup { background: #fff !important; }
+body.light .op-page { background: #fff !important; border-color: #e0e0ea !important; }
+body.light .op-client, body.light .op-proj { color: #111 !important; }
+body.light .op-sub, body.light .op-ml { color: #666 !important; }
+body.light .op-mv { background: #f5f5f5 !important; color: #111 !important; }
+body.light .op-sec { border-color: #e0e0ea !important; }
+body.light .op-txt { color: #333 !important; }
+body.light .mv-header { background: var(--accent-soft) !important; border-color: var(--accent-border) !important; }
+body.light .mv-team { color: #111 !important; }
+body.light .mv-date { color: #666 !important; }
+body.light .mv-content { background: #f5f5f5 !important; border-color: #e0e0ea !important; color: #333 !important; }
+body.light .action-item { background: #f5f5f5 !important; border-color: #e0e0ea !important; }
+body.light .action-title { color: #111 !important; }
+body.light .tl-step { background: #f5f5f5 !important; border-color: #e0e0ea !important; }
+body.light .tl-step input, body.light .tl-step select { background: #fff !important; border-color: #e0e0ea !important; color: #111 !important; }
+body.light .kanban-col { background: #f0f0f5 !important; border-color: #e0e0ea !important; }
+body.light .kanban-col-title { color: #333 !important; }
+body.light .kanban-count { background: rgba(0,0,0,0.08) !important; color: #555 !important; }
+body.light .kc-title { color: #111 !important; }
+body.light .kc-proj { background: #f0f0f5 !important; color: #555 !important; }
+body.light input[type="date"]::-webkit-calendar-picker-indicator { filter: none; }
+body.light .cal-month { color: #111 !important; }
+body.light .cal-leg { color: #666 !important; }
+body.light .search-box { background: #fff !important; border-color: #e0e0ea !important; }
+body.light .search-field { color: #111 !important; }
+body.light .search-field::placeholder { color: #aaa !important; }
+body.light .sri-title { color: #111 !important; }
+body.light .sri-sub { color: #666 !important; }
+body.light .search-empty { color: #999 !important; }
+body.light .search-result-item:hover { background: var(--accent-soft) !important; }
+
 </style>
 </head>
 <body>
@@ -683,7 +979,13 @@ input[type="radio"]    { accent-color: #4a9eff; }
 <div class="layout">
 
 <aside class="sidebar">
-  <div class="sb-header"><div class="app-name">Project<span>Hub</span></div></div>
+  <div class="sb-header" style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+    <div class="app-name">Project<span>Hub</span></div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <div onclick="openSearch()" title="Recherche (Ctrl+K)" style="cursor:pointer;color:rgba(255,255,255,0.35);font-size:14px;line-height:1">⌕</div>
+      <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Mode clair / sombre"></button>
+    </div>
+  </div>
   <div class="sb-user" id="sbUser"></div>
   <nav class="sb-nav">
     <div class="nav-sec">Principal</div>
@@ -964,25 +1266,64 @@ input[type="radio"]    { accent-color: #4a9eff; }
     <div><div class="pt">Analytiques</div><div class="ps">Vue globale de l'équipe</div></div>
   </div>
   <div class="pb">
-    <div class="analytics-grid">
-      <div class="analytics-card">
-        <div class="analytics-title">Lancements par Project Lead</div>
-        <div id="anPersonLoad"></div>
+    <!-- Row 1: stat cards -->
+    <div class="grid g4" style="margin-bottom:16px">
+      <div class="stat stat-clickable" id="anStatActive" onclick="openActiveProjects()">
+        <span class="stat-ico">🟢</span>
+        <div class="stat-val" id="anStatActiveVal">—</div>
+        <div class="stat-lbl">Projets en cours</div>
       </div>
-      <div class="analytics-card">
-        <div class="analytics-title">Tâches en retard par personne</div>
-        <div id="anOverdue"></div>
+      <div class="stat stat-clickable" id="anStatTasks" onclick="openOpenTasks()">
+        <span class="stat-ico">✅</span>
+        <div class="stat-val" id="anStatTasksVal">—</div>
+        <div class="stat-lbl">Tâches ouvertes</div>
+      </div>
+      <div class="stat">
+        <span class="stat-ico">🚀</span>
+        <div class="stat-val" id="anStatDone">—</div>
+        <div class="stat-lbl">Projets terminés</div>
+      </div>
+      <div class="stat">
+        <span class="stat-ico">⚠️</span>
+        <div class="stat-val" id="anStatOverdue" style="color:var(--accent)">—</div>
+        <div class="stat-lbl">Tâches en retard</div>
       </div>
     </div>
+    <!-- Row 2: launches chart + next launches -->
+    <div class="analytics-grid" style="margin-bottom:16px">
+      <div class="analytics-card" style="grid-column:1/-1">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <div class="analytics-title" style="margin-bottom:0">Lancements par mois (projets terminés)</div>
+          <div class="theme-toggle-wrap">
+            <span class="chart-filter-label">Filtrer par</span>
+            <div class="filter-chip active" id="fcAll" onclick="setChartFilter('all')">Tous</div>
+            <div class="filter-chip" id="fcLead" onclick="setChartFilter('lead')">Project Lead</div>
+            <div class="filter-chip" id="fcClient" onclick="setChartFilter('client')">Client</div>
+          </div>
+        </div>
+        <div class="chart-filter-panel" id="chartFilterPanel">
+          <select class="fsel" id="chartFilterValue" onchange="renderLaunchChart()" style="font-size:11px;min-width:180px">
+            <option value="">— Sélectionner —</option>
+          </select>
+        </div>
+        <div class="chart-container"><canvas id="launchChart"></canvas></div>
+      </div>
+    </div>
+    <!-- Row 3: project progress + next launches -->
     <div class="analytics-grid">
       <div class="analytics-card">
         <div class="analytics-title">Avancement des projets</div>
         <div id="anProjProgress"></div>
       </div>
       <div class="analytics-card">
-        <div class="analytics-title">Statut des tâches</div>
-        <div id="anTaskStatus"></div>
+        <div class="analytics-title">5 prochains lancements</div>
+        <div id="anNextLaunches"></div>
       </div>
+    </div>
+    <!-- Row 4: overdue per person -->
+    <div style="margin-top:16px" class="analytics-card">
+      <div class="analytics-title">Tâches en retard par personne</div>
+      <div id="anOverdue"></div>
     </div>
   </div>
 </div>
@@ -1166,6 +1507,25 @@ input[type="radio"]    { accent-color: #4a9eff; }
   </div>
 </div>
 
+
+<!-- Active Projects Modal -->
+<div class="modal-overlay" id="activeProjectsModal">
+  <div class="modal" style="width:560px">
+    <div class="modal-title">Projets en cours</div>
+    <div id="activeProjectsList"></div>
+    <div class="modal-actions"><button class="btn btn-ghost" onclick="closeModal('activeProjectsModal')">Fermer</button></div>
+  </div>
+</div>
+
+<!-- Open Tasks Modal -->
+<div class="modal-overlay" id="openTasksModal">
+  <div class="modal" style="width:560px">
+    <div class="modal-title">Tâches ouvertes</div>
+    <div id="openTasksList"></div>
+    <div class="modal-actions"><button class="btn btn-ghost" onclick="closeModal('openTasksModal')">Fermer</button></div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -1249,6 +1609,7 @@ function applyTimelineTemplate(withTest) {
   document.getElementById('tlSteps').innerHTML = '';
   steps.forEach(s => addTLStep(s.name, '', 0, s.status, s.days, s.phase));
   updateTotalDays();
+  autoCalcWeeks();
 }
 
 function updateTotalDays() {
@@ -1347,7 +1708,47 @@ function logout(){
   me=null;
   document.getElementById('app').style.display='none';
   document.getElementById('login-screen').style.display='flex';
-  loadLoginUsers();
+  
+// ═══════════════════════════════════════════════
+//  THEME TOGGLE
+// ═══════════════════════════════════════════════
+function toggleTheme(){
+  document.body.classList.toggle('light');
+  const isLight=document.body.classList.contains('light');
+  localStorage.setItem('pmTheme',isLight?'light':'dark');
+  if(document.getElementById('page-analytics').classList.contains('active')){
+    renderLaunchChart();
+  }
+}
+function initTheme(){
+  const saved=localStorage.getItem('pmTheme');
+  if(saved==='light') document.body.classList.add('light');
+}
+
+// ═══════════════════════════════════════════════
+//  AUTO-CALC WEEKS
+// ═══════════════════════════════════════════════
+function autoCalcWeeks(){
+  const startVal=document.getElementById('f_start').value;
+  if(!startVal) return;
+  const rows=document.querySelectorAll('.tl-step');
+  let cumulDays=0;
+  rows.forEach(function(row){
+    const daysInput=row.querySelector('.tl-days');
+    const weekInput=row.querySelector('.tl-week');
+    const days=parseInt(daysInput?.value)||0;
+    cumulDays+=days;
+    const weekNum=Math.ceil(cumulDays/5);
+    if(weekInput) weekInput.value='S'+weekNum;
+  });
+}
+
+initTheme();
+loadLoginUsers();
+// Auto-calc weeks when start date changes
+document.addEventListener('change', function(e){
+  if(e.target && e.target.id==='f_start') autoCalcWeeks();
+});
 }
 
 // ═══════════════════════════════════════════════
@@ -1821,6 +2222,9 @@ async function kbDrop(e,newStatus){
 // ═══════════════════════════════════════════════
 //  ANALYTICS
 // ═══════════════════════════════════════════════
+let launchChartInst = null;
+let chartFilterMode = 'all';
+
 async function loadAnalytics(){
   const[{data:p},{data:t}]=await Promise.all([
     db.from('projects').select('*'),
@@ -1828,57 +2232,178 @@ async function loadAnalytics(){
   ]);
   allProjects=p||[];allTasks=t||[];
   const today=new Date().toISOString().slice(0,10);
-  // Lancements par Project Lead
-  const launchMap={};
-  allProjects.forEach(proj=>{
-    const lead=proj.org_data?.lead||'';if(!lead)return;
-    const u=allUsers.find(u=>u.name.toLowerCase()===lead.toLowerCase());
-    const key=u?u.id:lead;
-    if(!launchMap[key])launchMap[key]={name:u?u.name:lead,count:0};
-    launchMap[key].count++;
-  });
-  const launchEntries=Object.values(launchMap).sort((a,b)=>b.count-a.count);
-  const maxLaunch=Math.max(...launchEntries.map(e=>e.count),1);
-  document.getElementById('anPersonLoad').innerHTML=launchEntries.length
-    ?launchEntries.map(e=>{
-        const pct=Math.round(e.count/maxLaunch*100);
-        const col=e.count>=3?'#7ec8ff':e.count>=2?'#ffd166':'#5ce89e';
-        return '<div class="person-bar"><div class="person-bar-name">'+escH(e.name)+'</div><div class="person-bar-track"><div class="person-bar-fill" style="width:'+pct+'%;background:'+col+'"></div></div><div class="person-bar-count">'+e.count+'</div></div>';
+
+  // Stat cards
+  const active=allProjects.filter(x=>x.status==='active').length;
+  const done=allProjects.filter(x=>x.status==='done').length;
+  const openT=allTasks.filter(x=>x.status!=='done').length;
+  const overdue=allTasks.filter(x=>x.status!=='done'&&x.due_date&&String(x.due_date).slice(0,10)<today).length;
+  document.getElementById('anStatActiveVal').textContent=active;
+  document.getElementById('anStatTasksVal').textContent=openT;
+  document.getElementById('anStatDone').textContent=done;
+  document.getElementById('anStatOverdue').textContent=overdue;
+
+  // Project progress
+  document.getElementById('anProjProgress').innerHTML=allProjects
+    .filter(proj=>(proj.timeline_steps||[]).length>0)
+    .slice(0,8).map(proj=>{
+      const steps=proj.timeline_steps||[];
+      const d=steps.filter(s=>s.status==='done').length;
+      const pct=Math.round(d/steps.length*100);
+      const col=pct>=80?'#27ae60':pct>=40?'#FF9620':'#4a9eff';
+      return '<div class="proj-progress-row"><div class="proj-progress-name">'+escH(proj.project_name)+'</div><div class="prog-bar"><div class="prog-fill" style="width:'+pct+'%;background:'+col+'"></div></div><div class="proj-progress-pct">'+pct+'%</div></div>';
+    }).join('')||'<div style="color:var(--text-sec);font-size:12px;padding:12px 0">Aucune donnee de timeline</div>';
+
+  // Next 5 upcoming launches
+  const upcoming=allProjects
+    .filter(x=>x.launch_date&&x.launch_date>=today&&x.status!=='done')
+    .sort((a,b)=>a.launch_date>b.launch_date?1:-1)
+    .slice(0,5);
+  document.getElementById('anNextLaunches').innerHTML=upcoming.length
+    ?upcoming.map(function(proj,i){
+        return '<div class="launch-item">'+
+          '<div class="launch-num">'+(i+1)+'</div>'+
+          '<div style="flex:1;min-width:0">'+
+          '<div class="launch-name">'+escH(proj.project_name)+'</div>'+
+          '<div class="launch-client">'+escH(proj.client_name||'—')+'</div>'+
+          '</div>'+
+          '<div class="launch-date">'+fmtDate(proj.launch_date)+'</div>'+
+          '</div>';
       }).join('')
-    :'<div style="color:rgba(255,255,255,0.35);font-size:12px">Aucune donnee</div>';
-  // Taches en retard par personne
+    :'<div style="color:var(--text-sec);font-size:12px;padding:12px 0">Aucun lancement planifie</div>';
+
+  // Overdue per person
   const overdueMap={};
-  allTasks.filter(t=>t.status!=='done'&&t.due_date&&String(t.due_date).slice(0,10)<today&&t.assignee_id).forEach(t=>{
-    overdueMap[t.assignee_id]=(overdueMap[t.assignee_id]||0)+1;
+  allTasks.filter(x=>x.status!=='done'&&x.due_date&&String(x.due_date).slice(0,10)<today&&x.assignee_id).forEach(x=>{
+    overdueMap[x.assignee_id]=(overdueMap[x.assignee_id]||0)+1;
   });
   const maxOv=Math.max(...Object.values(overdueMap),1);
   const overdueUsers=allUsers.filter(u=>overdueMap[u.id]>0).sort((a,b)=>(overdueMap[b.id]||0)-(overdueMap[a.id]||0));
   document.getElementById('anOverdue').innerHTML=overdueUsers.length
-    ?overdueUsers.map(u=>{const count=overdueMap[u.id]||0,pct=Math.round(count/maxOv*100);return '<div class="person-bar"><div class="person-bar-name">'+escH(u.name)+'</div><div class="person-bar-track"><div class="person-bar-fill" style="width:'+pct+'%;background:#ff8080"></div></div><div class="person-bar-count" style="color:#ff8080">'+count+'</div></div>';}).join('')
-    :'<div style="color:#5ce89e;font-size:13px;font-weight:700;padding:12px 0">Aucune tache en retard !</div>';
-  // Avancement projets
-  document.getElementById('anProjProgress').innerHTML=allProjects.slice(0,6).map(proj=>{
-    const steps=proj.timeline_steps||[];
-    const done=steps.filter(s=>s.status==='done').length;
-    const pct=steps.length?Math.round(done/steps.length*100):0;
-    const col=pct>=80?'#5ce89e':pct>=40?'#ffd166':'#4a9eff';
-    return '<div class="proj-progress-row"><div class="proj-progress-name">'+escH(proj.project_name)+'</div><div class="prog-bar"><div class="prog-fill" style="width:'+pct+'%;background:'+col+'"></div></div><div class="proj-progress-pct">'+pct+'%</div></div>';
-  }).join('')||'<div style="color:rgba(255,255,255,0.35);font-size:12px">Aucun projet</div>';
-  // Statut des taches
-  const todo=allTasks.filter(t=>t.status==='todo').length;
-  const inprog=allTasks.filter(t=>t.status==='in_progress').length;
-  const done=allTasks.filter(t=>t.status==='done').length;
-  const total=allTasks.length||1;
-  document.getElementById('anTaskStatus').innerHTML=
-    '<div style="margin-bottom:12px"><div style="height:12px;border-radius:6px;overflow:hidden;display:flex;gap:2px">'+
-    '<div style="width:'+Math.round(done/total*100)+'%;background:#27ae60;transition:width .6s"></div>'+
-    '<div style="width:'+Math.round(inprog/total*100)+'%;background:#f39c12;transition:width .6s"></div>'+
-    '<div style="width:'+Math.round(todo/total*100)+'%;background:rgba(255,255,255,0.15);transition:width .6s"></div></div></div>'+
-    '<div class="donut-legend">'+
-    '<div class="donut-item"><div class="donut-dot" style="background:#27ae60"></div>Terminees — <strong>'+done+'</strong> ('+Math.round(done/total*100)+'%)</div>'+
-    '<div class="donut-item"><div class="donut-dot" style="background:#f39c12"></div>En cours — <strong>'+inprog+'</strong> ('+Math.round(inprog/total*100)+'%)</div>'+
-    '<div class="donut-item"><div class="donut-dot" style="background:rgba(255,255,255,0.25)"></div>A faire — <strong>'+todo+'</strong> ('+Math.round(todo/total*100)+'%)</div>'+
-    '<div style="margin-top:10px;font-size:11px;color:rgba(255,255,255,0.35)">Total : '+total+' tache'+(total>1?'s':'')+'</div></div>';
+    ?overdueUsers.map(function(u){
+        const count=overdueMap[u.id]||0,pct=Math.round(count/maxOv*100);
+        return '<div class="person-bar"><div class="person-bar-name">'+escH(u.name)+'</div><div class="person-bar-track"><div class="person-bar-fill" style="width:'+pct+'%;background:#FF9620"></div></div><div class="person-bar-count" style="color:#FF9620">'+count+'</div></div>';
+      }).join('')
+    :'<div style="color:#27ae60;font-size:13px;font-weight:700;padding:12px 0">Aucune tache en retard !</div>';
+
+  // Launch chart
+  chartFilterMode='all';
+  document.getElementById('fcAll').classList.add('active');
+  document.getElementById('fcLead').classList.remove('active');
+  document.getElementById('fcClient').classList.remove('active');
+  document.getElementById('chartFilterPanel').classList.remove('open');
+  renderLaunchChart();
+}
+
+function setChartFilter(mode){
+  chartFilterMode=mode;
+  ['all','lead','client'].forEach(function(m){
+    document.getElementById('fc'+m.charAt(0).toUpperCase()+m.slice(1))?.classList.toggle('active',m===mode);
+  });
+  const panel=document.getElementById('chartFilterPanel');
+  if(mode==='all'){
+    panel.classList.remove('open');
+    renderLaunchChart();
+    return;
+  }
+  panel.classList.add('open');
+  const sel=document.getElementById('chartFilterValue');
+  sel.innerHTML='<option value="">— Tous —</option>';
+  if(mode==='lead'){
+    const leads=[...new Set(allProjects.map(p=>p.org_data?.lead).filter(Boolean))];
+    leads.forEach(l=>{ const opt=document.createElement('option'); opt.value=l; opt.textContent=l; sel.appendChild(opt); });
+  } else {
+    const clients=[...new Set(allProjects.map(p=>p.client_name).filter(Boolean))];
+    clients.forEach(c=>{ const opt=document.createElement('option'); opt.value=c; opt.textContent=c; sel.appendChild(opt); });
+  }
+  renderLaunchChart();
+}
+
+function renderLaunchChart(){
+  const filterVal=document.getElementById('chartFilterValue')?.value||'';
+  // Build monthly data for last 12 months
+  const months=[];
+  const labels=[];
+  const now=new Date();
+  for(let i=11;i>=0;i--){
+    const d=new Date(now.getFullYear(),now.getMonth()-i,1);
+    const key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+    months.push(key);
+    labels.push(d.toLocaleDateString('fr-BE',{month:'short',year:'2-digit'}));
+  }
+  const counts=months.map(function(m){
+    return allProjects.filter(function(p){
+      if(p.status!=='done') return false;
+      if(!p.launch_date) return false;
+      const mKey=p.launch_date.slice(0,7);
+      if(mKey!==m) return false;
+      if(chartFilterMode==='lead'&&filterVal&&(p.org_data?.lead||'')!==filterVal) return false;
+      if(chartFilterMode==='client'&&filterVal&&p.client_name!==filterVal) return false;
+      return true;
+    }).length;
+  });
+  const canvas=document.getElementById('launchChart');
+  if(!canvas) return;
+  if(launchChartInst){launchChartInst.destroy();launchChartInst=null;}
+  const isDark=!document.body.classList.contains('light');
+  const gridColor=isDark?'rgba(255,255,255,0.06)':'rgba(0,0,0,0.06)';
+  const textColor=isDark?'rgba(255,255,255,0.45)':'rgba(0,0,0,0.45)';
+  launchChartInst=new Chart(canvas.getContext('2d'),{
+    type:'bar',
+    data:{labels:labels,datasets:[{
+      label:'Lancements terminés',
+      data:counts,
+      backgroundColor:'rgba(255,150,32,0.7)',
+      borderColor:'#FF9620',
+      borderWidth:1.5,
+      borderRadius:4,
+    }]},
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{
+        x:{ticks:{color:textColor,font:{size:10}},grid:{color:gridColor}},
+        y:{beginAtZero:true,ticks:{stepSize:1,color:textColor,font:{size:10}},grid:{color:gridColor}}
+      }
+    }
+  });
+}
+
+function openActiveProjects(){
+  const active=allProjects.filter(p=>p.status==='active');
+  document.getElementById('activeProjectsList').innerHTML=active.length
+    ?active.map(function(p){
+        return '<div class="modal-list-item" data-pid="'+p.id+'">'+
+          '<div><div class="mli-name">'+escH(p.project_name)+'</div><div class="mli-sub">'+escH(p.client_name||'—')+(p.launch_date?' · 📅 '+fmtDate(p.launch_date):'')+'</div></div>'+
+          '</div>';
+      }).join('')
+    :'<div style="color:var(--text-sec);padding:16px;text-align:center">Aucun projet actif</div>';
+  const listEl=document.getElementById('activeProjectsList');
+  listEl.querySelectorAll('[data-pid]').forEach(function(el){
+    el.addEventListener('click',function(){closeModal('activeProjectsModal');viewProject(this.dataset.pid);});
+  });
+  openModal('activeProjectsModal');
+}
+
+function openOpenTasks(){
+  const open=allTasks.filter(t=>t.status!=='done').sort(function(a,b){
+    if(!a.due_date) return 1; if(!b.due_date) return -1;
+    return a.due_date>b.due_date?1:-1;
+  });
+  const today=new Date().toISOString().slice(0,10);
+  document.getElementById('openTasksList').innerHTML=open.length
+    ?open.map(function(t){
+        const u=getU(t.assignee_id),p2=getP(t.project_id);
+        const late=t.due_date&&String(t.due_date).slice(0,10)<today;
+        return '<div class="modal-list-item">'+
+          '<div style="flex:1"><div class="mli-name">'+escH(t.title)+'</div>'+
+          '<div class="mli-sub">'+(p2?'📁 '+escH(p2.project_name)+' · ':'')+( u?'👤 '+escH(u.name):'')+'</div></div>'+
+          (t.due_date?'<div style="font-size:11px;font-weight:700;color:'+(late?'#FF9620':'var(--text-sec)')+'">'+fmtDate(t.due_date)+'</div>':'')+
+          '</div>';
+      }).join('')
+    :'<div style="color:var(--text-sec);padding:16px;text-align:center">Aucune tache ouverte !</div>';
+  openModal('openTasksModal');
 }
 
 // ═══════════════════════════════════════════════
