@@ -960,7 +960,7 @@ body.light .search-result-item:hover { background: var(--accent-soft) !important
 
 </style>
 </head>
-<body>
+<body class="light">
 
 <!-- ═══════════ LOGIN ═══════════ -->
 <div id="login-screen">
@@ -983,7 +983,6 @@ body.light .search-result-item:hover { background: var(--accent-soft) !important
     <div class="app-name">Project<span>Hub</span></div>
     <div style="display:flex;align-items:center;gap:8px">
       <div onclick="openSearch()" title="Recherche (Ctrl+K)" style="cursor:pointer;color:rgba(255,255,255,0.35);font-size:14px;line-height:1">⌕</div>
-      <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Mode clair / sombre"></button>
     </div>
   </div>
   <div class="sb-user" id="sbUser"></div>
@@ -1708,21 +1707,6 @@ function logout(){
   me=null;
   document.getElementById('app').style.display='none';
   document.getElementById('login-screen').style.display='flex';
-  
-// ═══════════════════════════════════════════════
-//  THEME TOGGLE
-// ═══════════════════════════════════════════════
-function toggleTheme(){
-  document.body.classList.toggle('light');
-  const isLight=document.body.classList.contains('light');
-  localStorage.setItem('pmTheme',isLight?'light':'dark');
-  if(document.getElementById('page-analytics').classList.contains('active')){
-    renderLaunchChart();
-  }
-}
-function initTheme(){
-  const saved=localStorage.getItem('pmTheme');
-  if(saved==='light') document.body.classList.add('light');
 }
 
 // ═══════════════════════════════════════════════
@@ -1743,13 +1727,9 @@ function autoCalcWeeks(){
   });
 }
 
-initTheme();
-loadLoginUsers();
-// Auto-calc weeks when start date changes
 document.addEventListener('change', function(e){
   if(e.target && e.target.id==='f_start') autoCalcWeeks();
 });
-}
 
 // ═══════════════════════════════════════════════
 //  HOME
