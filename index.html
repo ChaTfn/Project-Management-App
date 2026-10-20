@@ -3,37 +3,46 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ProjectHub</title>
-<meta name="description" content="ProjectHub — gestion des projets Customer Development et PDQA">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23FF9620'/%3E%3Ctext x='32' y='43' font-family='Arial' font-size='32' font-weight='700' text-anchor='middle' fill='%232A1600'%3EP%3C/text%3E%3C/svg%3E">
+<title>Jalon</title>
+<meta name="description" content="Jalon — gestion des projets Quality & R&D (Customer Development et PDQA)">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='14' y='14' width='36' height='36' rx='6' transform='rotate(45 32 32)' fill='%23FF9620'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 /* ==========================================================================
-   ProjectHub — Système de design
+   Jalon — Système de design
    --------------------------------------------------------------------------
    Toutes les couleurs, rayons, ombres et espacements sont définis UNE SEULE
    FOIS ci-dessous (section 1 « Tokens »). Pour changer l'apparence de toute
    l'application, modifier uniquement ces variables.
+   Signature visuelle : le losange orange (un « jalon » sur un planning).
+   Il sert de logo et marque les Gates, en violet, dans la timeline et le pipeline.
    Ordre du fichier :
-     1. Tokens (variables)          5. Navigation (sidebar, header)
-     2. Variantes : PDQA, sombre    6. Composants (boutons, cartes, badges…)
-     3. Base                        7. Modules (kanban, calendrier, one-pager…)
-     4. Utilitaires                 8. Accessibilité, responsive, impression
+     1. Tokens                 5. Navigation
+     2. Variantes PDQA/sombre  6. Composants
+     3. Base                   7. Modules (dashboard, pipeline, kanban, calendrier, one-pager…)
+     4. Utilitaires            8. Accessibilité, responsive, impression
    ========================================================================== */
 
 /* 1. TOKENS ================================================================ */
 :root {
   /* Marque */
-  --brand: #FF9620;               /* Orange de la marque (fonds, accents)        */
-  --brand-strong: #F28A12;        /* Variante pour dégradés et survol            */
-  --brand-ink: #9A4D00;           /* Orange lisible pour du TEXTE sur fond clair */
+  --brand: #FF9620;               /* Orange de la marque (fonds, accents)          */
+  --brand-strong: #F08A12;
+  --brand-ink: #9A4D00;           /* Orange lisible pour du texte sur fond clair   */
   --brand-soft: rgba(255,150,32,.12);
-  --brand-border: rgba(255,150,32,.38);
-  --on-brand: #2A1600;            /* Texte posé sur l'orange (contraste ≈ 8:1)   */
+  --brand-border: rgba(255,150,32,.40);
+  --on-brand: #2A1600;            /* Texte posé sur l'orange (contraste ≈ 8:1)     */
+
+  /* Gates (jalons de décision) : couleur dédiée, distincte des statuts */
+  --gate: #6B46C1;
+  --gate-strong: #553399;
+  --gate-ink: #4C2A99;
+  --gate-soft: #F1ECFB;
+  --gate-border: rgba(107,70,193,.35);
 
   /* Accent de l'espace courant (redéfini par l'espace PDQA) */
   --space: var(--brand);
@@ -42,275 +51,255 @@
   --space-border: var(--brand-border);
 
   /* Surfaces */
-  --bg: #F6F5F2;                  /* Blanc cassé chaud                           */
-  --bg-tint-1: rgba(255,150,32,.10);
-  --bg-tint-2: rgba(120,140,170,.10);
-  --surface: #FFFFFF;             /* Surfaces opaques (tableaux, formulaires)    */
-  --surface-2: #FAFAF8;           /* Fond alterné, en-têtes de tableaux          */
-  --surface-3: #F1F0EC;
-  --glass: rgba(255,255,255,.68); /* Surfaces translucides (cartes, sidebar)     */
-  --glass-strong: rgba(255,255,255,.86);
-  --glass-blur: 16px;
+  --bg: #F5F5F2;
+  --bg-tint-1: rgba(255,150,32,.07);
+  --bg-tint-2: rgba(120,135,160,.07);
+  --surface: #FFFFFF;
+  --surface-2: #FAFAF8;
+  --surface-3: #F0F0EC;
+  --glass: rgba(255,255,255,.72);
+  --glass-strong: rgba(255,255,255,.9);
+  --glass-blur: 14px;
 
   /* Texte */
-  --text: #17181C;
-  --text-2: #4A4D57;
-  --text-3: #6E717B;              /* Contraste ≥ 4.5:1 sur blanc                 */
-  --text-inverse: #FFFFFF;
+  --text: #1B1E24;
+  --text-2: #484C55;
+  --text-3: #6A6E78;               /* Contraste ≥ 4.5:1 sur blanc */
 
-  /* Bordures */
-  --line: rgba(23,24,28,.08);
-  --line-strong: rgba(23,24,28,.16);
+  /* Traits */
+  --line: #E7E7E2;
+  --line-strong: #D5D5CF;
 
-  /* Sémantique (toujours accompagnée d'un libellé ou d'une icône) */
-  --ok: #157F3B;      --ok-soft: #E7F5EC;
+  /* Statuts (toujours accompagnés d'un libellé) */
+  --ok: #157F3B;      --ok-soft: #E6F4EA;
   --info: #1D5FD1;    --info-soft: #E8F0FD;
-  --warn: #8A5A00;    --warn-soft: #FDF3DD;
-  --danger: #B42318;  --danger-soft: #FDECEA;
-  --neutral: #4A4D57; --neutral-soft: #EEEEEC;
+  --warn: #8A5A00;    --warn-soft: #FCF1D9;
+  --danger: #B42318;  --danger-soft: #FCEBE9;
+  --neutral: #484C55; --neutral-soft: #EDEDEA;
+  /* Étapes de timeline */
+  --step-done: #2E8B57; --step-current: #2F62C4; --step-warning: #C0392B; --step-upcoming: #E4E4DF; --step-upcoming-ink: #555A63;
 
   /* Typographie */
-  --font: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-  --fs-xs: 11px; --fs-sm: 12px; --fs-md: 13.5px; --fs-base: 14px;
-  --fs-lg: 16px; --fs-xl: 20px; --fs-2xl: 26px; --fs-3xl: 34px;
+  --font: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  --fs-xs: 11.5px; --fs-sm: 12.5px; --fs-md: 13.5px; --fs-base: 14px;
+  --fs-lg: 16px; --fs-xl: 19px; --fs-2xl: 26px; --fs-3xl: 32px;
   --fw-regular: 400; --fw-medium: 500; --fw-semibold: 600; --fw-bold: 700;
 
   /* Espacements (échelle de 4 px) */
   --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px;
   --sp-5: 20px; --sp-6: 24px; --sp-8: 32px; --sp-10: 40px;
 
-  /* Rayons */
-  --r-sm: 8px; --r-md: 12px; --r-lg: 16px; --r-xl: 22px; --r-pill: 999px;
+  /* Rayons : petits pour les contrôles, moyens pour les panneaux */
+  --r-xs: 6px; --r-sm: 8px; --r-md: 10px; --r-lg: 14px; --r-xl: 18px; --r-pill: 999px;
 
-  /* Ombres */
-  --sh-1: 0 1px 2px rgba(23,24,28,.05);
-  --sh-2: 0 2px 8px rgba(23,24,28,.05), 0 1px 2px rgba(23,24,28,.04);
-  --sh-3: 0 12px 32px rgba(23,24,28,.10), 0 2px 6px rgba(23,24,28,.05);
-  --sh-inset: inset 0 1px 0 rgba(255,255,255,.75);
+  /* Ombres (discrètes) */
+  --sh-1: 0 1px 2px rgba(27,30,36,.05);
+  --sh-2: 0 1px 3px rgba(27,30,36,.06), 0 1px 1px rgba(27,30,36,.03);
+  --sh-3: 0 16px 40px rgba(27,30,36,.12), 0 2px 6px rgba(27,30,36,.05);
+  --sh-inset: inset 0 1px 0 rgba(255,255,255,.8);
   --focus: 0 0 0 3px rgba(255,150,32,.45);
 
-  /* Mouvement */
   --ease: cubic-bezier(.2,.7,.2,1);
   --t-fast: 120ms; --t-med: 200ms;
 
-  /* Mise en page */
-  --sidebar-w: 248px;
-  --header-h: 64px;
+  --sidebar-w: 244px;
 }
 
 /* 2. VARIANTES ============================================================= */
-/* Espace PDQA : même famille visuelle, accent pétrole distinctif.
-   Les actions principales restent orange (identité de marque). */
+/* Espace PDQA : accent pétrole ; les actions principales restent orange. */
 [data-workspace="pdqa"] {
   --space: #0F6E6A;
   --space-ink: #0B5753;
   --space-soft: rgba(15,110,106,.10);
   --space-border: rgba(15,110,106,.32);
-  --bg: #F3F6F5;
-  --bg-tint-1: rgba(15,110,106,.10);
-  --bg-tint-2: rgba(255,150,32,.07);
+  --bg: #F2F5F4;
+  --bg-tint-1: rgba(15,110,106,.08);
+  --bg-tint-2: rgba(255,150,32,.05);
 }
 
-/* Variante sombre (préférence utilisateur conservée) */
 body.theme-dark {
-  --bg: #121316; --bg-tint-1: rgba(255,150,32,.08); --bg-tint-2: rgba(90,110,140,.10);
-  --surface: #1B1C20; --surface-2: #202126; --surface-3: #26272D;
-  --glass: rgba(30,31,36,.72); --glass-strong: rgba(30,31,36,.9);
-  --text: #F2F2F3; --text-2: #C4C5CB; --text-3: #9C9EA6;
-  --line: rgba(255,255,255,.08); --line-strong: rgba(255,255,255,.16);
-  --brand-ink: #FFB25C; --space-ink: #FFB25C;
+  --bg: #131417; --bg-tint-1: rgba(255,150,32,.06); --bg-tint-2: rgba(90,110,140,.08);
+  --surface: #1C1D21; --surface-2: #212227; --surface-3: #2A2B31;
+  --glass: rgba(28,29,33,.78); --glass-strong: rgba(32,33,38,.94);
+  --text: #F1F1F2; --text-2: #C6C7CC; --text-3: #9EA0A8;
+  --line: #2C2D33; --line-strong: #3A3B42;
+  --brand-ink: #FFB35E; --space-ink: #FFB35E;
+  --gate: #8B6BE0; --gate-strong: #7454D1; --gate-ink: #C5B3F5; --gate-soft: rgba(139,107,224,.16); --gate-border: rgba(139,107,224,.45);
   --ok: #4ADE80; --ok-soft: rgba(74,222,128,.12);
-  --info: #7AA7FF; --info-soft: rgba(122,167,255,.12);
+  --info: #7AA7FF; --info-soft: rgba(122,167,255,.13);
   --warn: #F5C46B; --warn-soft: rgba(245,196,107,.12);
-  --danger: #FF8A80; --danger-soft: rgba(255,138,128,.12);
-  --neutral: #C4C5CB; --neutral-soft: rgba(255,255,255,.07);
-  --sh-inset: inset 0 1px 0 rgba(255,255,255,.04);
+  --danger: #FF8A80; --danger-soft: rgba(255,138,128,.13);
+  --neutral: #C6C7CC; --neutral-soft: rgba(255,255,255,.07);
+  --step-upcoming: #33343B; --step-upcoming-ink: #C6C7CC;
+  --sh-inset: inset 0 1px 0 rgba(255,255,255,.03);
+  --sh-2: 0 1px 2px rgba(0,0,0,.3);
 }
-body.theme-dark[data-workspace="pdqa"] { --space-ink: #5ED3CC; --bg: #101615; }
+body.theme-dark[data-workspace="pdqa"] { --space: #2BA59E; --space-ink: #6FD8D1; --space-soft: rgba(43,165,158,.14); --space-border: rgba(43,165,158,.4); --bg: #111615; }
 
 /* 3. BASE ================================================================== */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; }
 body {
   font-family: var(--font); font-size: var(--fs-base); color: var(--text);
-  line-height: 1.45; -webkit-font-smoothing: antialiased;
+  line-height: 1.45; -webkit-font-smoothing: antialiased; font-feature-settings: "tnum" 0;
   background:
-    radial-gradient(1200px 600px at 100% -10%, var(--bg-tint-1), transparent 60%),
+    radial-gradient(1100px 520px at 100% -10%, var(--bg-tint-1), transparent 60%),
     radial-gradient(900px 500px at -10% 110%, var(--bg-tint-2), transparent 60%),
     var(--bg);
   background-attachment: fixed;
-  transition: background-color var(--t-med) var(--ease);
 }
 button, input, select, textarea { font: inherit; color: inherit; }
-button { cursor: pointer; background: none; border: 0; }
+button { cursor: pointer; background: none; border: 0; text-align: inherit; }
 a { color: var(--space-ink); }
 svg.ico { width: 18px; height: 18px; flex-shrink: 0; stroke: currentColor; fill: none;
-  stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
 svg.ico.sm { width: 15px; height: 15px; }
 svg.ico.lg { width: 22px; height: 22px; }
 [hidden] { display: none !important; }
-:focus-visible { outline: none; box-shadow: var(--focus); border-radius: var(--r-sm); }
-h1[tabindex="-1"]:focus { outline: none; box-shadow: none; }   /* focus programmatique (lecteurs d'écran) sans anneau visible */
+:focus-visible { outline: none; box-shadow: var(--focus); border-radius: var(--r-xs); }
+h1[tabindex="-1"]:focus { outline: none; box-shadow: none; }
+.num, .kpi-value, .progress-val, .bar-val, .kb-count, .pipe-count { font-variant-numeric: tabular-nums; }
 
 /* 4. UTILITAIRES =========================================================== */
-.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
-  overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 .row { display: flex; align-items: center; gap: var(--sp-2); }
 .row.wrap { flex-wrap: wrap; }
 .grow { flex: 1; min-width: 0; }
 .muted { color: var(--text-3); }
 .small { font-size: var(--fs-sm); }
+.t-danger { color: var(--danger); font-weight: var(--fw-semibold); display: inline-flex; align-items: center; gap: 4px; }
 .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.mt-4 { margin-top: var(--sp-4); } .mt-6 { margin-top: var(--sp-6); }
-.mb-4 { margin-bottom: var(--sp-4); }
+.mt-4 { margin-top: var(--sp-4); } .mt-6 { margin-top: var(--sp-6); } .mb-4 { margin-bottom: var(--sp-4); }
 .stack > * + * { margin-top: var(--sp-4); }
 
 /* 5. NAVIGATION ============================================================ */
 .app { display: flex; min-height: 100vh; }
 .sidebar {
   position: sticky; top: 0; height: 100vh; width: var(--sidebar-w); flex-shrink: 0;
-  display: flex; flex-direction: column; gap: var(--sp-4); padding: var(--sp-5) var(--sp-4);
+  display: flex; flex-direction: column; gap: var(--sp-5); padding: var(--sp-5) var(--sp-4);
   background: var(--glass); border-right: 1px solid var(--line);
-  backdrop-filter: blur(var(--glass-blur)) saturate(1.2);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.2);
+  backdrop-filter: blur(var(--glass-blur)) saturate(1.15); -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.15);
   z-index: 20;
 }
-.brand { display: flex; align-items: center; gap: var(--sp-3); padding: 0 var(--sp-2); }
-.brand-mark { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center;
-  background: linear-gradient(145deg, var(--brand), var(--brand-strong)); color: var(--on-brand);
-  font-weight: var(--fw-bold); font-size: 15px; box-shadow: 0 4px 14px rgba(255,150,32,.35), var(--sh-inset); }
-.brand-name { font-weight: var(--fw-bold); font-size: var(--fs-lg); letter-spacing: -.01em; }
-.brand-name span { color: var(--brand-ink); }
+.brand { display: flex; align-items: center; gap: 12px; padding: 2px var(--sp-2) 0; }
+/* Logo : un losange orange, le symbole du jalon sur un planning */
+.brand-mark { width: 18px; height: 18px; margin: 0 3px; flex-shrink: 0; border-radius: 3px; transform: rotate(45deg);
+  background: linear-gradient(135deg, #FFAA4A, var(--brand) 60%, var(--brand-strong));
+  box-shadow: 0 3px 10px rgba(255,150,32,.35); }
+.brand-mark.lg { width: 26px; height: 26px; margin: 0 6px; border-radius: 4px; }
+.brand-name { font-weight: var(--fw-bold); font-size: 20px; letter-spacing: -.015em; }
 
-/* Sélecteur d'espace */
-.ws-switch { display: grid; gap: var(--sp-1); padding: var(--sp-1); border-radius: var(--r-md);
-  background: var(--surface-3); border: 1px solid var(--line); }
-.ws-option { display: flex; align-items: center; gap: var(--sp-2); padding: var(--sp-2) var(--sp-3);
-  border-radius: 9px; text-align: left; color: var(--text-2); font-size: var(--fs-sm);
-  font-weight: var(--fw-semibold); transition: background var(--t-fast), color var(--t-fast); }
-.ws-option:hover { background: var(--glass-strong); color: var(--text); }
+.ws-switch { display: grid; gap: 2px; padding: 3px; border-radius: var(--r-md); background: var(--surface-3); }
+.ws-option { display: flex; align-items: flex-start; gap: 10px; padding: 8px 10px; border-radius: var(--r-sm);
+  color: var(--text-2); font-size: var(--fs-md); font-weight: var(--fw-semibold); line-height: 1.25;
+  transition: background var(--t-fast), color var(--t-fast); }
+.ws-option:hover { color: var(--text); background: var(--glass-strong); }
 .ws-option[aria-current="true"] { background: var(--surface); color: var(--text); box-shadow: var(--sh-2); }
-.ws-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.ws-option small { display: block; font-weight: var(--fw-regular); color: var(--text-3); font-size: var(--fs-xs); margin-top: 2px; }
+.ws-dot { width: 8px; height: 8px; border-radius: 2px; transform: rotate(45deg); flex-shrink: 0; margin-top: 5px; }
 .ws-dot.customer { background: var(--brand); }
 .ws-dot.pdqa { background: #0F6E6A; }
-.ws-option small { display: block; font-weight: var(--fw-regular); color: var(--text-3); font-size: var(--fs-xs); }
 
-.nav { display: flex; flex-direction: column; gap: 2px; flex: 1; overflow-y: auto; }
-.nav-label { font-size: var(--fs-xs); font-weight: var(--fw-semibold); color: var(--text-3);
-  text-transform: uppercase; letter-spacing: .08em; padding: var(--sp-3) var(--sp-3) var(--sp-1); }
-.nav-item { display: flex; align-items: center; gap: var(--sp-3); padding: 9px var(--sp-3);
-  border-radius: 10px; color: var(--text-2); font-size: var(--fs-md); font-weight: var(--fw-medium);
-  text-decoration: none; position: relative; transition: background var(--t-fast), color var(--t-fast); }
-.nav-item:hover { background: var(--glass-strong); color: var(--text); }
-.nav-item[aria-current="page"] { background: var(--space-soft); color: var(--space-ink); font-weight: var(--fw-semibold); }
-.nav-item[aria-current="page"]::before { content: ""; position: absolute; left: -16px; top: 8px; bottom: 8px;
-  width: 3px; border-radius: 0 3px 3px 0; background: var(--space); }
-.nav-count { margin-left: auto; font-size: var(--fs-xs); font-weight: var(--fw-semibold);
-  padding: 1px 7px; border-radius: var(--r-pill); background: var(--danger-soft); color: var(--danger); }
+.nav { display: flex; flex-direction: column; gap: 1px; flex: 1; overflow-y: auto; }
+.nav-label { font-size: var(--fs-xs); font-weight: var(--fw-semibold); color: var(--text-3); padding: var(--sp-4) 10px var(--sp-1); }
+.nav-item { display: flex; align-items: center; gap: 11px; padding: 8px 10px; border-radius: var(--r-sm);
+  color: var(--text-2); font-size: var(--fs-md); font-weight: var(--fw-medium); text-decoration: none; position: relative;
+  transition: background var(--t-fast), color var(--t-fast); }
+.nav-item:hover { background: var(--surface-3); color: var(--text); }
+.nav-item[aria-current="page"] { background: var(--surface); color: var(--text); font-weight: var(--fw-semibold); box-shadow: var(--sh-2); }
+.nav-item[aria-current="page"] .ico { color: var(--space); }
+.nav-count { margin-left: auto; min-width: 20px; text-align: center; font-size: var(--fs-xs); font-weight: var(--fw-semibold);
+  padding: 1px 6px; border-radius: var(--r-pill); background: var(--danger-soft); color: var(--danger); }
 
-.sidebar-footer .row .btn { padding: 0 8px; }
 .sidebar-footer { border-top: 1px solid var(--line); padding-top: var(--sp-3); display: grid; gap: var(--sp-2); }
-.me-card { display: flex; align-items: center; gap: var(--sp-3); padding: var(--sp-2); }
+.sidebar-footer .btn-glass { justify-content: flex-start; }
+.sidebar-footer .kbd { margin-left: auto; }
+.sidebar-footer .row .btn { padding: 0 8px; }
+.me-card { display: flex; align-items: center; gap: var(--sp-3); padding: var(--sp-1) var(--sp-1); }
 .me-name { font-size: var(--fs-md); font-weight: var(--fw-semibold); }
 .me-role { font-size: var(--fs-xs); color: var(--text-3); }
 
 .main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
-
-/* Bandeau d'espace : rend l'espace courant visible immédiatement */
-.space-banner { display: flex; align-items: center; gap: var(--sp-3); padding: 10px var(--sp-8);
+/* Bandeau d'espace : l'espace courant est visible dès l'arrivée sur la page */
+.space-banner { display: flex; align-items: center; gap: 10px; padding: 9px var(--sp-8);
   font-size: var(--fs-sm); font-weight: var(--fw-semibold); color: var(--space-ink);
-  background: linear-gradient(90deg, var(--space-soft), transparent 70%);
-  border-bottom: 1px solid var(--space-border); }
-.space-banner .tag { padding: 3px 10px; border-radius: var(--r-pill); color: #fff; background: var(--space);
-  font-size: var(--fs-xs); letter-spacing: .06em; text-transform: uppercase; }
-[data-workspace="customer"] .space-banner .tag { color: var(--on-brand); }
+  border-top: 3px solid var(--space); background: linear-gradient(90deg, var(--space-soft), transparent 60%);
+  border-bottom: 1px solid var(--line); }
+.space-dot { width: 8px; height: 8px; border-radius: 2px; transform: rotate(45deg); background: var(--space); }
 
 .page-header { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--sp-4);
-  padding: var(--sp-6) var(--sp-8) var(--sp-4); flex-wrap: wrap; }
-.page-title { font-size: var(--fs-2xl); font-weight: var(--fw-bold); letter-spacing: -.02em; line-height: 1.15; }
-.page-sub { color: var(--text-3); font-size: var(--fs-md); margin-top: var(--sp-1); }
+  padding: var(--sp-6) var(--sp-8) var(--sp-5); flex-wrap: wrap; }
+.page-title { font-size: var(--fs-2xl); font-weight: var(--fw-semibold); letter-spacing: -.02em; line-height: 1.15; }
+.page-sub { color: var(--text-3); font-size: var(--fs-md); margin-top: 6px; }
+.page-sub::first-letter { text-transform: uppercase; }
 .page-actions { display: flex; gap: var(--sp-2); flex-wrap: wrap; align-items: center; }
 .page-body { padding: 0 var(--sp-8) var(--sp-10); }
-.breadcrumb { display: flex; align-items: center; gap: var(--sp-1); font-size: var(--fs-sm);
-  color: var(--text-3); margin-bottom: var(--sp-2); }
+.breadcrumb { display: flex; align-items: center; gap: 4px; font-size: var(--fs-sm); color: var(--text-3); margin-bottom: 6px; }
 .breadcrumb button { color: var(--text-3); font-weight: var(--fw-medium); }
 .breadcrumb button:hover { color: var(--text); text-decoration: underline; }
 
 /* 6. COMPOSANTS ============================================================ */
 /* Boutons ------------------------------------------------------------------ */
-.btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--sp-2);
-  height: 38px; padding: 0 var(--sp-4); border-radius: 11px; font-size: var(--fs-md);
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  height: 36px; padding: 0 14px; border-radius: var(--r-sm); font-size: var(--fs-md);
   font-weight: var(--fw-semibold); white-space: nowrap; border: 1px solid transparent;
   transition: transform var(--t-fast) var(--ease), box-shadow var(--t-fast), background var(--t-fast), border-color var(--t-fast); }
 .btn:active { transform: translateY(1px); }
 .btn:disabled { opacity: .55; cursor: not-allowed; transform: none; }
-.btn-sm { height: 32px; padding: 0 var(--sp-3); font-size: var(--fs-sm); border-radius: 9px; }
+.btn-sm { height: 30px; padding: 0 10px; font-size: var(--fs-sm); border-radius: var(--r-xs); gap: 5px; }
 .btn-icon { width: 36px; padding: 0; }
 .btn-sm.btn-icon { width: 30px; }
-
 /* Action principale : orange de la marque, dégradé très léger */
-.btn-primary { color: var(--on-brand);
-  background: linear-gradient(180deg, #FFA43D, var(--brand) 55%, var(--brand-strong));
-  border-color: rgba(200,100,0,.25);
-  box-shadow: 0 4px 14px rgba(255,150,32,.30), var(--sh-inset); }
-.btn-primary:hover { box-shadow: 0 8px 22px rgba(255,150,32,.38), var(--sh-inset); }
-
-/* Glass button : surface translucide, bordure fine, profondeur maîtrisée */
+.btn-primary { color: var(--on-brand); border-color: rgba(190,95,0,.28);
+  background: linear-gradient(180deg, #FFA53F, var(--brand) 60%, var(--brand-strong));
+  box-shadow: 0 1px 2px rgba(190,95,0,.2), 0 4px 12px rgba(255,150,32,.22), var(--sh-inset); }
+.btn-primary:hover { box-shadow: 0 1px 2px rgba(190,95,0,.2), 0 6px 18px rgba(255,150,32,.32), var(--sh-inset); }
+/* Glass button : translucide, bordure fine */
 .btn-glass { color: var(--text); background: var(--glass); border-color: var(--line-strong);
-  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-  box-shadow: var(--sh-1), var(--sh-inset); }
-.btn-glass:hover { background: var(--glass-strong); border-color: var(--space-border); box-shadow: var(--sh-2), var(--sh-inset); }
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); box-shadow: var(--sh-1), var(--sh-inset); }
+.btn-glass:hover { background: var(--glass-strong); border-color: var(--text-3); }
 .btn-ghost { color: var(--text-2); }
 .btn-ghost:hover { background: var(--surface-3); color: var(--text); }
-.btn-danger { color: var(--danger); background: var(--danger-soft); border-color: transparent; }
+.btn-danger { color: var(--danger); background: var(--danger-soft); }
 .btn-danger:hover { border-color: var(--danger); }
 
-/* Groupe segmenté (choix de vue) */
-.segmented { display: inline-flex; padding: 3px; gap: 2px; border-radius: 12px;
-  background: var(--surface-3); border: 1px solid var(--line); }
-.segmented button { height: 30px; padding: 0 var(--sp-3); border-radius: 9px; font-size: var(--fs-sm);
-  font-weight: var(--fw-semibold); color: var(--text-2); }
+.segmented { display: inline-flex; padding: 3px; gap: 2px; border-radius: var(--r-md); background: var(--surface-3); }
+.segmented button { height: 30px; padding: 0 14px; border-radius: 7px; font-size: var(--fs-sm); font-weight: var(--fw-semibold); color: var(--text-2); }
+.segmented button:hover { color: var(--text); }
 .segmented button[aria-pressed="true"] { background: var(--surface); color: var(--text); box-shadow: var(--sh-2); }
 
-/* Cartes ------------------------------------------------------------------- */
+/* Panneaux ------------------------------------------------------------------ */
 .card { background: var(--glass); border: 1px solid var(--line); border-radius: var(--r-lg);
-  box-shadow: var(--sh-2), var(--sh-inset); backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur)); }
+  box-shadow: var(--sh-1); backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur)); }
 .card.solid { background: var(--surface); backdrop-filter: none; -webkit-backdrop-filter: none; }
-.card-pad { padding: var(--sp-5); }
-.card-head { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3);
-  padding: var(--sp-4) var(--sp-5); border-bottom: 1px solid var(--line); }
-.card-title { font-size: var(--fs-md); font-weight: var(--fw-semibold); }
+.card-pad { padding: var(--sp-5) var(--sp-6); }
+.card-head { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3); padding: 14px var(--sp-5); border-bottom: 1px solid var(--line); }
+.card-title { font-size: var(--fs-base); font-weight: var(--fw-semibold); }
 .card-body { padding: var(--sp-4) var(--sp-5); }
-.section-title { font-size: var(--fs-xs); font-weight: var(--fw-semibold); text-transform: uppercase;
-  letter-spacing: .08em; color: var(--text-3); margin-bottom: var(--sp-3); }
+.section-title { font-size: var(--fs-base); font-weight: var(--fw-semibold); color: var(--text); margin-bottom: var(--sp-4); }
+.section-title .muted { font-weight: var(--fw-regular); }
 
-/* Grilles */
 .grid { display: grid; gap: var(--sp-4); }
 .g2 { grid-template-columns: repeat(2, minmax(0,1fr)); }
 .g3 { grid-template-columns: repeat(3, minmax(0,1fr)); }
 .g4 { grid-template-columns: repeat(4, minmax(0,1fr)); }
-.dash-grid { display: grid; gap: var(--sp-4); grid-template-columns: minmax(0,1.4fr) minmax(0,1fr); }
+.dash-grid { display: grid; gap: var(--sp-4); grid-template-columns: minmax(0,1.5fr) minmax(0,1fr); align-items: start; }
 
-/* Indicateurs du dashboard */
-.kpi { display: flex; flex-direction: column; gap: var(--sp-2); padding: var(--sp-5); text-align: left;
-  border-radius: var(--r-lg); position: relative; overflow: hidden;
-  transition: transform var(--t-med) var(--ease), box-shadow var(--t-med), border-color var(--t-med); }
-button.kpi:hover { transform: translateY(-2px); box-shadow: var(--sh-3), var(--sh-inset); border-color: var(--space-border); }
-.kpi-top { width: 100%; display: flex; align-items: center; justify-content: space-between; color: var(--text-3);
-  font-size: var(--fs-sm); font-weight: var(--fw-semibold); }
-.kpi-ico { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center;
-  background: var(--space-soft); color: var(--space-ink); }
-.kpi-value { font-size: var(--fs-3xl); font-weight: var(--fw-bold); letter-spacing: -.03em; line-height: 1; }
+/* Indicateurs : une seule bande séparée par des filets */
+.kpi-strip { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); overflow: hidden; }
+.kpi { display: flex; flex-direction: column; gap: 6px; padding: var(--sp-5) var(--sp-6); text-align: left; position: relative; transition: background var(--t-fast); }
+.kpi + .kpi { border-left: 1px solid var(--line); }
+button.kpi:hover { background: var(--glass-strong); }
+button.kpi:hover .kpi-label { color: var(--text); }
+.kpi-label { font-size: var(--fs-md); font-weight: var(--fw-medium); color: var(--text-2); }
+.kpi-value { font-size: var(--fs-3xl); font-weight: var(--fw-semibold); letter-spacing: -.03em; line-height: 1.05; }
 .kpi-foot { font-size: var(--fs-sm); color: var(--text-3); display: flex; align-items: center; gap: 4px; }
-.kpi.alert .kpi-ico { background: var(--danger-soft); color: var(--danger); }
 .kpi.alert .kpi-value { color: var(--danger); }
-.kpi.calm .kpi-ico { background: var(--ok-soft); color: var(--ok); }
+.kpi.alert::before { content: ""; position: absolute; left: 0; top: 0; right: 0; height: 3px; background: var(--danger); }
 
-/* Badges ------------------------------------------------------------------- */
-.badge { display: inline-flex; align-items: center; gap: 5px; height: 24px; padding: 0 9px;
-  border-radius: var(--r-pill); font-size: var(--fs-xs); font-weight: var(--fw-semibold);
-  white-space: nowrap; border: 1px solid transparent; }
+/* Badges -------------------------------------------------------------------- */
+.badge { display: inline-flex; align-items: center; gap: 5px; height: 22px; padding: 0 8px; border-radius: var(--r-pill);
+  font-size: var(--fs-xs); font-weight: var(--fw-semibold); white-space: nowrap; width: fit-content; }
 .badge::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
 .badge.no-dot::before { display: none; }
 .b-ok { color: var(--ok); background: var(--ok-soft); }
@@ -319,84 +308,75 @@ button.kpi:hover { transform: translateY(-2px); box-shadow: var(--sh-3), var(--s
 .b-danger { color: var(--danger); background: var(--danger-soft); }
 .b-neutral { color: var(--neutral); background: var(--neutral-soft); }
 .b-space { color: var(--space-ink); background: var(--space-soft); }
-.chip { display: inline-flex; align-items: center; gap: 4px; height: 22px; padding: 0 8px;
-  border-radius: var(--r-pill); font-size: var(--fs-xs); font-weight: var(--fw-semibold);
-  color: var(--text-2); background: var(--surface-3); white-space: nowrap; max-width: 100%; }
+.chip { display: inline-flex; align-items: center; gap: 4px; height: 22px; padding: 0 8px; border-radius: var(--r-xs);
+  font-size: var(--fs-xs); font-weight: var(--fw-medium); color: var(--text-2); background: var(--surface-3); white-space: nowrap; max-width: 100%; }
 
-/* Priorité : barres + texte (ne repose pas sur la couleur seule) */
 .prio { display: inline-flex; align-items: center; gap: 6px; font-size: var(--fs-sm); color: var(--text-2); white-space: nowrap; }
 .prio-bars { display: inline-flex; gap: 2px; align-items: flex-end; }
 .prio-bars i { width: 3px; border-radius: 1px; background: var(--line-strong); }
 .prio-bars i:nth-child(1) { height: 6px; } .prio-bars i:nth-child(2) { height: 9px; } .prio-bars i:nth-child(3) { height: 12px; }
-.prio[data-level="1"] .prio-bars i:nth-child(-n+1),
-.prio[data-level="2"] .prio-bars i:nth-child(-n+2) { background: var(--text-2); }
+.prio[data-level="1"] .prio-bars i:nth-child(-n+1), .prio[data-level="2"] .prio-bars i:nth-child(-n+2) { background: var(--text-2); }
 .prio[data-level="3"] .prio-bars i { background: var(--brand-ink); }
 
-/* Échéance */
 .due { display: inline-flex; align-items: center; gap: 5px; font-size: var(--fs-sm); white-space: nowrap; color: var(--text-2); }
 .due.overdue { color: var(--danger); font-weight: var(--fw-semibold); }
 .due.today, .due.soon { color: var(--warn); font-weight: var(--fw-semibold); }
-.due.done { color: var(--text-3); }
-.due.none { color: var(--text-3); }
+.due.done, .due.none { color: var(--text-3); }
 
-/* Avatar */
-.avatar { border-radius: 50%; display: inline-grid; place-items: center; color: #fff; font-weight: var(--fw-bold);
-  flex-shrink: 0; box-shadow: 0 0 0 2px var(--surface); }
+.avatar { border-radius: 50%; display: inline-grid; place-items: center; color: #fff; font-weight: var(--fw-semibold); flex-shrink: 0; letter-spacing: .02em; }
 .person { display: inline-flex; align-items: center; gap: var(--sp-2); min-width: 0; font-size: var(--fs-md); }
 
-/* Progression */
-.progress { display: flex; align-items: center; gap: var(--sp-2); min-width: 110px; }
-.progress-track { flex: 1; height: 6px; border-radius: var(--r-pill); background: var(--surface-3); overflow: hidden; }
-.progress-fill { height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--space), var(--space)); }
-.progress-val { font-size: var(--fs-sm); color: var(--text-2); width: 36px; text-align: right; font-variant-numeric: tabular-nums; }
+.progress { display: flex; align-items: center; gap: var(--sp-2); min-width: 100px; }
+.progress-track { flex: 1; height: 5px; border-radius: var(--r-pill); background: var(--surface-3); overflow: hidden; }
+.progress-fill { height: 100%; border-radius: inherit; background: var(--space); }
+.progress-val { font-size: var(--fs-sm); color: var(--text-2); width: 38px; text-align: right; }
 
-/* Champs de formulaire (opaques pour la lisibilité) ------------------------- */
+/* Formulaires (opaques pour la lisibilité) --------------------------------- */
 .field { display: flex; flex-direction: column; gap: 6px; }
 .field.full { grid-column: 1 / -1; }
 .label { font-size: var(--fs-sm); font-weight: var(--fw-semibold); color: var(--text-2); }
 .label .req { color: var(--danger); }
 .hint { font-size: var(--fs-xs); color: var(--text-3); }
 .error-msg { font-size: var(--fs-xs); color: var(--danger); font-weight: var(--fw-semibold); }
+.error-msg:empty { display: none; }
 .input, .select, .textarea {
-  width: 100%; height: 38px; padding: 0 var(--sp-3); border-radius: 10px; font-size: var(--fs-md);
+  width: 100%; height: 36px; padding: 0 var(--sp-3); border-radius: var(--r-sm); font-size: var(--fs-md);
   background: var(--surface); color: var(--text); border: 1px solid var(--line-strong);
   transition: border-color var(--t-fast), box-shadow var(--t-fast); }
 .textarea { height: auto; min-height: 96px; padding: var(--sp-2) var(--sp-3); line-height: 1.55; resize: vertical; }
-.select { appearance: none; padding-right: 34px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236E717B' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
-  background-repeat: no-repeat; background-position: right 12px center; }
+.select { appearance: none; padding-right: 32px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236A6E78' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 11px center; }
 .input:hover, .select:hover, .textarea:hover { border-color: var(--text-3); }
 .input:focus, .select:focus, .textarea:focus { outline: none; border-color: var(--brand); box-shadow: var(--focus); }
 .input[aria-invalid="true"], .select[aria-invalid="true"] { border-color: var(--danger); }
-.input-sm { height: 32px; font-size: var(--fs-sm); border-radius: 8px; }
-.form-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: var(--sp-4); }
-.search { position: relative; flex: 1; min-width: 220px; max-width: 360px; }
+.input-sm { height: 30px; font-size: var(--fs-sm); border-radius: var(--r-xs); padding: 0 8px; }
+.select.input-sm { padding-right: 26px; background-position: right 8px center; }
+.form-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: var(--sp-4) var(--sp-5); }
+.search { position: relative; flex: 1; min-width: 200px; max-width: 340px; }
 .search .ico { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--text-3); }
-.search .input { padding-left: 36px; }
+.search .input { padding-left: 34px; }
 
-/* Barre de filtres */
-.toolbar { display: flex; align-items: center; gap: var(--sp-2); flex-wrap: wrap; padding: var(--sp-3);
-  border-radius: var(--r-lg); margin-bottom: var(--sp-4); }
-.toolbar .select { width: auto; min-width: 150px; height: 36px; }
+.toolbar { display: flex; align-items: center; gap: var(--sp-2); flex-wrap: wrap; padding: 10px; border-radius: var(--r-lg); margin-bottom: var(--sp-4); }
+.toolbar .select { width: auto; min-width: 150px; }
 .toolbar .spacer { flex: 1; }
 .result-count { font-size: var(--fs-sm); color: var(--text-3); padding: 0 var(--sp-2); white-space: nowrap; }
-.check { display: inline-flex; align-items: center; gap: 6px; font-size: var(--fs-sm); color: var(--text-2);
-  font-weight: var(--fw-medium); cursor: pointer; user-select: none; }
+.check { display: inline-flex; align-items: center; gap: 7px; font-size: var(--fs-sm); color: var(--text-2); font-weight: var(--fw-medium); cursor: pointer; user-select: none; padding: 0 4px; }
 .check input { width: 16px; height: 16px; accent-color: var(--brand); }
+.view-switch { display: flex; align-items: center; gap: var(--sp-4); flex-wrap: wrap; margin-bottom: var(--sp-4); }
 
-/* Tableaux (opaques) -------------------------------------------------------- */
-.table-wrap { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg);
-  box-shadow: var(--sh-2); overflow: auto; max-height: calc(100vh - 260px); }
+/* Tableaux (opaques) ---------------------------------------------------------- */
+.table-wrap { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); box-shadow: var(--sh-1); overflow: auto; max-height: calc(100vh - 250px); }
 .table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: var(--fs-md); }
-.table th { position: sticky; top: 0; z-index: 1; background: var(--surface-2); text-align: left;
-  font-size: var(--fs-xs); font-weight: var(--fw-semibold); color: var(--text-3); text-transform: uppercase;
-  letter-spacing: .06em; padding: 10px var(--sp-4); border-bottom: 1px solid var(--line); white-space: nowrap; }
-.th-sort { display: inline-flex; align-items: center; gap: 4px; color: inherit; font: inherit;
-  text-transform: inherit; letter-spacing: inherit; }
+.table th { position: sticky; top: 0; z-index: 1; background: var(--surface-2); text-align: left; font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold); color: var(--text-3); padding: 10px var(--sp-4); border-bottom: 1px solid var(--line); white-space: nowrap; }
+.th-sort { display: inline-flex; align-items: center; gap: 4px; color: inherit; font: inherit; }
 .th-sort:hover { color: var(--text); }
-.th-sort .arrow { opacity: .35; }
+.th-sort .arrow { opacity: 0; transition: opacity var(--t-fast); }
+.th-sort:hover .arrow, .th-sort:focus-visible .arrow { opacity: .5; }
 th[aria-sort="ascending"] .arrow, th[aria-sort="descending"] .arrow { opacity: 1; color: var(--space-ink); }
-.table td { padding: 12px var(--sp-4); border-bottom: 1px solid var(--line); vertical-align: middle; }
+th[aria-sort="ascending"], th[aria-sort="descending"] { color: var(--text); }
+.table td { padding: 11px var(--sp-4); border-bottom: 1px solid var(--line); vertical-align: middle; }
 .table tbody tr { transition: background var(--t-fast); }
 .table tbody tr:hover { background: var(--surface-2); }
 .table tbody tr:last-child td { border-bottom: 0; }
@@ -405,78 +385,60 @@ th[aria-sort="ascending"] .arrow, th[aria-sort="descending"] .arrow { opacity: 1
 .table tr.is-done .cell-title { color: var(--text-3); text-decoration: line-through; }
 .cell-title { font-weight: var(--fw-semibold); color: var(--text); }
 .cell-sub { font-size: var(--fs-sm); color: var(--text-3); margin-top: 2px; }
+.row-meta { display: flex; gap: var(--sp-3); align-items: center; min-width: 0; }
+.row-meta > span + span { padding-left: var(--sp-3); border-left: 1px solid var(--line-strong); display: inline-flex; align-items: center; gap: 6px; }
 .link-btn { color: var(--text); font-weight: var(--fw-semibold); text-align: left; }
-.link-btn:hover { color: var(--space-ink); text-decoration: underline; }
+.link-btn:hover { color: var(--space-ink); text-decoration: underline; text-underline-offset: 2px; }
 .link-muted { color: var(--text-2); text-align: left; font-size: var(--fs-md); }
-.link-muted:hover { color: var(--space-ink); text-decoration: underline; }
+.link-muted:hover { color: var(--space-ink); text-decoration: underline; text-underline-offset: 2px; }
 .col-actions { width: 1%; white-space: nowrap; text-align: right; }
 
-/* Case « terminée » */
-.task-check { width: 22px; height: 22px; border-radius: 50%; border: 1.8px solid var(--line-strong);
-  display: inline-grid; place-items: center; color: transparent; background: var(--surface);
-  transition: all var(--t-fast); }
+.task-check { width: 20px; height: 20px; border-radius: 50%; border: 1.6px solid var(--line-strong);
+  display: inline-grid; place-items: center; color: transparent; background: var(--surface); transition: all var(--t-fast); }
 .task-check:hover { border-color: var(--ok); color: var(--ok); }
 .task-check[aria-checked="true"] { background: var(--ok); border-color: var(--ok); color: #fff; }
 
-/* Sélecteur de statut en ligne */
 .status-select { width: auto; min-width: 108px; height: 28px; border-radius: var(--r-pill); padding: 0 26px 0 10px; font-size: var(--fs-xs);
   font-weight: var(--fw-semibold); border: 1px solid transparent; background-position: right 8px center; background-size: 10px; }
 .status-select.s-todo { color: var(--neutral); background-color: var(--neutral-soft); }
 .status-select.s-in_progress { color: var(--info); background-color: var(--info-soft); }
 .status-select.s-done { color: var(--ok); background-color: var(--ok-soft); }
 
-/* Menu contextuel */
 .menu-wrap { position: relative; display: inline-block; }
-.menu { position: absolute; right: 0; top: calc(100% + 4px); min-width: 190px; padding: var(--sp-1);
+.menu { position: absolute; right: 0; top: calc(100% + 4px); min-width: 190px; padding: 4px;
   background: var(--glass-strong); border: 1px solid var(--line); border-radius: var(--r-md);
   box-shadow: var(--sh-3); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); z-index: 30; }
-.menu button { display: flex; width: 100%; align-items: center; gap: var(--sp-2); padding: 8px 10px;
-  border-radius: 8px; font-size: var(--fs-md); text-align: left; color: var(--text); }
+.menu button { display: flex; width: 100%; align-items: center; gap: var(--sp-2); padding: 8px 10px; border-radius: var(--r-xs); font-size: var(--fs-md); text-align: left; color: var(--text); }
 .menu button:hover, .menu button:focus-visible { background: var(--surface-3); }
 .menu button.danger { color: var(--danger); }
 
-/* États vides / chargement */
 .empty { text-align: center; padding: var(--sp-10) var(--sp-6); }
-.empty-ico { width: 52px; height: 52px; margin: 0 auto var(--sp-4); border-radius: 16px; display: grid;
-  place-items: center; background: var(--space-soft); color: var(--space-ink); }
-.empty-title { font-size: var(--fs-lg); font-weight: var(--fw-semibold); margin-bottom: var(--sp-1); }
+.empty-ico { width: 48px; height: 48px; margin: 0 auto var(--sp-4); border-radius: var(--r-md); display: grid; place-items: center; background: var(--space-soft); color: var(--space-ink); }
+.empty-title { font-size: var(--fs-lg); font-weight: var(--fw-semibold); margin-bottom: 4px; }
 .empty-sub { color: var(--text-3); margin-bottom: var(--sp-4); font-size: var(--fs-md); }
-.skeleton { border-radius: var(--r-md); background: linear-gradient(90deg, var(--surface-3), var(--surface-2), var(--surface-3));
-  background-size: 200% 100%; animation: shimmer 1.2s infinite linear; }
-@keyframes shimmer { to { background-position: -200% 0; } }
-.spinner { width: 28px; height: 28px; border-radius: 50%; border: 3px solid var(--line-strong);
-  border-top-color: var(--brand); animation: spin .8s linear infinite; margin: var(--sp-8) auto; }
+.spinner { width: 26px; height: 26px; border-radius: 50%; border: 3px solid var(--line-strong); border-top-color: var(--brand); animation: spin .8s linear infinite; margin: var(--sp-8) auto; }
 @keyframes spin { to { transform: rotate(360deg); } }
-.notice { display: flex; gap: var(--sp-3); align-items: flex-start; padding: var(--sp-3) var(--sp-4);
-  border-radius: var(--r-md); font-size: var(--fs-md); background: var(--warn-soft); color: var(--warn);
-  border: 1px solid rgba(138,90,0,.2); }
-.notice.info { background: var(--info-soft); color: var(--info); border-color: rgba(29,95,209,.2); }
+.notice { display: flex; gap: var(--sp-3); align-items: flex-start; padding: var(--sp-3) var(--sp-4); border-radius: var(--r-md); font-size: var(--fs-md);
+  background: var(--warn-soft); color: var(--warn); border: 1px solid rgba(138,90,0,.2); }
 
-/* Fenêtres modales et panneau latéral --------------------------------------- */
+/* Fenêtres -------------------------------------------------------------------- */
 .overlay { position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center;
-  background: rgba(23,24,28,.30); backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px);
-  animation: fade var(--t-med) var(--ease); padding: var(--sp-4); }
+  background: rgba(27,30,36,.32); backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px); animation: fade var(--t-med) var(--ease); padding: var(--sp-4); }
 .overlay.drawer-overlay { justify-content: flex-end; padding: 0; }
 @keyframes fade { from { opacity: 0; } }
-.modal { width: 520px; max-width: 100%; max-height: 90vh; overflow-y: auto; background: var(--surface);
-  border-radius: var(--r-xl); border: 1px solid var(--line); box-shadow: var(--sh-3); padding: var(--sp-6); }
-.modal-title { font-size: var(--fs-xl); font-weight: var(--fw-bold); letter-spacing: -.01em; margin-bottom: var(--sp-4); }
+.modal { width: 520px; max-width: 100%; max-height: 90vh; overflow-y: auto; background: var(--surface); border-radius: var(--r-xl); border: 1px solid var(--line); box-shadow: var(--sh-3); padding: var(--sp-6); }
+.modal-title { font-size: var(--fs-xl); font-weight: var(--fw-semibold); letter-spacing: -.01em; margin-bottom: var(--sp-4); }
 .modal-actions { display: flex; justify-content: flex-end; gap: var(--sp-2); margin-top: var(--sp-6); }
-.drawer { width: 460px; max-width: 100vw; height: 100%; background: var(--surface); border-left: 1px solid var(--line);
-  box-shadow: var(--sh-3); display: flex; flex-direction: column; animation: slide-in var(--t-med) var(--ease); }
+.drawer { width: 460px; max-width: 100vw; height: 100%; background: var(--surface); border-left: 1px solid var(--line); box-shadow: var(--sh-3); display: flex; flex-direction: column; animation: slide-in var(--t-med) var(--ease); }
 @keyframes slide-in { from { transform: translateX(24px); opacity: 0; } }
-.drawer-head { display: flex; align-items: center; justify-content: space-between; padding: var(--sp-5) var(--sp-6);
-  border-bottom: 1px solid var(--line); }
+.drawer-head { display: flex; align-items: center; justify-content: space-between; padding: var(--sp-5) var(--sp-6); border-bottom: 1px solid var(--line); }
 .drawer-body { flex: 1; overflow-y: auto; padding: var(--sp-5) var(--sp-6); display: grid; gap: var(--sp-4); align-content: start; }
-.drawer-foot { display: flex; gap: var(--sp-2); justify-content: flex-end; padding: var(--sp-4) var(--sp-6);
-  border-top: 1px solid var(--line); background: var(--surface-2); }
+.drawer-foot { display: flex; gap: var(--sp-2); justify-content: flex-end; padding: var(--sp-4) var(--sp-6); border-top: 1px solid var(--line); background: var(--surface-2); }
 .drawer-foot .left { margin-right: auto; }
 
-/* Notifications */
 .toasts { position: fixed; right: var(--sp-5); bottom: var(--sp-5); display: grid; gap: var(--sp-2); z-index: 200; }
-.toast { display: flex; align-items: center; gap: var(--sp-3); min-width: 260px; max-width: 420px;
-  padding: var(--sp-3) var(--sp-4); border-radius: var(--r-md); background: var(--glass-strong);
-  border: 1px solid var(--line); box-shadow: var(--sh-3); font-size: var(--fs-md); font-weight: var(--fw-medium);
+.toast { display: flex; align-items: center; gap: var(--sp-3); min-width: 260px; max-width: 420px; padding: var(--sp-3) var(--sp-4); border-radius: var(--r-md);
+  background: var(--glass-strong); border: 1px solid var(--line); box-shadow: var(--sh-3); font-size: var(--fs-md); font-weight: var(--fw-medium);
   backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); animation: slide-up var(--t-med) var(--ease); }
 @keyframes slide-up { from { transform: translateY(10px); opacity: 0; } }
 .toast.ok .ico { color: var(--ok); } .toast.error { border-color: rgba(180,35,24,.3); } .toast.error .ico { color: var(--danger); }
@@ -484,237 +446,316 @@ th[aria-sort="ascending"] .arrow, th[aria-sort="descending"] .arrow { opacity: 1
 /* Connexion */
 .login { min-height: 100vh; display: grid; place-items: center; padding: var(--sp-6); }
 .login-card { width: 420px; max-width: 100%; padding: var(--sp-8); }
-.login-brand { display: flex; align-items: center; gap: var(--sp-3); margin-bottom: var(--sp-6); }
-.login-list { display: grid; gap: var(--sp-2); max-height: 50vh; overflow-y: auto; margin: var(--sp-4) 0; }
-.user-btn { display: flex; align-items: center; gap: var(--sp-3); padding: var(--sp-3); border-radius: var(--r-md);
-  border: 1px solid var(--line); background: var(--surface); text-align: left; transition: all var(--t-fast); }
-.user-btn:hover { border-color: var(--brand-border); background: var(--brand-soft); transform: translateX(2px); }
+.login-brand { display: flex; align-items: center; gap: 14px; margin-bottom: var(--sp-8); }
+.login-brand .brand-name { font-size: 24px; }
+.login-list { display: grid; gap: 6px; max-height: 50vh; overflow-y: auto; margin: var(--sp-4) 0; }
+.user-btn { display: flex; align-items: center; gap: var(--sp-3); padding: 10px var(--sp-3); border-radius: var(--r-md); border: 1px solid var(--line); background: var(--surface); text-align: left; transition: border-color var(--t-fast), background var(--t-fast); }
+.user-btn:hover { border-color: var(--brand-border); background: var(--brand-soft); }
 
 /* Recherche globale */
-.cmdk { width: 640px; max-width: 100%; align-self: flex-start; margin-top: 10vh; background: var(--glass-strong);
-  border: 1px solid var(--line); border-radius: var(--r-xl); box-shadow: var(--sh-3); overflow: hidden;
-  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+.cmdk { width: 640px; max-width: 100%; align-self: flex-start; margin-top: 10vh; background: var(--glass-strong); border: 1px solid var(--line); border-radius: var(--r-xl); box-shadow: var(--sh-3); overflow: hidden; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
 .cmdk-input { display: flex; align-items: center; gap: var(--sp-3); padding: var(--sp-4) var(--sp-5); border-bottom: 1px solid var(--line); }
 .cmdk-input input { flex: 1; border: 0; background: transparent; font-size: var(--fs-lg); outline: none; }
 .cmdk-results { max-height: 420px; overflow-y: auto; padding: var(--sp-2); }
-.cmdk-group { font-size: var(--fs-xs); font-weight: var(--fw-semibold); color: var(--text-3); text-transform: uppercase;
-  letter-spacing: .08em; padding: var(--sp-3) var(--sp-3) var(--sp-1); }
-.cmdk-item { display: flex; width: 100%; align-items: center; gap: var(--sp-3); padding: 10px var(--sp-3);
-  border-radius: 10px; text-align: left; }
+.cmdk-group { font-size: var(--fs-sm); font-weight: var(--fw-semibold); color: var(--text-3); padding: var(--sp-3) var(--sp-3) var(--sp-1); }
+.cmdk-item { display: flex; width: 100%; align-items: center; gap: var(--sp-3); padding: 10px var(--sp-3); border-radius: var(--r-sm); text-align: left; }
 .cmdk-item:hover, .cmdk-item[aria-selected="true"] { background: var(--space-soft); }
-.kbd { font-size: var(--fs-xs); color: var(--text-3); border: 1px solid var(--line-strong); border-radius: 6px; padding: 1px 6px; background: var(--surface); }
+.kbd { font-size: var(--fs-xs); color: var(--text-3); border: 1px solid var(--line-strong); border-radius: 5px; padding: 0 6px; background: var(--surface); font-weight: var(--fw-medium); }
 
-/* Listes compactes (dashboard) */
-.list-row { display: flex; align-items: center; gap: var(--sp-3); padding: 11px var(--sp-5);
-  border-bottom: 1px solid var(--line); width: 100%; text-align: left; transition: background var(--t-fast); }
+.list-row { display: flex; align-items: center; gap: var(--sp-4); padding: 12px var(--sp-5); border-bottom: 1px solid var(--line); width: 100%; text-align: left; transition: background var(--t-fast); }
 .list-row:last-child { border-bottom: 0; }
-button.list-row:hover { background: var(--surface-2); }
+button.list-row:hover { background: var(--glass-strong); }
+.list-progress { width: 130px; flex-shrink: 0; }
 
 /* 7. MODULES =============================================================== */
-/* Kanban ------------------------------------------------------------------- */
+/* Marque des Gates : petit losange violet */
+.gate-mark { width: 10px; height: 10px; border-radius: 2px; transform: rotate(45deg); background: var(--gate); flex-shrink: 0; display: inline-block; }
+.gate-mark.sm { width: 8px; height: 8px; }
+
+/* Pipeline des projets (dashboard) ---------------------------------------------- */
+.pipe-scroll { overflow-x: auto; padding-bottom: var(--sp-3); margin: 0 calc(var(--sp-8) * -1); padding-left: var(--sp-8); padding-right: var(--sp-8); scroll-padding: var(--sp-8); }
+/* Fondu à droite : signale que le pipeline continue */
+.pipe-scroll { -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 56px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 56px), transparent); }
+.pipe-scroll:focus-visible { box-shadow: inset var(--focus); }
+.pipe { display: flex; gap: var(--sp-5); align-items: stretch; width: max-content; position: relative; }
+.pipe-phase { display: flex; flex-direction: column; gap: var(--sp-2); }
+.pipe-phase-head { display: flex; align-items: baseline; gap: var(--sp-2); padding: 0 2px 8px; border-bottom: 2px solid var(--line-strong); }
+.pipe-phase-id { font-weight: var(--fw-semibold); font-size: var(--fs-md); }
+.pipe-phase-sub { color: var(--text-3); font-size: var(--fs-sm); }
+.pipe-cols { display: flex; gap: 8px; flex: 1; }
+.pipe-col { width: 192px; flex-shrink: 0; display: flex; flex-direction: column; border-radius: var(--r-md); background: var(--surface-3); border: 1px solid transparent; }
+.pipe-col-head { display: flex; align-items: flex-start; gap: 8px; padding: 10px 10px 8px; min-height: 58px; }
+.pipe-col-n { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; font-size: 10.5px; font-weight: var(--fw-semibold); background: var(--surface); color: var(--text-3); flex-shrink: 0; }
+.pipe-col-name { display: block; font-size: var(--fs-sm); font-weight: var(--fw-semibold); line-height: 1.3; color: var(--text-2); }
+.pipe-col-opt { display: block; font-size: 10.5px; color: var(--text-3); margin-top: 2px; }
+.pipe-count { font-size: var(--fs-xs); font-weight: var(--fw-semibold); color: var(--text-3); padding-top: 2px; }
+.pipe-cards { display: grid; gap: 6px; padding: 0 6px 6px; align-content: start; flex: 1; min-height: 60px; }
+.pipe-empty { border: 1.5px dashed var(--line-strong); border-radius: var(--r-sm); min-height: 44px; opacity: .6; }
+/* Colonnes « Gate » : violet, bien distinctes */
+.pipe-col.is-gate { background: var(--gate-soft); border-color: var(--gate-border); }
+.pipe-col.is-gate .gate-mark { margin: 5px 3px 0; }
+.pipe-col.is-gate .pipe-col-name { color: var(--gate-ink); }
+.pipe-gate-no { display: block; font-size: var(--fs-xs); font-weight: var(--fw-bold); color: var(--gate); margin-bottom: 1px; }
+.pipe-col.is-gate .pipe-count { color: var(--gate-ink); }
+.pipe-col.is-gate .pipe-empty { border-color: var(--gate-border); }
+.pipe-col.is-gate .pipe-card { border-color: var(--gate-border); }
+.pipe-card { display: grid; gap: 6px; width: 100%; text-align: left; padding: 10px 11px; border-radius: var(--r-sm); background: var(--surface);
+  border: 1px solid var(--line); box-shadow: var(--sh-1); transition: box-shadow var(--t-fast), transform var(--t-fast), border-color var(--t-fast); }
+.pipe-card:hover { box-shadow: var(--sh-2), 0 4px 14px rgba(27,30,36,.08); transform: translateY(-1px); border-color: var(--line-strong); }
+.pipe-card.is-risk { box-shadow: inset 3px 0 0 var(--danger), var(--sh-1); }
+.pipe-card-top { display: flex; gap: 6px; align-items: flex-start; }
+.pipe-card-name { flex: 1; font-weight: var(--fw-semibold); font-size: var(--fs-md); line-height: 1.3; }
+.pipe-ver { font-size: 10.5px; font-weight: var(--fw-semibold); color: var(--text-3); border: 1px solid var(--line-strong); border-radius: 4px; padding: 0 4px; line-height: 16px; }
+.pipe-card-client { font-size: var(--fs-sm); color: var(--text-2); margin-top: -3px; }
+.pipe-card-custom { font-size: var(--fs-xs); color: var(--text-3); font-style: italic; }
+.pipe-card .progress { min-width: 0; }
+.pipe-card-foot { display: flex; justify-content: space-between; align-items: center; gap: 6px; font-size: var(--fs-sm); color: var(--text-3); }
+.pipe-card-foot .due { font-size: var(--fs-xs); }
+
+/* Kanban des tâches --------------------------------------------------------------- */
 .kanban { display: grid; grid-template-columns: repeat(3, minmax(260px, 1fr)); gap: var(--sp-4); align-items: start; overflow-x: auto; }
-.kb-col { border-radius: var(--r-lg); background: var(--glass); border: 1px solid var(--line); padding: var(--sp-3);
-  min-height: 360px; transition: background var(--t-fast), border-color var(--t-fast), box-shadow var(--t-fast);
-  backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur)); }
-.kb-col.is-over { border-color: var(--brand); background: var(--brand-soft); box-shadow: 0 0 0 3px rgba(255,150,32,.18); }
-.kb-col-head { display: flex; align-items: center; gap: var(--sp-2); padding: var(--sp-1) var(--sp-2) var(--sp-3); }
+.kb-col { border-radius: var(--r-lg); background: var(--surface-3); border: 1px solid transparent; padding: 10px; min-height: 360px; transition: background var(--t-fast), border-color var(--t-fast), box-shadow var(--t-fast); }
+.kb-col.is-over { border-color: var(--brand); background: var(--brand-soft); box-shadow: 0 0 0 3px rgba(255,150,32,.15); }
+.kb-col-head { display: flex; align-items: center; gap: var(--sp-2); padding: 2px 4px 10px; }
 .kb-col-title { font-size: var(--fs-md); font-weight: var(--fw-semibold); }
-.kb-count { margin-left: auto; font-size: var(--fs-xs); font-weight: var(--fw-semibold); color: var(--text-2);
-  background: var(--surface-3); border-radius: var(--r-pill); padding: 2px 9px; }
+.kb-count { margin-left: auto; font-size: var(--fs-xs); font-weight: var(--fw-semibold); color: var(--text-2); }
 .kb-dot { width: 9px; height: 9px; border-radius: 50%; }
 .kb-dot.todo { background: var(--neutral); } .kb-dot.in_progress { background: var(--info); } .kb-dot.done { background: var(--ok); }
-.kb-list { display: grid; gap: var(--sp-2); min-height: 40px; }
-.kb-card { position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md);
-  padding: var(--sp-3); box-shadow: var(--sh-1); cursor: grab; transition: transform var(--t-fast), box-shadow var(--t-fast), opacity var(--t-fast); }
-.kb-card:hover { box-shadow: var(--sh-2); transform: translateY(-1px); }
-.kb-card.is-dragging { opacity: .45; transform: rotate(1deg); }
+.kb-list { display: grid; gap: 8px; min-height: 40px; }
+.kb-card { position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md); padding: 12px; box-shadow: var(--sh-1); cursor: grab; transition: transform var(--t-fast), box-shadow var(--t-fast), opacity var(--t-fast); }
+.kb-card:hover { box-shadow: var(--sh-2), 0 4px 14px rgba(27,30,36,.08); transform: translateY(-1px); }
+.kb-card.is-dragging { opacity: .45; }
 .kb-card.is-saving { opacity: .7; }
 .kb-card.is-late { box-shadow: inset 3px 0 0 var(--danger), var(--sh-1); }
-.kb-title { font-size: var(--fs-md); font-weight: var(--fw-semibold); line-height: 1.35; margin-bottom: var(--sp-2);
-  text-align: left; display: block; width: 100%; }
-.kb-meta { display: flex; align-items: center; gap: var(--sp-2); flex-wrap: wrap; }
+.kb-title { font-size: var(--fs-md); font-weight: var(--fw-semibold); line-height: 1.35; margin-bottom: 8px; text-align: left; display: block; width: 100%; }
+.kb-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .kb-meta .avatar { margin-left: auto; }
 .kb-moves { position: absolute; top: 8px; right: 8px; display: flex; gap: 2px; opacity: 0; transition: opacity var(--t-fast); }
 .kb-card:hover .kb-moves, .kb-card:focus-within .kb-moves { opacity: 1; }
-.kb-moves button { width: 26px; height: 26px; border-radius: 7px; display: grid; place-items: center;
-  background: var(--surface-3); color: var(--text-2); }
+.kb-moves button { width: 26px; height: 26px; border-radius: var(--r-xs); display: grid; place-items: center; background: var(--surface-3); color: var(--text-2); }
 .kb-moves button:hover { background: var(--brand-soft); color: var(--brand-ink); }
-.kb-empty { text-align: center; color: var(--text-3); font-size: var(--fs-sm); padding: var(--sp-6) var(--sp-2);
-  border: 1.5px dashed var(--line-strong); border-radius: var(--r-md); }
+.kb-empty { text-align: center; color: var(--text-3); font-size: var(--fs-sm); padding: var(--sp-6) var(--sp-2); border: 1.5px dashed var(--line-strong); border-radius: var(--r-md); }
 
-/* Calendrier ---------------------------------------------------------------- */
-.cal-toolbar { display: flex; align-items: center; gap: var(--sp-3); flex-wrap: wrap; margin-bottom: var(--sp-3); }
-.cal-label { font-size: var(--fs-xl); font-weight: var(--fw-bold); letter-spacing: -.01em; min-width: 220px; }
+/* Calendrier ------------------------------------------------------------------------- */
+.cal-toolbar { display: flex; align-items: center; gap: var(--sp-3); flex-wrap: wrap; margin-bottom: var(--sp-2); }
+.cal-label { font-size: var(--fs-xl); font-weight: var(--fw-semibold); letter-spacing: -.01em; min-width: 220px; }
 .cal-label::first-letter { text-transform: uppercase; }
-.cal-legend { display: flex; gap: var(--sp-4); flex-wrap: wrap; font-size: var(--fs-sm); color: var(--text-2); margin: var(--sp-2) 0 var(--sp-3); }
-.cal-legend span { display: inline-flex; align-items: center; gap: 6px; }
-.cal-month { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); overflow: hidden; box-shadow: var(--sh-2); }
+.cal-legend { display: flex; gap: var(--sp-4); flex-wrap: wrap; align-items: center; font-size: var(--fs-sm); color: var(--text-2); margin: var(--sp-2) 0 var(--sp-3); }
+.cal-legend > span { display: inline-flex; align-items: center; gap: 6px; }
+.legend-swatch { width: 11px; height: 11px; border-radius: 3px; display: inline-block; }
+.cal-month { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); overflow: hidden; box-shadow: var(--sh-1); }
 .cal-dow { display: grid; grid-template-columns: repeat(7, minmax(0,1fr)); background: var(--surface-2); border-bottom: 1px solid var(--line); }
-.cal-dow div { padding: 9px; font-size: var(--fs-xs); font-weight: var(--fw-semibold); color: var(--text-3); text-transform: uppercase; letter-spacing: .06em; }
+.cal-dow div { padding: 9px 10px; font-size: var(--fs-sm); font-weight: var(--fw-semibold); color: var(--text-3); }
 .cal-weeks { display: grid; grid-template-columns: repeat(7, minmax(0,1fr)); }
-.cal-cell { min-height: 118px; padding: 6px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line);
-  display: flex; flex-direction: column; gap: 3px; min-width: 0; position: relative; }
+.cal-cell { min-height: 116px; padding: 6px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); display: flex; flex-direction: column; gap: 3px; min-width: 0; }
 .cal-cell:nth-child(7n) { border-right: 0; }
+.cal-cell.is-weekend { background: var(--surface-2); }
 .cal-cell.is-out { background: var(--surface-2); }
-.cal-cell.is-out .cal-num { color: var(--text-3); }
-.cal-cell.is-weekend { background: color-mix(in srgb, var(--surface-2) 60%, transparent); }
+.cal-cell.is-out .cal-num { color: var(--text-3); opacity: .7; }
 .cal-cell-head { display: flex; align-items: center; justify-content: space-between; }
 .cal-num { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-size: var(--fs-sm); font-weight: var(--fw-semibold); }
 .cal-num:hover { background: var(--surface-3); }
 .cal-cell.is-today .cal-num { background: var(--space); color: #fff; }
 [data-workspace="customer"] .cal-cell.is-today .cal-num { color: var(--on-brand); }
-.cal-add { opacity: 0; width: 24px; height: 24px; border-radius: 7px; display: grid; place-items: center; color: var(--text-3); }
+.cal-add { opacity: 0; width: 24px; height: 24px; border-radius: var(--r-xs); display: grid; place-items: center; color: var(--text-3); }
 .cal-cell:hover .cal-add, .cal-add:focus-visible { opacity: 1; }
 .cal-add:hover { background: var(--brand-soft); color: var(--brand-ink); }
-.cal-more { font-size: var(--fs-xs); font-weight: var(--fw-semibold); color: var(--text-2); text-align: left; padding: 1px 6px; border-radius: 6px; }
+.cal-more { display: inline-flex; align-items: center; gap: 4px; font-size: var(--fs-xs); font-weight: var(--fw-semibold); color: var(--text-2); text-align: left; padding: 2px 6px; border-radius: var(--r-xs); }
 .cal-more:hover { background: var(--surface-3); }
-.ev { display: flex; align-items: center; gap: 5px; width: 100%; min-width: 0; padding: 3px 7px; border-radius: 7px;
-  font-size: var(--fs-xs); font-weight: var(--fw-semibold); text-align: left; border: 1px solid transparent; line-height: 1.3; }
+.ev { display: flex; align-items: center; gap: 5px; width: 100%; min-width: 0; padding: 3px 7px; border-radius: var(--r-xs); font-size: var(--fs-xs); font-weight: var(--fw-semibold); text-align: left; line-height: 1.3; border-left: 3px solid currentColor; }
 .ev .ico { width: 12px; height: 12px; }
 .ev span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.ev:hover { filter: brightness(.97); border-color: currentColor; }
+.ev:hover { filter: brightness(.97); }
 .ev-task { color: var(--info); background: var(--info-soft); }
 .ev-late { color: var(--danger); background: var(--danger-soft); }
 .ev-done { color: var(--text-3); background: var(--surface-3); text-decoration: line-through; }
 .ev-project { color: var(--brand-ink); background: var(--brand-soft); }
 [data-workspace="pdqa"] .ev-project { color: var(--space-ink); background: var(--space-soft); }
-.ev-meeting { color: #6B3FA0; background: #F2ECFA; }
-body.theme-dark .ev-meeting { color: #C9A8F5; background: rgba(201,168,245,.12); }
-.legend-swatch { width: 12px; height: 12px; border-radius: 4px; display: inline-block; border: 1.5px solid currentColor; }
-
-.cal-week { display: grid; grid-template-columns: repeat(7, minmax(0,1fr)); background: var(--surface);
-  border: 1px solid var(--line); border-radius: var(--r-lg); overflow: hidden; box-shadow: var(--sh-2); min-height: 420px; }
+.ev-meeting { color: #3F5568; background: #E9EEF2; }
+body.theme-dark .ev-meeting { color: #A9BDCC; background: rgba(169,189,204,.12); }
+.legend-swatch.ev-task { background: var(--info); } .legend-swatch.ev-late { background: var(--danger); } .legend-swatch.ev-done { background: var(--line-strong); }
+.legend-swatch.ev-project { background: var(--space); } .legend-swatch.ev-meeting { background: #6E8396; }
+.cal-week { display: grid; grid-template-columns: repeat(7, minmax(0,1fr)); background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); overflow: hidden; box-shadow: var(--sh-1); min-height: 420px; }
 .cal-wcol { border-right: 1px solid var(--line); display: flex; flex-direction: column; min-width: 0; }
 .cal-wcol:last-child { border-right: 0; }
-.cal-whead { padding: var(--sp-3); border-bottom: 1px solid var(--line); background: var(--surface-2); text-align: left; }
-.cal-whead .dow { font-size: var(--fs-xs); color: var(--text-3); text-transform: uppercase; letter-spacing: .06em; font-weight: var(--fw-semibold); }
-.cal-whead .num { font-size: var(--fs-xl); font-weight: var(--fw-bold); }
+.cal-whead { padding: 10px 12px; border-bottom: 1px solid var(--line); background: var(--surface-2); text-align: left; }
+.cal-whead .dow { font-size: var(--fs-sm); color: var(--text-3); font-weight: var(--fw-medium); }
+.cal-whead .dow::first-letter { text-transform: uppercase; }
+.cal-whead .num { font-size: var(--fs-xl); font-weight: var(--fw-semibold); }
 .cal-wcol.is-today .cal-whead { background: var(--space-soft); }
 .cal-wcol.is-today .num { color: var(--space-ink); }
-.cal-wbody { padding: var(--sp-2); display: grid; gap: 4px; align-content: start; flex: 1; }
+.cal-wbody { padding: 8px; display: grid; gap: 4px; align-content: start; flex: 1; }
 .cal-wbody .ev { white-space: normal; padding: 6px 8px; }
 .cal-wbody .ev span { white-space: normal; }
-.cal-day { display: grid; gap: var(--sp-4); }
 .day-item { display: flex; align-items: center; gap: var(--sp-3); padding: var(--sp-3) var(--sp-4); border-bottom: 1px solid var(--line); }
 .day-item:last-child { border-bottom: 0; }
-.day-type { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; flex-shrink: 0; }
+.day-type { width: 34px; height: 34px; border-radius: var(--r-sm); display: grid; place-items: center; flex-shrink: 0; }
 
-/* One-pager (fiche projet client) ------------------------------------------ */
-.op-page { max-width: 1120px; margin: 0 auto; padding: var(--sp-6); background: var(--surface); }
-.op-header { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--sp-4);
-  padding-bottom: var(--sp-4); margin-bottom: var(--sp-4); border-bottom: 2px solid var(--brand); }
-.op-client, .op-proj { font-size: var(--fs-xl); font-weight: var(--fw-bold); }
-.op-sep { color: var(--text-3); }
-.op-sub { font-size: var(--fs-sm); color: var(--text-3); margin-top: 2px; }
-.op-meta { display: flex; gap: var(--sp-3); margin-top: var(--sp-3); flex-wrap: wrap; }
+/* One-pager -------------------------------------------------------------------------- */
+.op-page { max-width: 1180px; margin: 0 auto; padding: var(--sp-6) var(--sp-8); background: var(--surface); }
+.op-header { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--sp-6); padding-bottom: var(--sp-5); margin-bottom: var(--sp-5); border-bottom: 1px solid var(--line); position: relative; }
+.op-header::after { content: ""; position: absolute; left: 0; bottom: -1px; width: 64px; height: 2px; background: var(--brand); }
+.op-title { display: flex; flex-direction: column; gap: 2px; }
+.op-client { font-size: var(--fs-md); font-weight: var(--fw-semibold); color: var(--text-3); }
+.op-proj { font-size: var(--fs-2xl); font-weight: var(--fw-semibold); letter-spacing: -.02em; line-height: 1.15; }
+.op-meta { display: flex; gap: var(--sp-6); margin-top: var(--sp-4); flex-wrap: wrap; }
 .op-mf { display: flex; flex-direction: column; gap: 2px; }
-.op-ml { font-size: 10px; font-weight: var(--fw-semibold); color: var(--text-3); text-transform: uppercase; letter-spacing: .06em; }
-.op-mv { font-size: var(--fs-sm); font-weight: var(--fw-semibold); background: var(--surface-3); padding: 3px 9px; border-radius: 6px; }
-.op-rag-grp { display: flex; gap: var(--sp-4); }
-.op-rag-item { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: var(--fs-xs); font-weight: var(--fw-semibold); color: var(--text-2); }
-.op-rag-dot { width: 22px; height: 22px; border-radius: 50%; }
-.op-sec { border: 1px solid var(--line); border-radius: var(--r-md); padding: var(--sp-3) var(--sp-4); margin-bottom: var(--sp-3); }
-.op-sec-title { font-size: var(--fs-xs); font-weight: var(--fw-bold); text-transform: uppercase; letter-spacing: .08em; color: var(--text-2); margin-bottom: var(--sp-3); }
-.op-mid, .op-bottom { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-3); margin-bottom: var(--sp-3); }
-.op-txt { font-size: var(--fs-sm); color: var(--text-2); line-height: 1.7; white-space: pre-wrap; }
-.op-fin-lbl { font-size: 10px; font-weight: var(--fw-semibold); color: var(--text-3); text-transform: uppercase; }
-.op-fin-val { font-weight: var(--fw-bold); margin-bottom: var(--sp-2); }
-.chev-wrap { display: grid; gap: 4px; }
-.chev-row { display: flex; }
-.chev { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 64px;
-  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%, 10px 50%);
-  color: #fff; text-align: center; padding: 6px 16px 10px 20px; position: relative; }
-.chev.first { clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%); }
-.chev.cdone { background: #2E8B57; } .chev.ccurrent { background: #3A6ABF; } .chev.cwarning { background: #C0392B; } .chev.cupcoming { background: #8E979E; }
-.chev-name { font-size: 9px; font-weight: var(--fw-bold); line-height: 1.3; word-break: break-word; }
-.chev-week { font-size: 8px; text-decoration: underline; font-style: italic; margin-top: 1px; }
-.chev-prog { font-size: 8px; opacity: .9; margin-top: 1px; }
-.chev-bar { position: absolute; bottom: 5px; left: 18px; right: 14px; height: 3px; background: rgba(255,255,255,.3); border-radius: 2px; }
-.chev-fill { height: 100%; background: rgba(255,255,255,.9); border-radius: 2px; }
-.chev-legend { display: flex; gap: var(--sp-3); font-size: 10px; color: var(--text-3); margin-top: var(--sp-2); flex-wrap: wrap; }
-.chev-legend span { display: inline-flex; align-items: center; gap: 4px; }
-.chev-legend i { width: 9px; height: 9px; border-radius: 2px; display: inline-block; }
-.ver-pills { display: flex; gap: var(--sp-2); flex-wrap: wrap; margin-bottom: var(--sp-4); }
-.ver-pill { height: 30px; padding: 0 var(--sp-3); border-radius: var(--r-pill); font-size: var(--fs-sm); font-weight: var(--fw-semibold);
-  border: 1px solid var(--line-strong); background: var(--surface); color: var(--text-2); }
-.ver-pill[aria-pressed="true"] { background: var(--brand); color: var(--on-brand); border-color: var(--brand); }
+.op-ml { font-size: var(--fs-xs); color: var(--text-3); }
+.op-mv { font-size: var(--fs-md); font-weight: var(--fw-semibold); }
+.op-rag-grp { display: flex; gap: var(--sp-5); padding-top: 4px; }
+.op-rag-item { display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: var(--fs-xs); font-weight: var(--fw-medium); color: var(--text-2); }
+.op-rag-dot { width: 18px; height: 18px; border-radius: 50%; border: 2px solid transparent; }
+.rag-green { background: var(--step-done); } .rag-yellow { background: #D4A017; } .rag-red { background: var(--step-warning); }
+.rag-none { background: transparent; border-color: var(--line-strong); border-style: dashed; }
+.op-sec { border: 1px solid var(--line); border-radius: var(--r-md); padding: var(--sp-4) var(--sp-5); margin-bottom: var(--sp-4); }
+.op-sec-title { font-size: var(--fs-base); font-weight: var(--fw-semibold); margin-bottom: var(--sp-4); }
+.op-mid, .op-bottom { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4); }
+.op-mid .op-sec, .op-bottom .op-sec { margin-bottom: 0; }
+.op-mid { margin-bottom: var(--sp-4); }
+.op-txt { font-size: var(--fs-md); color: var(--text-2); line-height: 1.65; white-space: pre-wrap; }
+.op-fin { display: grid; grid-template-columns: minmax(150px, auto) 1fr; gap: var(--sp-5); align-items: center; }
+.op-fin-grid { display: grid; gap: var(--sp-3); }
+.op-fin-lbl { font-size: var(--fs-xs); color: var(--text-3); }
+.op-fin-val { font-weight: var(--fw-semibold); font-size: var(--fs-lg); font-variant-numeric: tabular-nums; }
+.op-fin-val .muted { font-size: var(--fs-sm); font-weight: var(--fw-regular); }
+.op-fin-chart { position: relative; height: 190px; min-width: 0; }
+
+/* Timeline : une rangée par phase */
+.tl-rows { display: grid; gap: 6px; }
+.tl-row { display: grid; grid-template-columns: 108px minmax(0, 1fr); gap: var(--sp-3); align-items: stretch; }
+.tl-row-head { display: flex; flex-direction: column; justify-content: center; padding-left: 10px; border-left: 2px solid var(--line-strong); }
+.tl-row-ph { font-size: var(--fs-xs); color: var(--text-3); }
+.tl-row-lbl { font-size: var(--fs-md); font-weight: var(--fw-semibold); }
+.chev-row { display: flex; list-style: none; gap: 3px; min-width: 0; }
+.chev { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; justify-content: center; gap: 3px; min-height: 66px;
+  padding: 8px 16px 8px 20px; position: relative; color: #fff; font-size: 11px; line-height: 1.25;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%, 10px 50%); }
+.chev.first { clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%); padding-left: 12px; }
+.chev-name { font-weight: var(--fw-semibold); overflow-wrap: break-word; hyphens: auto; -webkit-hyphens: auto; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+.chev-foot { display: flex; gap: 6px; font-size: 10px; opacity: .9; }
+.chev-bar { position: absolute; left: 20px; right: 16px; bottom: 6px; height: 3px; border-radius: 2px; background: rgba(255,255,255,.3); overflow: hidden; }
+.chev.first .chev-bar { left: 12px; }
+.chev-bar span { display: block; height: 100%; background: rgba(255,255,255,.95); }
+.chev.s-done { background: var(--step-done); }
+.chev.s-current { background: var(--step-current); }
+.chev.s-warning { background: var(--step-warning); }
+.chev.s-upcoming { background: var(--step-upcoming); color: var(--step-upcoming-ink); }
+.chev.s-upcoming .chev-bar { background: rgba(0,0,0,.08); }
+.chev.s-upcoming .chev-bar span { background: var(--text-3); }
+/* Gates : violet ; le statut reste lisible (texte + intensité) */
+.chev.is-gate { background: var(--gate); color: #fff; }
+.chev.is-gate.s-upcoming { background: var(--gate-soft); color: var(--gate-ink); box-shadow: inset 0 0 0 1.5px var(--gate-border); }
+.chev.is-gate.s-current { background: var(--gate-strong); }
+.chev.is-gate.s-warning { background: linear-gradient(180deg, var(--gate) 0 calc(100% - 5px), var(--step-warning) calc(100% - 5px)); }
+.chev-gate-no { font-size: 10px; font-weight: var(--fw-bold); letter-spacing: .02em; display: inline-flex; align-items: center; gap: 5px; }
+.chev-gate-no::before { content: ""; width: 7px; height: 7px; border-radius: 1px; transform: rotate(45deg); background: currentColor; }
+.chev-state { font-weight: var(--fw-semibold); }
+.chev-legend { display: flex; gap: var(--sp-4); font-size: var(--fs-xs); color: var(--text-3); margin-top: var(--sp-3); flex-wrap: wrap; padding-left: 120px; }
+.chev-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.chev-legend .lg { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+.lg.s-done { background: var(--step-done); } .lg.s-current { background: var(--step-current); } .lg.s-warning { background: var(--step-warning); }
+.lg.s-upcoming { background: var(--step-upcoming); box-shadow: inset 0 0 0 1px var(--line-strong); }
+.lg.is-gate { background: var(--gate); transform: rotate(45deg) scale(.85); }
+
+/* Organigramme */
+.org { display: flex; flex-direction: column; align-items: center; }
+.org-top { width: min(240px, 100%); }
+.org-line { width: 1px; height: 14px; background: var(--line-strong); }
+.org-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; width: 100%; padding-top: 14px; border-top: 1px solid var(--line-strong); position: relative; }
+.org-card { display: flex; flex-direction: column; gap: 2px; padding: 8px 10px; border-radius: var(--r-sm); background: var(--surface-2); border: 1px solid var(--line); box-shadow: inset 3px 0 0 var(--role); min-width: 0; }
+.org-card.is-lead { padding: 10px 14px; background: var(--surface); }
+.org-role { font-size: var(--fs-xs); color: var(--text-3); }
+.org-name { font-size: var(--fs-sm); font-weight: var(--fw-semibold); line-height: 1.3; overflow-wrap: anywhere; }
+.org-card.is-lead .org-name { font-size: var(--fs-md); }
+
+.ver-pills { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-bottom: var(--sp-4); }
+.ver-pill { height: 28px; padding: 0 12px; border-radius: var(--r-pill); font-size: var(--fs-sm); font-weight: var(--fw-semibold); border: 1px solid var(--line-strong); background: var(--surface); color: var(--text-2); }
+.ver-pill[aria-pressed="true"] { background: var(--text); color: var(--surface); border-color: var(--text); }
+.ver-pill[aria-pressed="true"] .muted { color: inherit; opacity: .7; }
 
 /* Éditeur de timeline */
-.tl-head, .tl-step { display: grid; grid-template-columns: minmax(0,2fr) 76px 64px 64px 130px 32px; gap: var(--sp-2); align-items: center; }
-.tl-head { padding: 0 var(--sp-3) var(--sp-2); font-size: 10px; font-weight: var(--fw-semibold); color: var(--text-3); text-transform: uppercase; letter-spacing: .06em; }
-.tl-step { padding: 6px var(--sp-3); border-radius: var(--r-sm); background: var(--surface-2); border: 1px solid var(--line); margin-bottom: 6px; }
-.tl-phase { font-size: 10px; color: var(--text-3); }
-.option-card { display: flex; align-items: center; gap: var(--sp-2); padding: var(--sp-2) var(--sp-3); border-radius: var(--r-sm);
-  border: 1px solid var(--line-strong); background: var(--surface); font-size: var(--fs-md); font-weight: var(--fw-medium); cursor: pointer; }
+.tl-head, .tl-step { display: grid; grid-template-columns: minmax(0,2fr) 70px 62px 70px 128px 30px; gap: var(--sp-2); align-items: center; }
+.tl-head { padding: 0 10px 6px; font-size: var(--fs-xs); font-weight: var(--fw-semibold); color: var(--text-3); }
+.tl-step { padding: 5px 10px; border-radius: var(--r-sm); margin-bottom: 4px; border: 1px solid transparent; }
+.tl-step:hover { background: var(--surface-2); }
+.tl-step.is-gate { background: var(--gate-soft); border-color: var(--gate-border); }
+.tl-name-cell { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.tl-name-cell .input { flex: 1; }
+.tl-mark { width: 12px; display: inline-grid; place-items: center; flex-shrink: 0; }
+.tl-phase { font-size: var(--fs-xs); color: var(--text-3); white-space: nowrap; }
+.option-card { display: flex; align-items: center; gap: var(--sp-2); padding: 7px 12px; border-radius: var(--r-sm); border: 1px solid var(--line-strong); background: var(--surface); font-size: var(--fs-md); font-weight: var(--fw-medium); cursor: pointer; }
 .option-card:has(input:checked) { border-color: var(--brand); background: var(--brand-soft); }
 .option-card input { accent-color: var(--brand); }
 
-/* Meeting minutes ----------------------------------------------------------- */
-.meeting-card { display: flex; align-items: center; gap: var(--sp-4); padding: var(--sp-4) var(--sp-5); width: 100%; text-align: left;
-  transition: transform var(--t-med) var(--ease), box-shadow var(--t-med); margin-bottom: var(--sp-3); }
-.meeting-card:hover { transform: translateY(-1px); box-shadow: var(--sh-3), var(--sh-inset); }
-.date-box { width: 56px; padding: var(--sp-2) 0; border-radius: var(--r-md); text-align: center; flex-shrink: 0;
-  background: var(--space-soft); color: var(--space-ink); border: 1px solid var(--space-border); }
-.date-box .d { font-size: var(--fs-xl); font-weight: var(--fw-bold); line-height: 1; }
-.date-box .m { font-size: 10px; font-weight: var(--fw-semibold); text-transform: uppercase; letter-spacing: .06em; margin-top: 3px; }
-.mv-header { padding: var(--sp-6); margin-bottom: var(--sp-4); border-radius: var(--r-lg); background: linear-gradient(120deg, var(--space-soft), transparent); border: 1px solid var(--space-border); }
-.mv-team { font-size: var(--fs-2xl); font-weight: var(--fw-bold); }
-.mv-section { margin-bottom: var(--sp-5); }
+/* Meeting minutes ---------------------------------------------------------------------- */
+.meeting-card { display: flex; align-items: center; gap: var(--sp-4); padding: var(--sp-4) var(--sp-5); width: 100%; text-align: left; margin-bottom: var(--sp-2); }
+.date-box { width: 54px; padding: 7px 0; border-radius: var(--r-md); text-align: center; flex-shrink: 0; background: var(--surface); border: 1px solid var(--line); }
+.date-box .d { font-size: var(--fs-xl); font-weight: var(--fw-semibold); line-height: 1; }
+.date-box .m { font-size: var(--fs-xs); color: var(--space-ink); font-weight: var(--fw-semibold); margin-top: 3px; }
+.mv-header { padding: var(--sp-5) var(--sp-6); margin-bottom: var(--sp-4); border-radius: var(--r-lg); background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--space); }
+.mv-team { font-size: var(--fs-xl); font-weight: var(--fw-semibold); }
+.mv-section { margin-bottom: var(--sp-4); }
 .mv-content { white-space: pre-wrap; line-height: 1.7; }
-.action-item { display: flex; align-items: center; gap: var(--sp-3); padding: var(--sp-3) var(--sp-4); border-bottom: 1px solid var(--line); }
+.action-item { display: flex; align-items: center; gap: var(--sp-3); padding: var(--sp-3) var(--sp-5); border-bottom: 1px solid var(--line); }
 .action-item:last-child { border-bottom: 0; }
-.action-num { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-size: var(--fs-xs); font-weight: var(--fw-bold);
-  background: var(--brand-soft); color: var(--brand-ink); flex-shrink: 0; }
-.mm-action-row { display: grid; grid-template-columns: minmax(0,2fr) minmax(0,1fr) 150px 32px; gap: var(--sp-2); align-items: center; margin-bottom: 6px; }
-.part-grid { display: flex; gap: var(--sp-2); flex-wrap: wrap; }
-.part-chip { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px 0 4px; border-radius: var(--r-pill);
-  border: 1px solid var(--line-strong); background: var(--surface); font-size: var(--fs-sm); font-weight: var(--fw-medium); color: var(--text-2); }
+.action-num { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-size: var(--fs-xs); font-weight: var(--fw-semibold); background: var(--surface-3); color: var(--text-2); flex-shrink: 0; }
+.mm-action-row { display: grid; grid-template-columns: minmax(0,2fr) minmax(0,1fr) 150px 30px; gap: var(--sp-2); align-items: center; margin-bottom: 6px; }
+.part-grid { display: flex; gap: 6px; flex-wrap: wrap; }
+.part-chip { display: inline-flex; align-items: center; gap: 7px; height: 32px; padding: 0 12px 0 4px; border-radius: var(--r-pill); border: 1px solid var(--line-strong); background: var(--surface); font-size: var(--fs-sm); font-weight: var(--fw-medium); color: var(--text-2); }
+.part-chip:not(:has(.avatar)) { padding-left: 12px; }
 .part-chip[aria-pressed="true"] { border-color: var(--space); background: var(--space-soft); color: var(--space-ink); }
 
-/* Analytiques --------------------------------------------------------------- */
+/* Analytiques ------------------------------------------------------------------------------ */
 .chart-box { position: relative; height: 220px; }
-.filter-chip { height: 28px; padding: 0 var(--sp-3); border-radius: var(--r-pill); font-size: var(--fs-sm); font-weight: var(--fw-semibold);
-  border: 1px solid var(--line-strong); background: var(--surface); color: var(--text-2); }
+.filter-chip { height: 28px; padding: 0 12px; border-radius: var(--r-pill); font-size: var(--fs-sm); font-weight: var(--fw-semibold); border: 1px solid var(--line-strong); background: var(--surface); color: var(--text-2); }
 .filter-chip[aria-pressed="true"] { border-color: var(--brand); background: var(--brand-soft); color: var(--brand-ink); }
 .bar-row { display: flex; align-items: center; gap: var(--sp-3); margin-bottom: var(--sp-3); font-size: var(--fs-md); }
-.bar-name { width: 140px; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.bar-track { flex: 1; height: 8px; border-radius: var(--r-pill); background: var(--surface-3); overflow: hidden; }
+.bar-name { width: 150px; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bar-track { flex: 1; height: 7px; border-radius: var(--r-pill); background: var(--surface-3); overflow: hidden; }
 .bar-fill { height: 100%; border-radius: inherit; }
-.bar-val { width: 40px; text-align: right; font-weight: var(--fw-semibold); font-variant-numeric: tabular-nums; }
-.launch-num { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-size: var(--fs-xs); font-weight: var(--fw-bold);
-  background: var(--brand-soft); color: var(--brand-ink); flex-shrink: 0; }
+.bar-val { width: 40px; text-align: right; font-weight: var(--fw-semibold); }
+.launch-num { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-size: var(--fs-xs); font-weight: var(--fw-semibold); background: var(--surface-3); color: var(--text-2); flex-shrink: 0; }
 
-/* Utilisateurs */
 .user-card { display: flex; align-items: center; gap: var(--sp-3); padding: var(--sp-4); }
 
-/* Fiche projet PDQA */
 .detail-grid { display: grid; grid-template-columns: minmax(0,2fr) minmax(280px,1fr); gap: var(--sp-4); align-items: start; }
-.kv { display: grid; grid-template-columns: 130px 1fr; gap: var(--sp-2) var(--sp-3); font-size: var(--fs-md); }
+.kv { display: grid; grid-template-columns: 120px 1fr; gap: 10px var(--sp-3); font-size: var(--fs-md); align-items: center; }
 .kv dt { color: var(--text-3); }
 .kv dd { color: var(--text); font-weight: var(--fw-medium); }
 
-/* 8. ACCESSIBILITÉ, RESPONSIVE, IMPRESSION ================================= */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
-}
+/* 8. ACCESSIBILITÉ, RESPONSIVE, IMPRESSION ===================================================== */
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
 @media (prefers-reduced-transparency: reduce) {
-  .card, .sidebar, .menu, .toast, .cmdk, .kb-col, .btn-glass { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; background: var(--surface) !important; }
+  .card, .sidebar, .menu, .toast, .cmdk, .btn-glass { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; background: var(--surface) !important; }
 }
-@media (max-width: 1180px) {
-  .g4 { grid-template-columns: repeat(2, minmax(0,1fr)); }
-  .dash-grid, .detail-grid { grid-template-columns: 1fr; }
-  .op-mid, .op-bottom { grid-template-columns: 1fr; }
+@media (max-width: 1240px) {
+  .dash-grid, .detail-grid, .op-mid, .op-bottom { grid-template-columns: 1fr; }
+  .chev { font-size: 10.5px; padding-right: 13px; }
+}
+@media (max-width: 1100px) {
+  .kpi-strip { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .kpi:nth-child(3) { border-left: 0; }
+  .kpi:nth-child(n+3) { border-top: 1px solid var(--line); }
+  .tl-row { grid-template-columns: 1fr; gap: 4px; }
+  .tl-row-head { flex-direction: row; justify-content: flex-start; gap: 8px; align-items: baseline; border-left: 0; padding-left: 0; }
+  .chev-row { flex-wrap: wrap; row-gap: 4px; }
+  .chev { flex: 1 1 calc(25% - 3px); }
+  .chev-legend { padding-left: 0; }
+  .org-grid { grid-template-columns: repeat(3, minmax(0,1fr)); }
 }
 @media (max-width: 900px) {
-  :root { --sidebar-w: 76px; }
-  .sidebar { padding: var(--sp-4) var(--sp-2); }
-  .brand-name, .nav-item span.txt, .nav-label, .ws-option .txt, .me-card .txt, .sidebar-footer .txt { display: none; }
+  :root { --sidebar-w: 72px; }
+  .sidebar { padding: var(--sp-4) var(--sp-2); align-items: center; }
+  .brand-name, .nav-item .txt, .nav-label, .ws-option .txt, .me-card .txt, .sidebar-footer .txt { display: none; }
+  .brand { padding: 0; } .ws-switch { width: 100%; } .ws-option { justify-content: center; } .ws-dot { margin-top: 0; }
   .nav-item { justify-content: center; }
-  .nav-count { position: absolute; top: 2px; right: 4px; }
+  .nav-count { position: absolute; top: 0; right: 0; }
   .page-header, .page-body { padding-left: var(--sp-4); padding-right: var(--sp-4); }
+  .pipe-scroll { margin: 0 calc(var(--sp-4) * -1); padding-left: var(--sp-4); padding-right: var(--sp-4); }
   .space-banner { padding-left: var(--sp-4); }
   .g3, .g2, .form-grid { grid-template-columns: 1fr; }
   .cal-cell { min-height: 90px; }
+  .list-progress { display: none; }
 }
 @media print {
   @page { size: A4 landscape; margin: 8mm; }
@@ -723,6 +764,7 @@ body.theme-dark .ev-meeting { color: #C9A8F5; background: rgba(201,168,245,.12);
   .sidebar, .space-banner, .page-header, .ver-pills, .no-print, .toasts { display: none !important; }
   .page-body { padding: 0 !important; }
   .op-page { box-shadow: none !important; border: 0 !important; padding: 0 !important; }
+  .chev { font-size: 9px; min-height: 54px; }
 }
 
 </style>
@@ -772,13 +814,15 @@ body.theme-dark .ev-meeting { color: #C9A8F5; background: rgba(201,168,245,.12);
 <script>
 'use strict';
 /* ==========================================================================
-   ProjectHub — 01 · Noyau
+   Jalon — 01 · Noyau
    Configuration, outils, dates, règles métier, permissions, accès aux données.
    Aucune fonction de ce fichier ne touche à l'affichage.
    ========================================================================== */
 
 /* ---------- 1. CONFIGURATION (modifier ici, nulle part ailleurs) ---------- */
 const CONFIG = {
+  appName: 'Jalon',                       // Nom affiché de l'application
+  appTagline: 'Projets Quality & R&D',
   supabaseUrl: 'https://dzsfalclzidskhijrelq.supabase.co',
   // Clé « anon » publique : elle est conçue pour être visible dans le navigateur.
   supabaseKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR6c2ZhbGNsemlkc2toaWpyZWxxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyOTA4ODEsImV4cCI6MjA5NDg2Njg4MX0.POXvXQLgZn8zc_qD-h7AEap_1ms2Qq0y0czb4WNJ4cs',
@@ -788,8 +832,8 @@ const CONFIG = {
   pdqaRoles: ['Quality & R&D Project Lead', 'PDQA Manager'],
 
   workspaces: {
-    customer: { id: 'customer', label: 'Customer Development Projects', short: 'Customer Development', tag: 'Clients' },
-    pdqa:     { id: 'pdqa',     label: 'PDQA · Internal & Cross-functional Projects', short: 'PDQA · Internal', tag: 'PDQA' },
+    customer: { id: 'customer', label: 'Customer Development Projects', short: 'Customer Development', hint: 'Projets clients', tag: 'Clients' },
+    pdqa:     { id: 'pdqa',     label: 'PDQA — Internal & Cross-functional Projects', short: 'PDQA Internal', hint: 'Projets internes et transverses', tag: 'PDQA' },
   },
 
   // Modules disponibles dans chaque espace (ordre = ordre du menu).
@@ -828,6 +872,50 @@ const CONFIG = {
     'Sales', 'Finance', 'Achats', 'RH', 'IT', 'HSE', 'Direction'],
   avatarColors: ['#3A4A6B', '#2E8B57', '#C0392B', '#C27C0E', '#7D4CAF', '#16877A'],
   dueSoonDays: 3,
+
+  /* Processus de développement client : 4 phases, 4 Gates.
+     Utilisé par le formulaire (modèle), le one-pager et la vue Pipeline du dashboard.
+     « industrialTest: true » = étape présente seulement « avec test industriel ». */
+  phases: [
+    { id: 'Phase 1', label: 'Étude' },
+    { id: 'Phase 2', label: 'Développement' },
+    { id: 'Phase 3', label: 'Validation' },
+    { id: 'Phase 4', label: 'Lancement' },
+  ],
+  timelineTemplate: [
+    { name: 'Gate 1 : GO / NO GO', days: 1, phase: 'Phase 1' },
+    { name: 'Réception du NPD Brief', days: 1, phase: 'Phase 1' },
+    { name: 'Étude de faisabilité', days: 7, phase: 'Phase 1' },
+    { name: 'Commande MP échantillons', days: 2, phase: 'Phase 1' },
+    { name: 'Réception matières premières – échantillon', days: 12, phase: 'Phase 1' },
+    { name: 'Création(s) dans le PLM + prévalidation', days: 12, phase: 'Phase 1' },
+    { name: 'Fabrication des échantillons', days: 7, phase: 'Phase 1', aliases: ['Manufacture des echantillons'] },
+    { name: 'Validation par le client', days: 14, phase: 'Phase 1' },
+    { name: 'Kick-off meeting', days: 7, phase: 'Phase 2' },
+    { name: 'Planification test industriel', days: 7, phase: 'Phase 2', industrialTest: true },
+    { name: 'Commande MP – test industriel', days: 7, phase: 'Phase 2', industrialTest: true },
+    { name: 'Réception matières premières – test industriel', days: 21, phase: 'Phase 2', industrialTest: true },
+    { name: 'Validation du test par le client', days: 7, phase: 'Phase 2', industrialTest: true },
+    { name: 'Gate 2 : Accord pricing + contrat', days: 7, phase: 'Phase 2' },
+    { name: 'Génération de la spec définitive + double check', days: 7, phase: 'Phase 3' },
+    { name: 'Création de la BoM sur Odoo', days: 7, phase: 'Phase 3' },
+    { name: 'Encodage de la commande client sur Odoo', days: 9, phase: 'Phase 3' },
+    { name: 'Réception des artworks du client', days: 14, phase: 'Phase 3' },
+    { name: 'Revue et approbation qualité des artworks', days: 6, phase: 'Phase 3' },
+    { name: 'Gate 3 : Demande de placement des P0', days: 7, phase: 'Phase 3' },
+    { name: 'Réception du BAT', days: 9, phase: 'Phase 3' },
+    { name: 'Réception de l\'approbation client', days: 9, phase: 'Phase 3', aliases: ['Reception de l approbation client'] },
+    { name: 'Gate 4 : Confirmation de la date de production', days: 7, phase: 'Phase 4' },
+    { name: 'Planification de la réunion première production', days: 5, phase: 'Phase 4' },
+    { name: 'Confirmation de la date de réception des RMs', days: 11, phase: 'Phase 4' },
+    { name: 'Première production', days: 71, phase: 'Phase 4' },
+  ],
+  stepStatuses: {
+    done:     { label: 'Terminé',  gateLabel: 'Franchie' },
+    current:  { label: 'En cours', gateLabel: 'En cours' },
+    warning:  { label: 'À risque', gateLabel: 'À risque' },
+    upcoming: { label: 'À venir',  gateLabel: 'À venir' },
+  },
 };
 
 /* ---------- 2. OUTILS GÉNÉRAUX ---------- */
@@ -926,6 +1014,58 @@ const Rules = {
   projectLeadName(p) {
     if (p.workspace === 'pdqa') return Store.user(p.pdqa_data?.lead_id)?.name || '';
     return (p.org_data?.lead || '').trim();
+  },
+};
+
+/* ---------- 4 bis. TIMELINE CLIENT ----------
+   Les étapes enregistrées dans les one-pagers sont reliées au modèle par leur nom
+   (sans tenir compte des accents, majuscules ni ponctuation). Les projets existants,
+   enregistrés avec des noms sans accents, sont donc reconnus automatiquement. */
+const Timeline = {
+  norm(name) {
+    return String(name || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
+      .replace(/[^a-z0-9]+/g, ' ').trim();
+  },
+  _index: null,
+  index() {
+    if (!Timeline._index) {
+      Timeline._index = new Map();
+      CONFIG.timelineTemplate.forEach((s, i) => [s.name, ...(s.aliases || [])].forEach(n => Timeline._index.set(Timeline.norm(n), i)));
+    }
+    return Timeline._index;
+  },
+  /** Position de l'étape dans le modèle, ou -1 pour une étape personnalisée. */
+  templateIndexOf(name) { const i = Timeline.index().get(Timeline.norm(name)); return i === undefined ? -1 : i; },
+  isGate(name) { return /^gate\s*\d/.test(Timeline.norm(name)); },
+  gateNumber(name) { const m = Timeline.norm(name).match(/^gate\s*(\d)/); return m ? Number(m[1]) : null; },
+  /** Libellé de la Gate sans le préfixe « Gate n : ». */
+  gateTitle(name) { return String(name || '').replace(/^\s*gate\s*\d\s*[:\-–]?\s*/i, ''); },
+  template(withIndustrialTest = true) {
+    return CONFIG.timelineTemplate.filter(s => withIndustrialTest || !s.industrialTest);
+  },
+  /** Complète les étapes d'un projet : libellé normalisé, phase, Gate, position dans le modèle. */
+  enrich(steps) {
+    let lastPhase = CONFIG.phases[0].id, lastIdx = -1;
+    return (Array.isArray(steps) ? steps : []).map(s => {
+      const idx = Timeline.templateIndexOf(s.name);
+      const tpl = idx >= 0 ? CONFIG.timelineTemplate[idx] : null;
+      const phase = s.phase || tpl?.phase || lastPhase;
+      lastPhase = phase;
+      if (idx >= 0) lastIdx = idx;
+      return { ...s, label: tpl ? tpl.name : (s.name || 'Étape sans nom'), phase, gate: Timeline.isGate(s.name),
+        templateIndex: idx, anchorIndex: idx >= 0 ? idx : Math.max(lastIdx, 0), custom: idx < 0,
+        status: CONFIG.stepStatuses[s.status] ? s.status : 'upcoming', prog: Math.max(0, Math.min(100, Number(s.prog) || 0)) };
+    });
+  },
+  /** Étape où se trouve le projet : la première « en cours / à risque », sinon la première non terminée. */
+  stage(project) {
+    const steps = Timeline.enrich(project.timeline_steps);
+    if (!steps.length) return { kind: 'unplanned', steps };
+    let i = steps.findIndex(s => s.status === 'current' || s.status === 'warning');
+    if (i < 0) i = steps.findIndex(s => s.status !== 'done');
+    if (i < 0) return { kind: 'launched', steps };
+    return { kind: 'step', step: steps[i], position: i, steps,
+      atRisk: steps.some(s => s.status === 'warning') };
   },
 };
 
@@ -1082,7 +1222,7 @@ function friendlyError(err) {
 }
 
 /* ==========================================================================
-   ProjectHub — 02 · Interface commune
+   Jalon — 02 · Interface commune
    Notifications, fenêtres, menus, navigation (routes), coque de l'application,
    connexion, thème, recherche globale, distribution centralisée des actions.
    ========================================================================== */
@@ -1290,17 +1430,17 @@ const Shell = {
     }).join('');
     const switcher = wsList.length > 1 ? `<div class="ws-switch" role="group" aria-label="Espace de travail">${wsList.map(ws => {
       const w = CONFIG.workspaces[ws];
-      return `<button class="ws-option" data-action="switch-ws" data-ws="${ws}" aria-current="${ws === App.ws}"><span class="ws-dot ${ws}"></span><span class="txt">${esc(w.short)}<small>${ws === 'pdqa' ? 'Projets internes & transverses' : 'Projets de développement clients'}</small></span></button>`;
+      return `<button class="ws-option" data-action="switch-ws" data-ws="${ws}" aria-current="${ws === App.ws}"><span class="ws-dot ${ws}"></span><span class="txt">${esc(w.short)}<small>${esc(w.hint)}</small></span></button>`;
     }).join('')}</div>` : '';
     document.querySelector('.sidebar').innerHTML = `
-      <div class="brand"><div class="brand-mark" aria-hidden="true">P</div><div class="brand-name">Project<span>Hub</span></div></div>
+      <div class="brand"><span class="brand-mark" aria-hidden="true"></span><span class="brand-name">${esc(CONFIG.appName)}</span></div>
       ${switcher}
-      <nav class="nav"><div class="nav-label">${esc(CONFIG.workspaces[App.ws].tag)}</div>${nav}
+      <nav class="nav">${nav}
         <div class="nav-label">Administration</div>
         <a class="nav-item" href="${Router.href(App.ws, 'users')}" ${App.page === 'users' ? 'aria-current="page"' : ''}>${icon('users')}<span class="txt">Utilisateurs</span></a>
       </nav>
       <div class="sidebar-footer">
-        <button class="btn btn-glass btn-sm" data-action="open-search" title="Recherche (Ctrl+K)">${icon('search', 'sm')}<span class="txt">Rechercher</span><span class="kbd txt" style="margin-left:auto">Ctrl K</span></button>
+        <button class="btn btn-glass btn-sm" data-action="open-search" title="Recherche (Ctrl+K)">${icon('search', 'sm')}<span class="txt">Rechercher</span><span class="kbd txt">Ctrl K</span></button>
         <div class="me-card">${avatar(me, 34)}<div class="grow txt"><div class="me-name truncate">${esc(me.name)}</div><div class="me-role truncate">${esc(me.role || '')}</div></div></div>
         <div class="row">
           <button class="btn btn-ghost btn-sm grow" data-action="toggle-theme" aria-label="Changer de thème">${icon(document.body.classList.contains('theme-dark') ? 'sun' : 'moon', 'sm')}<span class="txt">Thème</span></button>
@@ -1308,7 +1448,8 @@ const Shell = {
         </div>
       </div>`;
     const w = CONFIG.workspaces[App.ws];
-    document.getElementById('spaceBanner').innerHTML = `<span class="tag">${esc(w.tag)}</span><span>${esc(w.label)}</span>`;
+    document.getElementById('spaceBanner').innerHTML = `<span class="space-dot" aria-hidden="true"></span><span>${esc(w.label)}</span>`;
+    document.title = `${CONFIG.appName} — ${w.short}`;
     Shell.updateCounts();
   },
   updateCounts() {
@@ -1344,7 +1485,7 @@ const Login = {
     document.body.dataset.workspace = 'customer';
     const root = document.getElementById('root');
     root.innerHTML = `<div class="login"><div class="card login-card">
-      <div class="login-brand"><div class="brand-mark" aria-hidden="true">P</div><div><div class="brand-name">Project<span>Hub</span></div><div class="muted small">Quality & R&D · Gestion de projets</div></div></div>
+      <div class="login-brand"><span class="brand-mark lg" aria-hidden="true"></span><div><div class="brand-name">${esc(CONFIG.appName)}</div><div class="muted small">${esc(CONFIG.appTagline)}</div></div></div>
       <h1 class="modal-title" tabindex="-1">Qui êtes-vous ?</h1>
       <div class="login-list" id="loginList">${UI.loading()}</div>
       <button class="btn btn-glass" style="width:100%" data-action="new-user" data-from="login">${icon('plus', 'sm')}Ajouter un utilisateur</button>
@@ -1463,7 +1604,7 @@ function installGlobalHandlers() {
 }
 
 /* ==========================================================================
-   ProjectHub — 03 · Tâches
+   Jalon — 03 · Tâches
    Création/modification rapide (panneau latéral), liste des tâches, Kanban.
    ========================================================================== */
 
@@ -1804,7 +1945,7 @@ InputActions['kb-filter'] = ChangeActions['kb-filter'] = el => { App.view('kanba
 Routes.kanban = { module: 'kanban', render: v => Kanban.render(v) };
 
 /* ==========================================================================
-   ProjectHub — 04 · Calendrier (vues jour, semaine, mois)
+   Jalon — 04 · Calendrier (vues jour, semaine, mois)
 
    Règles d'affichage (une seule source, voir Calendar.events) :
    • Tâche     → à sa date d'échéance. « En retard » si non terminée et date passée.
@@ -1981,7 +2122,7 @@ ChangeActions['cal-toggle'] = el => { Calendar.state()[el.dataset.key] = el.chec
 Routes.calendar = { module: 'calendar', render: v => Calendar.render(v) };
 
 /* ==========================================================================
-   ProjectHub — 05 · Tableau de bord et projets
+   Jalon — 05 · Tableau de bord et projets
    Dashboard, liste des projets, fiche/one-pager client (logique conservée),
    formulaire client (timeline, finance, versions — logique conservée),
    formulaire et fiche des projets PDQA.
@@ -1989,45 +2130,58 @@ Routes.calendar = { module: 'calendar', render: v => Calendar.render(v) };
 
 /* ---------- Tableau de bord ---------- */
 const Home = {
+  defaults: { view: 'summary' },
   render(view) {
+    const ws = App.ws, me = Store.me, st = App.view('home', Home.defaults);
+    const pipeline = ws === 'customer' && st.view === 'pipeline';
+    const first = (me.name || '').split(' ')[0];
+    const toggle = ws === 'customer' ? `<div class="segmented" role="group" aria-label="Vue du tableau de bord">
+        <button data-action="home-view" data-view="summary" aria-pressed="${!pipeline}">Synthèse</button>
+        <button data-action="home-view" data-view="pipeline" aria-pressed="${pipeline}">Pipeline des projets</button></div>` : '';
+    view.innerHTML = pageHeader({ title: `Bonjour ${first}`, sub: Dates.long(Dates.today()),
+      actions: `<button class="btn btn-glass" data-action="new-task">${icon('plus', 'sm')}Tâche</button><button class="btn btn-primary" data-action="new-project">${icon('plus', 'sm')}Nouveau projet</button>` }) +
+      `<div class="page-body">${toggle ? `<div class="view-switch">${toggle}${pipeline ? '<span class="muted small grow">Chaque projet est placé à son étape actuelle, d\'après la dernière version de son one-pager.</span><span class="result-count" id="pipeCount"></span>' : ''}</div>` : ''}<div id="homeBody"></div></div>`;
+    if (pipeline) Pipeline.render(document.getElementById('homeBody')); else Home.summary(document.getElementById('homeBody'));
+  },
+  summary(box) {
     const ws = App.ws, me = Store.me, today = Dates.today();
     const projects = Store.projectsIn(ws), tasks = Store.tasksIn(ws);
     const active = projects.filter(p => p.status === 'active').length;
     const open = tasks.filter(t => !Rules.isTaskDone(t)).length;
     const overdue = tasks.filter(t => Rules.isTaskOverdue(t, today)).length;
     const lateProjects = projects.filter(p => Rules.isProjectLate(p, today)).length;
-    const kpi = (target, ic, label, value, foot, cls = '') => `<button class="kpi card ${cls}" data-action="dash-go" data-target="${target}">
-      <span class="kpi-top">${esc(label)}<span class="kpi-ico">${icon(ic)}</span></span><span class="kpi-value">${value}</span><span class="kpi-foot">${foot}</span></button>`;
+    const kpi = (target, label, value, foot, cls = '') => `<button class="kpi ${cls}" data-action="dash-go" data-target="${target}">
+      <span class="kpi-label">${esc(label)}</span><span class="kpi-value">${value}</span><span class="kpi-foot">${foot}</span></button>`;
     const recent = projects.slice().sort((a, b) => cmp(b.updated_at || b.created_at, a.updated_at || a.created_at)).slice(0, 6);
     const mine = sortTasks(tasks.filter(t => t.assignee_id === me.id && !Rules.isTaskDone(t)), 'due').slice(0, 7);
-    const first = (me.name || '').split(' ')[0];
     const deptCard = ws === 'pdqa' ? Home.departmentsCard(projects) : '';
-
-    view.innerHTML = pageHeader({ title: `Bonjour ${first}`, sub: `${Dates.long(today)} · ${CONFIG.workspaces[ws].label}`,
-      actions: `<button class="btn btn-glass" data-action="new-task">${icon('plus', 'sm')}Tâche</button><button class="btn btn-primary" data-action="new-project">${icon('plus', 'sm')}Nouveau projet</button>` }) +
-      `<div class="page-body stack">
-        <section class="grid g4" aria-label="Indicateurs">
-          ${kpi('projects-active', 'target', 'Projets actifs', active, `${lateProjects ? `${icon('alert', 'sm')}${lateProjects} en retard sur l'échéance` : 'Aucun en retard'}`)}
-          ${kpi('projects-all', 'folder', 'Projets au total', projects.length, `${projects.filter(p => p.status === 'done').length} terminés · ${projects.filter(p => p.status === 'paused').length} en pause`)}
-          ${kpi('tasks-open', 'list', 'Tâches ouvertes', open, `${tasks.filter(t => t.status === 'in_progress').length} en cours`)}
-          ${kpi('tasks-overdue', 'alert', 'Tâches en retard', overdue, overdue ? 'À traiter en priorité' : 'Tout est à jour', overdue ? 'alert' : 'calm')}
+    const stageOf = p => {
+      if (ws === 'pdqa') return esc(p.pdqa_data.department || 'Département non renseigné');
+      const sg = Timeline.stage(p);
+      return sg.kind === 'step' ? `${sg.step.gate ? '<span class="gate-mark sm" aria-hidden="true"></span>' : ''}${esc(sg.step.label)}` : sg.kind === 'launched' ? 'Toutes les étapes terminées' : 'Timeline non planifiée';
+    };
+    box.innerHTML = `<section class="kpi-strip card" aria-label="Indicateurs">
+        ${kpi('projects-active', 'Projets actifs', active, lateProjects ? `<span class="t-danger">${icon('alert', 'sm')}${lateProjects} en retard</span>` : 'Aucun en retard')}
+        ${kpi('projects-all', 'Projets au total', projects.length, `${projects.filter(p => p.status === 'done').length} terminés, ${projects.filter(p => p.status === 'paused').length} en pause`)}
+        ${kpi('tasks-open', 'Tâches ouvertes', open, `${tasks.filter(t => t.status === 'in_progress').length} en cours`)}
+        ${kpi('tasks-overdue', 'Tâches en retard', overdue, overdue ? 'À traiter en priorité' : 'Tout est à jour', overdue ? 'alert' : '')}
+      </section>
+      <div class="dash-grid mt-6">
+        <section class="card" aria-labelledby="recentH"><div class="card-head"><h2 class="card-title" id="recentH">Projets récents</h2>
+          <button class="btn btn-ghost btn-sm" data-action="go" data-page="projects">Tous les projets${icon('right', 'sm')}</button></div>
+          ${recent.length ? recent.map(p => `<button class="list-row" data-action="open-project" data-id="${esc(p.id)}">
+            <span class="grow"><span class="cell-title truncate" style="display:block">${esc(p.project_name)}</span>
+              <span class="cell-sub row-meta"><span>${esc(ws === 'pdqa' ? (Rules.projectLeadName(p) || 'Responsable à définir') : (p.client_name || 'Client non renseigné'))}</span><span class="truncate">${stageOf(p)}</span></span></span>
+            ${UI.projectStatusBadge(p.status)}<span class="list-progress">${Rules.projectProgress(p, tasks) === null ? '' : UI.progress(Rules.projectProgress(p, tasks))}</span></button>`).join('')
+            : UI.empty({ icon: 'folder', title: 'Aucun projet pour le moment', sub: 'Créez le premier projet de cet espace.', action: `<button class="btn btn-primary" data-action="new-project">${icon('plus', 'sm')}Nouveau projet</button>` })}
         </section>
-        <div class="dash-grid">
-          <section class="card" aria-labelledby="recentH"><div class="card-head"><h2 class="card-title" id="recentH">Projets récents</h2>
-            <button class="btn btn-ghost btn-sm" data-action="go" data-page="projects">Tous les projets${icon('right', 'sm')}</button></div>
-            ${recent.length ? recent.map(p => `<button class="list-row" data-action="open-project" data-id="${esc(p.id)}">
-              <span class="grow"><span class="cell-title truncate" style="display:block">${esc(p.project_name)}</span><span class="cell-sub">${esc(ws === 'pdqa' ? (p.pdqa_data.department || '—') : (p.client_name || '—'))} · ${esc(Rules.projectLeadName(p) || 'Chef de projet non défini')}</span></span>
-              ${UI.projectStatusBadge(p.status)}<span style="width:120px">${UI.progress(Rules.projectProgress(p, tasks))}</span></button>`).join('')
-              : UI.empty({ icon: 'folder', title: 'Aucun projet pour le moment', sub: 'Créez le premier projet de cet espace.', action: `<button class="btn btn-primary" data-action="new-project">${icon('plus', 'sm')}Nouveau projet</button>` })}
+        <div class="stack">
+          <section class="card" aria-labelledby="mineH"><div class="card-head"><h2 class="card-title" id="mineH">Mes tâches à traiter</h2>
+            <button class="btn btn-ghost btn-sm" data-action="dash-go" data-target="tasks-mine">Toutes${icon('right', 'sm')}</button></div>
+            ${mine.length ? mine.map(t => `<button class="list-row" data-action="edit-task" data-id="${esc(t.id)}"><span class="grow"><span class="cell-title truncate" style="display:block">${esc(t.title)}</span><span class="cell-sub truncate">${esc(Store.project(t.project_id)?.project_name || 'Sans projet')}</span></span>${UI.due(t)}</button>`).join('')
+              : `<div class="card-body muted small">Aucune tâche ouverte ne vous est assignée.</div>`}
           </section>
-          <div class="stack">
-            <section class="card" aria-labelledby="mineH"><div class="card-head"><h2 class="card-title" id="mineH">Mes tâches à traiter</h2>
-              <button class="btn btn-ghost btn-sm" data-action="dash-go" data-target="tasks-mine">Toutes${icon('right', 'sm')}</button></div>
-              ${mine.length ? mine.map(t => `<button class="list-row" data-action="edit-task" data-id="${esc(t.id)}"><span class="grow"><span class="cell-title truncate" style="display:block">${esc(t.title)}</span><span class="cell-sub truncate">${esc(Store.project(t.project_id)?.project_name || 'Sans projet')}</span></span>${UI.due(t)}</button>`).join('')
-                : `<div class="card-body muted small">Aucune tâche ouverte qui vous est assignée.</div>`}
-            </section>
-            ${deptCard}
-          </div>
+          ${deptCard}
         </div>
       </div>`;
   },
@@ -2040,6 +2194,99 @@ const Home = {
       <div class="card-body">${rows.length ? rows.map(([d, n]) => `<div class="bar-row"><span class="bar-name">${esc(d)}</span><span class="bar-track"><span class="bar-fill" style="display:block;width:${n / max * 100}%;background:var(--space)"></span></span><span class="bar-val">${n}</span></div>`).join('') : '<span class="muted small">Aucune initiative en cours.</span>'}</div></section>`;
   },
 };
+Actions['home-view'] = el => { App.view('home', Home.defaults).view = el.dataset.view; Home.render(document.getElementById('view')); };
+
+/* ---------- Pipeline des projets clients (Kanban des étapes) ----------
+   Colonnes = étapes du modèle de timeline client, regroupées par phase.
+   Chaque projet est placé à son étape actuelle, lue dans timeline_steps du projet,
+   c'est-à-dire la dernière version enregistrée de son one-pager. Lecture seule :
+   pour faire avancer un projet, on met à jour son one-pager. */
+const Pipeline = {
+  defaults: { status: 'open', client: '', lead: '', hideEmpty: false },
+  render(box) {
+    const st = App.view('pipeline', Pipeline.defaults);
+    const all = Store.projectsIn('customer');
+    const clients = uniqueSorted(all.map(p => p.client_name)), leads = uniqueSorted(all.map(Rules.projectLeadName));
+    box.innerHTML = `<div class="toolbar card">
+        <select class="select" data-change="pipe-filter" data-key="status" aria-label="Filtrer par statut">${UI.options([{ value: 'open', label: 'Actifs et en pause' }, { value: 'active', label: 'Actifs' }, { value: 'paused', label: 'En pause' }, { value: 'done', label: 'Terminés' }], st.status, { placeholder: 'Tous les statuts' })}</select>
+        <select class="select" data-change="pipe-filter" data-key="client" aria-label="Filtrer par client">${UI.options(clients.map(v => ({ value: v, label: v })), st.client, { placeholder: 'Tous les clients' })}</select>
+        <select class="select" data-change="pipe-filter" data-key="lead" aria-label="Filtrer par chef de projet">${UI.options(leads.map(v => ({ value: v, label: v })), st.lead, { placeholder: 'Tous les chefs de projet' })}</select>
+        <div class="segmented" role="group" aria-label="Aller à une phase">${CONFIG.phases.map(ph => `<button data-action="pipe-jump" data-phase="${esc(ph.id)}" title="${esc(ph.label)}">${esc(ph.id)}</button>`).join('')}</div>
+        <span class="spacer"></span>
+        <label class="check"><input type="checkbox" data-change="pipe-toggle" ${st.hideEmpty ? 'checked' : ''}>Masquer les étapes vides</label>
+      </div><div class="pipe-scroll" id="pipeBoard" tabindex="0" aria-label="Pipeline des projets, défilement horizontal"></div>`;
+    Pipeline.renderBoard();
+  },
+  projects() {
+    const st = App.view('pipeline', Pipeline.defaults);
+    return Store.projectsIn('customer').filter(p =>
+      (!st.status || (st.status === 'open' ? p.status !== 'done' : p.status === st.status)) &&
+      (!st.client || p.client_name === st.client) && (!st.lead || Rules.projectLeadName(p) === st.lead));
+  },
+  renderBoard() {
+    const board = document.getElementById('pipeBoard'); if (!board) return;
+    const st = App.view('pipeline', Pipeline.defaults);
+    const tpl = CONFIG.timelineTemplate;
+    const cols = { unplanned: [], launched: [] }; tpl.forEach((_, i) => { cols[i] = []; });
+    const list = Pipeline.projects();
+    list.forEach(p => {
+      const sg = Timeline.stage(p);
+      if (sg.kind === 'step') cols[sg.step.anchorIndex].push({ p, sg }); else cols[sg.kind].push({ p, sg });
+    });
+    Object.values(cols).forEach(c => c.sort((a, b) => cmp(Dates.key(a.p.launch_date), Dates.key(b.p.launch_date))));
+    const atRisk = list.filter(p => Timeline.stage(p).atRisk).length;
+    document.getElementById('pipeCount').textContent = `${list.length} projet${list.length > 1 ? 's' : ''}${atRisk ? `, ${atRisk} à risque` : ''}`;
+
+    // Colonnes visibles, groupées par phase.
+    const visible = i => !st.hideEmpty || cols[i].length;
+    const groups = [];
+    if (cols.unplanned.length) groups.push({ id: 'unplanned', label: 'Sans timeline', sub: 'À planifier', cols: [{ key: 'unplanned', title: 'Timeline non planifiée', items: cols.unplanned }] });
+    CONFIG.phases.forEach(ph => {
+      const c = tpl.map((s, i) => ({ s, i })).filter(({ s, i }) => s.phase === ph.id && visible(i))
+        .map(({ s, i }) => ({ key: i, n: i + 1, title: s.name, gate: Timeline.isGate(s.name), items: cols[i], optional: s.industrialTest }));
+      if (c.length) groups.push({ id: ph.id, label: ph.id, sub: ph.label, cols: c });
+    });
+    if (!st.hideEmpty || cols.launched.length) groups.push({ id: 'launched', label: 'Lancés', sub: 'Toutes les étapes terminées', cols: [{ key: 'launched', title: 'Timeline terminée', items: cols.launched }] });
+
+    if (!list.length) { board.innerHTML = `<div class="card">${UI.empty({ icon: 'layers', title: 'Aucun projet ne correspond aux filtres', sub: 'Modifiez les filtres du pipeline.' })}</div>`; return; }
+    board.innerHTML = `<div class="pipe">${groups.map(g => `<section class="pipe-phase" data-phase="${esc(g.id)}" aria-label="${esc(g.label)} ${esc(g.sub)}">
+        <header class="pipe-phase-head"><span class="pipe-phase-id">${esc(g.label)}</span><span class="pipe-phase-sub">${esc(g.sub)}</span></header>
+        <div class="pipe-cols">${g.cols.map(c => Pipeline.colHTML(c)).join('')}</div></section>`).join('')}</div>`;
+  },
+  colHTML(c) {
+    const title = c.gate ? `<span class="pipe-gate-no">Gate ${Timeline.gateNumber(c.title)}</span><span class="pipe-col-name">${esc(Timeline.gateTitle(c.title))}</span>`
+      : `<span class="pipe-col-name">${esc(c.title)}</span>`;
+    return `<div class="pipe-col ${c.gate ? 'is-gate' : ''}" role="list" aria-label="${esc(c.title)} : ${c.items.length} projet(s)">
+      <div class="pipe-col-head">${c.gate ? '<span class="gate-mark" aria-hidden="true"></span>' : c.n ? `<span class="pipe-col-n">${c.n}</span>` : ''}
+        <span class="grow">${title}${c.optional ? '<span class="pipe-col-opt">Avec test industriel</span>' : ''}</span><span class="pipe-count">${c.items.length}</span></div>
+      <div class="pipe-cards">${c.items.map(Pipeline.cardHTML).join('') || '<div class="pipe-empty" aria-hidden="true"></div>'}</div></div>`;
+  },
+  cardHTML({ p, sg }) {
+    const lead = Rules.projectLeadName(p);
+    const pct = Rules.projectProgress(p, []);
+    const step = sg.kind === 'step' ? sg.step : null;
+    const state = step ? CONFIG.stepStatuses[step.status] : null;
+    const late = Rules.isProjectLate(p);
+    return `<button class="pipe-card ${step?.status === 'warning' ? 'is-risk' : ''}" role="listitem" data-action="open-project" data-id="${esc(p.id)}"
+        title="Synchronisé avec la version ${esc(p.version || 'v1')} du one-pager${p.updated_at ? ', enregistrée le ' + esc(Dates.fmt(p.updated_at)) : ''}">
+      <span class="pipe-card-top"><span class="pipe-card-name">${esc(p.project_name)}</span><span class="pipe-ver">${esc(p.version || 'v1')}</span></span>
+      <span class="pipe-card-client">${esc(p.client_name || 'Client non renseigné')}</span>
+      ${step?.custom ? `<span class="pipe-card-custom">Étape : ${esc(step.label)}</span>` : ''}
+      ${step && step.status !== 'upcoming' ? `<span class="badge ${step.status === 'warning' ? 'b-danger' : 'b-info'}">${esc(state.label)}${step.prog ? ` · ${step.prog} %` : ''}</span>` : ''}
+      ${pct !== null ? UI.progress(pct) : ''}
+      <span class="pipe-card-foot">${lead ? `<span class="truncate">${esc(lead)}</span>` : '<span class="muted">Chef de projet à définir</span>'}
+        <span class="due ${late ? 'overdue' : ''}">${late ? icon('alert', 'sm') : icon('rocket', 'sm')}${esc(p.launch_date ? Dates.short(p.launch_date) : '—')}</span></span>
+      ${p.status === 'paused' ? '<span class="badge b-warn">En pause</span>' : ''}
+    </button>`;
+  },
+};
+Actions['pipe-jump'] = el => {
+  const target = [...document.querySelectorAll('.pipe-phase')].find(x => x.dataset.phase === el.dataset.phase);
+  const scroller = document.getElementById('pipeBoard');
+  if (target && scroller) scroller.scrollTo({ left: target.offsetLeft, behavior: 'smooth' });   // offsetLeft est relatif à .pipe
+};
+ChangeActions['pipe-filter'] = el => { App.view('pipeline', Pipeline.defaults)[el.dataset.key] = el.value; Pipeline.renderBoard(); };
+ChangeActions['pipe-toggle'] = el => { App.view('pipeline', Pipeline.defaults).hideEmpty = el.checked; Pipeline.renderBoard(); };
 Actions['dash-go'] = el => {
   const t = el.dataset.target;
   if (t.startsWith('projects')) { Object.assign(App.view('projects', ProjectsPage.defaults), ProjectsPage.defaults, { status: t === 'projects-active' ? 'active' : '' }); Router.go(App.ws, 'projects'); }
@@ -2202,78 +2449,81 @@ const OnePager = {
   },
   render(p) {
     const box = document.getElementById('opContent'); if (!box) return;
-    const od = p.org_data || {}, steps = p.timeline_steps || [];
-    const half = Math.ceil(steps.length / 2), row1 = steps.slice(0, half), row2 = steps.slice(half);
-    const cls = { done: 'cdone', current: 'ccurrent', warning: 'cwarning', upcoming: 'cupcoming' };
-    const chev = (s, first) => `<div class="chev ${cls[s.status] || 'cupcoming'} ${first ? 'first' : ''}"><div class="chev-name">${esc(s.name)}</div>${s.week ? `<div class="chev-week">${esc(s.week)}</div>` : ''}${s.prog > 0 ? `<div class="chev-prog">${Number(s.prog)}%</div>` : ''}<div class="chev-bar"><div class="chev-fill" style="width:${Number(s.prog) || 0}%"></div></div></div>`;
-    const timeline = !steps.length ? '<div class="muted small">Aucune étape définie</div>' :
-      `<div class="chev-wrap"><div class="chev-row">${row1.map((s, i) => chev(s, i === 0)).join('')}</div>${row2.length ? `<div class="chev-row">${row2.map((s, i) => chev(s, i === 0)).join('')}</div>` : ''}</div>
-      <div class="chev-legend"><span><i style="background:#2E8B57"></i>Terminé</span><span><i style="background:#3A6ABF"></i>En cours</span><span><i style="background:#C0392B"></i>À risque</span><span><i style="background:#8E979E"></i>À venir</span></div>`;
-    // Organigramme : 6 rôles fixes, chacun sa couleur, sans emoji.
-    const depts = [
-      { label: 'Opérations', name: od.operations, accent: '#C27C0E' }, { label: 'Technique', name: od.technique, accent: '#2F6FB5' },
-      { label: 'Sales', name: od.sales, accent: '#2E8B57' }, { label: 'Supply Chain', name: od.supply_chain, accent: '#7D4CAF' },
-      { label: 'Finance', name: od.finance, accent: '#C0392B' }];
-    const svgW = 520, svgH = 150, cardW = 92, cardH = 56, gap = 9, totalW = depts.length * (cardW + gap) - gap, startX = (svgW - totalW) / 2;
-    const lcW = 150, lcH = 50, lcX = (svgW - lcW) / 2, lcY = 4, cx = svgW / 2, deptY = lcY + lcH + 30;
-    const clip = (s, n) => { s = String(s || '—'); return s.length > n ? s.slice(0, n - 1) + '…' : s; };
-    let svg = '';
-    depts.forEach((d, i) => { const x = startX + i * (cardW + gap) + cardW / 2;
-      svg += `<path d="M${cx} ${lcY + lcH} V${lcY + lcH + 15} H${x} V${deptY}" fill="none" stroke="var(--line-strong)" stroke-width="1.5"/>`; });
-    svg += `<rect x="${lcX}" y="${lcY}" width="${lcW}" height="${lcH}" rx="10" fill="var(--surface-2)" stroke="#2E8B57" stroke-width="1.5"/><rect x="${lcX}" y="${lcY}" width="4" height="${lcH}" rx="2" fill="#2E8B57"/>
-      <text x="${lcX + 16}" y="${lcY + 21}" font-size="11" font-weight="700" fill="var(--text)">${esc(clip(od.lead, 20))}</text><text x="${lcX + 16}" y="${lcY + 36}" font-size="9" fill="var(--text-3)">Project Lead</text>`;
-    depts.forEach((d, i) => { const x = startX + i * (cardW + gap);
-      svg += `<rect x="${x}" y="${deptY}" width="${cardW}" height="${cardH}" rx="8" fill="var(--surface)" stroke="${d.accent}66" stroke-width="1.5"/><rect x="${x}" y="${deptY}" width="3" height="${cardH}" rx="1.5" fill="${d.accent}"/>
-        <text x="${x + 10}" y="${deptY + 22}" font-size="8" font-weight="700" fill="var(--text-3)">${esc(d.label)}</text><text x="${x + 10}" y="${deptY + 38}" font-size="9.5" font-weight="700" fill="var(--text)">${esc(clip(d.name, 13))}</text>`; });
-    const rag = { green: '#2E8B57', yellow: '#C27C0E', red: '#C0392B' };
-    const fin = (l, v, u) => `<div class="op-fin-lbl">${l}</div><div class="op-fin-val">${v !== null && v !== undefined && v !== '' ? esc(v) : '—'} ${u}</div>`;
-    box.innerHTML = `<div class="op-header"><div><div class="row" style="align-items:baseline"><span class="op-client">${esc(p.client_name || 'Client')}</span><span class="op-sep">—</span><span class="op-proj">${esc(p.project_name)}</span></div>
-        <div class="op-sub">One-Page Dashboard · édité le ${esc(Dates.fmt(Dates.today()))}</div>
-        <div class="op-meta"><div class="op-mf"><span class="op-ml">Début</span><span class="op-mv">${esc(Dates.fmt(p.start_date))}</span></div>
-          <div class="op-mf"><span class="op-ml">Lancement</span><span class="op-mv">${esc(Dates.fmt(p.launch_date))}</span></div>
-          <div class="op-mf"><span class="op-ml">Version</span><span class="op-mv">${esc(p.version || 'v1')}</span></div>
-          <div class="op-mf"><span class="op-ml">Priorité</span><span class="op-mv">${esc(CONFIG.projectPriorities[p.priority || 1])}</span></div>
-          <div class="op-mf"><span class="op-ml">Statut</span><span class="op-mv">${esc(CONFIG.projectStatuses[p.status]?.label || '—')}</span></div></div></div>
-      <div class="op-rag-grp">${[['Timeline', p.rag_timeline], ['Équipe', p.rag_team], ['Finance', p.rag_fin]].map(([l, v]) => `<div class="op-rag-item"><div class="op-rag-dot" style="background:${rag[v || 'green'] || rag.green}"></div>${l}</div>`).join('')}</div></div>
-      <div class="op-sec"><div class="op-sec-title">Timeline</div>${timeline}</div>
-      <div class="op-mid"><div class="op-sec" style="margin:0"><div class="op-sec-title">Équipe projet</div><div style="overflow-x:auto;text-align:center"><svg viewBox="0 0 ${svgW} ${svgH}" width="100%" style="max-width:${svgW}px;font-family:var(--font)" role="img" aria-label="Organigramme du projet">${svg}</svg></div></div>
-        <div class="op-sec" style="margin:0"><div class="op-sec-title">Finance</div><div class="row" style="align-items:flex-start;gap:var(--sp-4)"><div style="min-width:130px">
+    const od = p.org_data || {};
+    const rag = OnePager.rag(p);
+    const fin = (label, v, unit) => `<div class="op-fin-item"><div class="op-fin-lbl">${label}</div><div class="op-fin-val">${v !== null && v !== undefined && v !== '' ? `${esc(v)} ${unit}` : '<span class="muted">Non renseigné</span>'}</div></div>`;
+    const hasFin = [p.forecast_revenue, p.budget_revenue, p.forecast_margin, p.budget_margin].some(v => v !== null && v !== undefined && v !== '');
+    const meta = (label, value) => `<div class="op-mf"><span class="op-ml">${label}</span><span class="op-mv">${value}</span></div>`;
+    box.innerHTML = `<div class="op-header"><div class="grow">
+        <div class="op-title"><span class="op-client">${esc(p.client_name || 'Client non renseigné')}</span><span class="op-proj">${esc(p.project_name)}</span></div>
+        <div class="op-meta">${meta('Début', esc(Dates.fmt(p.start_date)))}${meta('Lancement', esc(Dates.fmt(p.launch_date)))}${meta('Version', esc(p.version || 'v1'))}${meta('Priorité', esc(CONFIG.projectPriorities[p.priority || 1]))}${meta('Statut', esc(CONFIG.projectStatuses[p.status]?.label || '—'))}</div></div>
+      <div class="op-rag-grp" aria-label="Météo du projet">${rag.map(r => `<div class="op-rag-item" title="${esc(r.title)}"><span class="op-rag-dot rag-${r.level}" aria-hidden="true"></span><span>${r.label}</span><span class="sr-only">${esc(r.title)}</span></div>`).join('')}</div></div>
+      <section class="op-sec"><h2 class="op-sec-title">Timeline</h2>${OnePager.timelineHTML(p.timeline_steps)}</section>
+      <div class="op-mid"><section class="op-sec"><h2 class="op-sec-title">Équipe projet</h2>${OnePager.orgHTML(od)}</section>
+        <section class="op-sec"><h2 class="op-sec-title">Finance</h2>${hasFin ? `<div class="op-fin"><div class="op-fin-grid">
           ${fin('Revenue forecast', p.forecast_revenue, 'k€')}${fin('Revenue budget', p.budget_revenue, 'k€')}${fin('Marge forecast', p.forecast_margin, '%')}${fin('Marge budget', p.budget_margin, '%')}</div>
-          <div class="grow" style="min-height:150px"><canvas id="finCanvas"></canvas></div></div></div></div>
-      <div class="op-bottom"><div class="op-sec" style="margin:0"><div class="op-sec-title">Risques</div><div class="op-txt">${esc(p.risks || 'Aucun risque enregistré')}</div></div>
-        <div class="op-sec" style="margin:0"><div class="op-sec-title">Actions</div><div class="op-txt">${esc(p.actions || 'Aucune action enregistrée')}</div></div></div>`;
+          <div class="op-fin-chart"><canvas id="finCanvas" aria-label="Graphique revenue et marge" role="img"></canvas></div></div>` : '<p class="muted small">Aucune donnée financière. Complétez-les via « Modifier ».</p>'}</section></div>
+      <div class="op-bottom"><section class="op-sec"><h2 class="op-sec-title">Risques</h2><div class="op-txt">${p.risks ? esc(p.risks) : '<span class="muted">Aucun risque enregistré.</span>'}</div></section>
+        <section class="op-sec"><h2 class="op-sec-title">Actions</h2><div class="op-txt">${p.actions ? esc(p.actions) : '<span class="muted">Aucune action enregistrée.</span>'}</div></section></div>`;
     const canvas = document.getElementById('finCanvas');
     if (OnePager.chart) { OnePager.chart.destroy(); OnePager.chart = null; }
     if (canvas && window.Chart && (p.forecast_revenue || p.budget_revenue)) {
       const css = getComputedStyle(document.body), muted = css.getPropertyValue('--text-3').trim() || '#6E717B', grid = css.getPropertyValue('--line').trim() || 'rgba(0,0,0,.08)';
+      const ink = css.getPropertyValue('--text-2').trim() || '#4A4D57';
       OnePager.chart = new Chart(canvas.getContext('2d'), {
         data: { labels: ['Forecast', 'Budget'], datasets: [
-          { type: 'bar', label: 'Revenue (k€)', data: [p.forecast_revenue || 0, p.budget_revenue || 0], backgroundColor: 'rgba(255,150,32,.7)', borderRadius: 4, yAxisID: 'y' },
-          { type: 'line', label: 'Marge %', data: [p.forecast_margin || 0, p.budget_margin || 0], borderColor: '#3A4A6B', backgroundColor: '#3A4A6B', pointRadius: 5, yAxisID: 'y2', tension: 0 }] },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { size: 10 }, boxWidth: 10, color: muted } } },
-          scales: { y: { beginAtZero: true, position: 'left', ticks: { font: { size: 10 }, color: muted }, grid: { color: grid } },
+          { type: 'bar', label: 'Revenue (k€)', data: [p.forecast_revenue || 0, p.budget_revenue || 0], backgroundColor: 'rgba(255,150,32,.8)', borderRadius: 4, maxBarThickness: 48, yAxisID: 'y' },
+          { type: 'line', label: 'Marge %', data: [p.forecast_margin || 0, p.budget_margin || 0], borderColor: ink, backgroundColor: ink, pointRadius: 4, yAxisID: 'y2', tension: 0 }] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { size: 11, family: 'IBM Plex Sans' }, boxWidth: 10, color: muted } } },
+          scales: { x: { ticks: { color: muted }, grid: { display: false } }, y: { beginAtZero: true, position: 'left', ticks: { font: { size: 10 }, color: muted }, grid: { color: grid } },
             y2: { beginAtZero: true, position: 'right', grid: { drawOnChartArea: false }, ticks: { callback: v => v + '%', font: { size: 10 }, color: muted }, max: 60 } } },
       });
     }
+  },
+
+  /** Météo : Timeline calculée depuis les étapes et l'échéance ; Équipe et Finance si renseignées en base. */
+  rag(p) {
+    const steps = Timeline.enrich(p.timeline_steps);
+    const late = Rules.isProjectLate(p), risk = steps.some(s => s.status === 'warning');
+    const tl = !steps.length ? { level: 'none', title: 'Timeline : non planifiée' } : late || risk
+      ? { level: 'red', title: `Timeline : ${late ? 'date de lancement dépassée' : 'étape à risque'}` } : { level: 'green', title: 'Timeline : dans les temps' };
+    const map = { green: 'conforme', yellow: 'à surveiller', red: 'critique' };
+    const field = (v, name) => (map[v] ? { level: v, title: `${name} : ${map[v]}` } : { level: 'none', title: `${name} : non évalué` });
+    return [{ label: 'Timeline', ...tl }, { label: 'Équipe', ...field(p.rag_team, 'Équipe') }, { label: 'Finance', ...field(p.rag_fin, 'Finance') }];
+  },
+
+  /** Timeline en une rangée par phase ; les 4 Gates ont leur propre couleur. */
+  timelineHTML(rawSteps) {
+    const steps = Timeline.enrich(rawSteps);
+    if (!steps.length) return '<p class="muted small">Aucune étape définie. Ajoutez la timeline via « Modifier ».</p>';
+    const rows = CONFIG.phases.map(ph => ({ ph, steps: steps.filter(s => s.phase === ph.id) })).filter(r => r.steps.length);
+    const other = steps.filter(s => !CONFIG.phases.some(ph => ph.id === s.phase));
+    if (other.length) rows.push({ ph: { id: 'Autres', label: 'Étapes' }, steps: other });
+    const chev = (s, first) => {
+      const st = CONFIG.stepStatuses[s.status];
+      const name = s.gate ? `<span class="chev-gate-no">Gate ${Timeline.gateNumber(s.name)}</span><span class="chev-name">${esc(Timeline.gateTitle(s.label))}</span>` : `<span class="chev-name">${esc(s.label)}</span>`;
+      return `<li class="chev s-${s.status} ${s.gate ? 'is-gate' : ''} ${first ? 'first' : ''}" title="${esc(s.label)} — ${esc(st.label)}${s.week ? ', ' + esc(s.week) : ''}">
+        ${name}<span class="chev-foot">${s.week ? `<span>${esc(s.week)}</span>` : ''}${s.gate ? `<span class="chev-state">${esc(st.gateLabel)}</span>` : s.prog > 0 && s.prog < 100 ? `<span>${s.prog} %</span>` : ''}</span>
+        <span class="sr-only">${esc(st.label)}</span>${s.prog > 0 && s.status !== 'done' ? `<span class="chev-bar"><span style="width:${s.prog}%"></span></span>` : ''}</li>`;
+    };
+    return `<div class="tl-rows">${rows.map(r => `<div class="tl-row"><div class="tl-row-head"><span class="tl-row-ph">${esc(r.ph.id)}</span><span class="tl-row-lbl">${esc(r.ph.label)}</span></div>
+        <ol class="chev-row">${r.steps.map((s, i) => chev(s, i === 0)).join('')}</ol></div>`).join('')}</div>
+      <div class="chev-legend"><span><i class="lg s-done"></i>Terminé</span><span><i class="lg s-current"></i>En cours</span><span><i class="lg s-warning"></i>À risque</span><span><i class="lg s-upcoming"></i>À venir</span><span><i class="lg is-gate"></i>Gate (décision)</span></div>`;
+  },
+
+  /** Organigramme en HTML : les noms s'affichent en entier. Six rôles fixes, chacun sa couleur. */
+  orgHTML(od) {
+    const roles = [['operations', 'Opérations', '#C27C0E'], ['technique', 'Technique', '#2F6FB5'], ['sales', 'Sales', '#2E8B57'], ['supply_chain', 'Supply Chain', '#7D4CAF'], ['finance', 'Finance', '#C0392B']];
+    const card = (role, name, color, lead) => `<div class="org-card ${lead ? 'is-lead' : ''}" style="--role:${color}"><span class="org-role">${role}</span><span class="org-name ${name ? '' : 'muted'}">${esc(name || 'À désigner')}</span></div>`;
+    return `<div class="org"><div class="org-top">${card('Project Lead', od.lead, '#2E8B57', true)}</div><div class="org-line" aria-hidden="true"></div>
+      <div class="org-grid">${roles.map(([k, l, c]) => card(l, od[k], c)).join('')}</div></div>`;
   },
 };
 Actions['show-version'] = el => OnePager.showVersion(el);
 Actions.print = () => window.print();
 
 /* ---------- Formulaire des projets clients (logique d'origine conservée) ---------- */
-const TIMELINE_TEMPLATE = {
-  withIndustrialTest: [
-    ['Gate 1 : GO / NO GO', 1, 'Phase 1'], ['Reception du NPD Brief', 1, 'Phase 1'], ['Etude de faisabilite', 7, 'Phase 1'], ['Commande MP echantillons', 2, 'Phase 1'],
-    ['Reception matieres premieres - echantillon', 12, 'Phase 1'], ['Creation(s) dans le PLM + Prevalidation', 12, 'Phase 1'], ['Manufacture des echantillons', 7, 'Phase 1'], ['Validation par le client', 14, 'Phase 1'],
-    ['Kick-off Meeting', 7, 'Phase 2'], ['Planification test industriel', 7, 'Phase 2'], ['Commande MP - Test industriel', 7, 'Phase 2'], ['Reception matieres premieres - Test industriel', 21, 'Phase 2'],
-    ['Validation du test par le client', 7, 'Phase 2'], ['Gate 2 : Accord pricing + contrat', 7, 'Phase 2'],
-    ['Generation de la spec definitive + double check', 7, 'Phase 3'], ['Creation de la BoM sur Odoo', 7, 'Phase 3'], ['Encodage de la commande client sur Odoo', 9, 'Phase 3'], ['Reception des artworks du client', 14, 'Phase 3'],
-    ['Revue et approbation qualite des Artworks', 6, 'Phase 3'], ['Gate 3 : Demande de placement des P0', 7, 'Phase 3'], ['Reception du BAT', 9, 'Phase 3'], ["Reception de l approbation client", 9, 'Phase 3'],
-    ['Gate 4 : Confirmation de la date de production', 7, 'Phase 4'], ['Planification de la reunion premiere production', 5, 'Phase 4'], ['Confirmation de la date de reception des RMs', 11, 'Phase 4'], ['Premiere production', 71, 'Phase 4']],
-  // Sans test industriel : les 4 étapes spécifiques au test de la phase 2 sont retirées.
-  withoutIndustrialSkip: ['Planification test industriel', 'Commande MP - Test industriel', 'Reception matieres premieres - Test industriel', 'Validation du test par le client'],
-};
-
+/* Le modèle de timeline est défini dans CONFIG.timelineTemplate (fichier 01-core). */
 const ProjectForm = {
   render(view, proj) {
     const preset = App.formPreset; App.formPreset = null;
@@ -2320,22 +2570,23 @@ const ProjectForm = {
           <section class="card solid card-pad"><h2 class="section-title"><label for="f_actions">Actions</label></h2><textarea class="textarea" id="f_actions" rows="5" placeholder="1. Action en cours">${esc(p?.actions || '')}</textarea></section></div>
       </div>`;
     const steps = p?.timeline_steps || [];
-    if (steps.length) { steps.forEach(s => ProjectForm.addStep(s.name, s.week, s.prog, s.status, s.days || 0, s.phase || '')); ProjectForm.updateTotal(); }
+    // Les étapes reconnues reprennent le libellé du modèle (accents corrigés) ; les étapes personnalisées restent telles quelles.
+    if (steps.length) { Timeline.enrich(steps).forEach(s => ProjectForm.addStep(s.label, s.week, s.prog, s.status, s.days || 0, s.phase || '')); ProjectForm.updateTotal(); }
     else ProjectForm.applyTemplate(true);
     document.getElementById('f_start').addEventListener('change', ProjectForm.autoWeeks);
     document.getElementById('tlSteps').addEventListener('input', e => { if (e.target.classList.contains('tl-days')) ProjectForm.updateTotal(); });
   },
   applyTemplate(withTest) {
-    const skip = withTest ? [] : TIMELINE_TEMPLATE.withoutIndustrialSkip;
     document.getElementById('tlSteps').innerHTML = '';
-    TIMELINE_TEMPLATE.withIndustrialTest.filter(([n]) => !skip.includes(n)).forEach(([name, days, phase]) => ProjectForm.addStep(name, '', 0, 'upcoming', days, phase));
+    Timeline.template(withTest).forEach(s => ProjectForm.addStep(s.name, '', 0, 'upcoming', s.days, s.phase));
     ProjectForm.updateTotal(); ProjectForm.autoWeeks();
   },
   addStep(name = '', week = '', prog = 0, status = 'upcoming', days = 0, phase = '') {
     const row = document.createElement('div');
-    row.className = 'tl-step'; row.dataset.phase = phase || '';
+    row.className = 'tl-step' + (Timeline.isGate(name) ? ' is-gate' : ''); row.dataset.phase = phase || '';
     const opts = [['done', 'Terminé'], ['current', 'En cours'], ['warning', 'À risque'], ['upcoming', 'À venir']];
-    row.innerHTML = `<div><input class="input input-sm tl-name" value="${esc(name)}" placeholder="Nom de l'étape" aria-label="Nom de l'étape">${phase ? `<div class="tl-phase">${esc(phase)}</div>` : ''}</div>
+    const ph = CONFIG.phases.find(x => x.id === phase);
+    row.innerHTML = `<div class="tl-name-cell"><span class="tl-mark">${Timeline.isGate(name) ? '<span class="gate-mark" title="Gate"></span><span class="sr-only">Gate</span>' : ''}</span><input class="input input-sm tl-name" value="${esc(name)}" placeholder="Nom de l'étape" aria-label="Nom de l'étape">${ph ? `<span class="tl-phase">${esc(ph.id)}</span>` : ''}</div>
       <input class="input input-sm tl-week" value="${esc(week)}" placeholder="S6" aria-label="Semaine">
       <input class="input input-sm tl-prog" type="number" min="0" max="100" value="${Number(prog) || 0}" aria-label="Avancement en %">
       <input class="input input-sm tl-days" type="number" min="0" value="${Number(days) || 0}" aria-label="Durée en jours">
@@ -2472,10 +2723,10 @@ const PdqaProject = {
       crumbs: [{ page: 'projects', label: 'Projets' }, { label: p.project_name }],
       actions: `<button class="btn btn-glass" data-action="delete-project" data-id="${esc(p.id)}">${icon('trash', 'sm')}Supprimer</button><button class="btn btn-primary" data-action="edit-project" data-id="${esc(p.id)}">${icon('edit', 'sm')}Modifier</button>` }) +
       `<div class="page-body"><div class="detail-grid"><div>
-          <section class="card card-pad"><h2 class="section-title">Description</h2><p class="op-txt" style="font-size:var(--fs-md)">${esc(p.description || 'Aucune description.')}</p></section>
-          ${projectTasksHTML(p)}
+          <section class="card card-pad"><h2 class="section-title">Description</h2><p class="op-txt" style="font-size:var(--fs-md)">${p.description ? esc(p.description) : '<span class="muted">Aucune description. Ajoutez-en une via « Modifier ».</span>'}</p></section>
+          <section class="card card-pad mt-4"><h2 class="section-title">Avancement</h2>${UI.progress(progress)}<p class="small muted mt-4">${tasks.filter(Rules.isTaskDone).length} tâche(s) terminée(s) sur ${tasks.length}${tasks.filter(t => Rules.isTaskOverdue(t)).length ? ` · <span style="color:var(--danger);font-weight:600">${tasks.filter(t => Rules.isTaskOverdue(t)).length} en retard</span>` : ''}</p></section>
         </div><aside class="stack">
-          <section class="card card-pad"><h2 class="section-title">Avancement</h2>${UI.progress(progress)}<p class="small muted mt-4">${tasks.filter(Rules.isTaskDone).length} tâche(s) terminée(s) sur ${tasks.length}${tasks.filter(t => Rules.isTaskOverdue(t)).length ? ` · <span style="color:var(--danger);font-weight:600">${tasks.filter(t => Rules.isTaskOverdue(t)).length} en retard</span>` : ''}</p></section>
+
           <section class="card card-pad"><h2 class="section-title">Informations</h2><dl class="kv">
             <dt>Statut</dt><dd>${UI.projectStatusBadge(p.status)}${Rules.isProjectLate(p) ? ' <span class="badge b-danger">En retard</span>' : ''}</dd>
             <dt>Priorité</dt><dd>${UI.projectPriority(p.priority)}</dd>
@@ -2485,14 +2736,14 @@ const PdqaProject = {
             <dt>Partenaires</dt><dd>${(d.partners || []).length ? d.partners.map(x => `<span class="chip">${esc(x)}</span>`).join(' ') : '—'}</dd>
             <dt>Contributeurs</dt><dd>${people.length ? people.map(u => `<div class="person" style="margin-bottom:4px">${avatar(u, 22)}${esc(u.name)}</div>`).join('') : '—'}</dd>
           </dl></section>
-        </aside></div></div>`;
+        </aside></div>${projectTasksHTML(p)}</div>`;
   },
 };
 Actions['save-pdqa'] = () => PdqaProject.save();
 Actions['chip-toggle'] = el => el.setAttribute('aria-pressed', String(el.getAttribute('aria-pressed') !== 'true'));
 
 /* ==========================================================================
-   ProjectHub — 06 · Meeting Minutes, Analytiques, Utilisateurs
+   Jalon — 06 · Meeting Minutes, Analytiques, Utilisateurs
    Logique métier d'origine conservée ; seuls l'apparence, le cloisonnement par
    espace et la gestion des erreurs ont été ajoutés.
    ========================================================================== */
@@ -2625,9 +2876,9 @@ const Analytics = {
     const map = {}; overdueT.filter(t => t.assignee_id).forEach(t => { map[t.assignee_id] = (map[t.assignee_id] || 0) + 1; });
     const max = Math.max(1, ...Object.values(map));
     const ovUsers = Store.users.filter(u => map[u.id]).sort((a, b) => map[b.id] - map[a.id]);
-    const stat = (action, ic, label, value, cls = '') => `<${action ? `button data-action="${action}"` : 'div'} class="kpi card ${cls}"><span class="kpi-top">${label}<span class="kpi-ico">${icon(ic)}</span></span><span class="kpi-value">${value}</span></${action ? 'button' : 'div'}>`;
+    const stat = (action, ic, label, value, cls = '') => `<${action ? `button data-action="${action}"` : 'div'} class="kpi ${cls}"><span class="kpi-label">${label}</span><span class="kpi-value">${value}</span></${action ? 'button' : 'div'}>`;
     view.innerHTML = pageHeader({ title: 'Analytiques', sub: 'Vue globale des projets clients.' }) +
-      `<div class="page-body stack"><div class="grid g4">${stat('an-active', 'target', 'Projets en cours', active)}${stat('an-open', 'list', 'Tâches ouvertes', openT)}${stat('', 'rocket', 'Projets terminés', done)}${stat('', 'alert', 'Tâches en retard', overdueT.length, overdueT.length ? 'alert' : 'calm')}</div>
+      `<div class="page-body stack"><div class="kpi-strip card">${stat('an-active', 'target', 'Projets en cours', active)}${stat('an-open', 'list', 'Tâches ouvertes', openT)}${stat('', 'rocket', 'Projets terminés', done)}${stat('', 'alert', 'Tâches en retard', overdueT.length, overdueT.length ? 'alert' : 'calm')}</div>
         <section class="card card-pad"><div class="row wrap mb-4"><h2 class="card-title grow">Lancements par mois (projets terminés)</h2>
           <span class="small muted">Filtrer par</span><div class="row" role="group" aria-label="Filtre du graphique">
           ${[['all', 'Tous'], ['lead', 'Project Lead'], ['client', 'Client']].map(([m, l]) => `<button class="filter-chip" data-action="an-mode" data-mode="${m}" aria-pressed="${Analytics.mode === m}">${l}</button>`).join('')}</div>
@@ -2725,7 +2976,7 @@ function boot() {
       .catch(() => Login.render());
   } else Login.render();
 }
-window.ProjectHub = { CONFIG, Dates, Rules, Perm, Store, App, Router, Kanban, Calendar };   // utile pour le diagnostic et les tests
+window.Jalon = { CONFIG, Dates, Rules, Perm, Store, App, Router, Kanban, Calendar };   // utile pour le diagnostic et les tests
 boot();
 
 </script>
