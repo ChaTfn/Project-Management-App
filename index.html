@@ -472,6 +472,47 @@ button.list-row:hover { background: var(--glass-strong); }
 .gate-mark { width: 10px; height: 10px; border-radius: 2px; transform: rotate(45deg); background: var(--gate); flex-shrink: 0; display: inline-block; }
 .gate-mark.sm { width: 8px; height: 8px; }
 
+/* Glissement par rapport à la référence */
+.slip { display: inline-flex; align-items: center; font-size: var(--fs-xs); font-weight: var(--fw-semibold); padding: 0 6px; border-radius: var(--r-pill); line-height: 18px; white-space: nowrap; }
+.slip.late { color: var(--danger); background: var(--danger-soft); }
+.slip.early { color: var(--ok); background: var(--ok-soft); }
+.b-gate { color: var(--gate-ink); background: var(--gate-soft); }
+.notice.info { background: var(--info-soft); color: var(--info); border-color: rgba(29,95,209,.2); }
+.notice .btn { flex-shrink: 0; }
+
+/* Décisions de Gate */
+.gate-row { display: flex; align-items: flex-start; gap: var(--sp-3); padding: 14px var(--sp-5); border-bottom: 1px solid var(--line); }
+.gate-row:last-child { border-bottom: 0; }
+.gate-row > .gate-mark { margin-top: 5px; }
+.gate-row.is-pending { background: linear-gradient(90deg, var(--gate-soft), transparent 70%); }
+.gate-row-title { font-weight: var(--fw-semibold); display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.gate-no { color: var(--gate); font-size: var(--fs-sm); font-weight: var(--fw-bold); }
+.gate-row .cell-sub { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+.gate-cond { font-size: var(--fs-sm); color: var(--text-2); margin-top: 4px; }
+.gate-hist { margin-top: 6px; font-size: var(--fs-sm); }
+.gate-hist summary { cursor: pointer; color: var(--text-3); font-weight: var(--fw-medium); }
+.decision-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 6px; margin-top: 6px; }
+fieldset.field { border: 0; padding: 0; }
+fieldset.field legend { margin-bottom: 0; }
+
+/* Documents */
+.doc-row { padding: 10px var(--sp-5); }
+.doc-row > .ico { color: var(--text-3); }
+
+/* Historique */
+.history > summary { list-style: none; cursor: pointer; justify-content: flex-start; gap: var(--sp-3); }
+.history > summary::-webkit-details-marker { display: none; }
+.history > summary::before { content: ""; width: 7px; height: 7px; border-right: 1.8px solid var(--text-3); border-bottom: 1.8px solid var(--text-3); transform: rotate(-45deg); transition: transform var(--t-fast); }
+.history[open] > summary::before { transform: rotate(45deg); }
+.history:not([open]) > summary { border-bottom: 0; }
+.history-list { list-style: none; display: grid; gap: 0; }
+.history-list > li { padding: 10px 0; border-bottom: 1px solid var(--line); }
+.history-list > li:last-child { border-bottom: 0; }
+.history-meta { display: flex; gap: var(--sp-3); font-size: var(--fs-xs); color: var(--text-3); }
+.history-meta span + span { padding-left: var(--sp-3); border-left: 1px solid var(--line-strong); }
+.history-text { font-size: var(--fs-md); font-weight: var(--fw-medium); margin-top: 2px; }
+.history-changes { list-style: none; margin-top: 4px; display: grid; gap: 2px; font-size: var(--fs-sm); color: var(--text-2); }
+
 /* Pipeline des projets (dashboard) ---------------------------------------------- */
 .pipe-scroll { overflow-x: auto; padding-bottom: var(--sp-3); margin: 0 calc(var(--sp-8) * -1); padding-left: var(--sp-8); padding-right: var(--sp-8); scroll-padding: var(--sp-8); }
 /* Fondu à droite : signale que le pipeline continue */
@@ -511,6 +552,8 @@ button.list-row:hover { background: var(--glass-strong); }
 .pipe-card .progress { min-width: 0; }
 .pipe-card-foot { display: flex; justify-content: space-between; align-items: center; gap: 6px; font-size: var(--fs-sm); color: var(--text-3); }
 .pipe-card-foot .due { font-size: var(--fs-xs); }
+.pipe-card-tasks, .pipe-card-slip { display: inline-flex; align-items: center; gap: 5px; font-size: var(--fs-xs); color: var(--text-2); }
+.pipe-card-slip { color: var(--danger); font-weight: var(--fw-semibold); }
 
 /* Kanban des tâches --------------------------------------------------------------- */
 .kanban { display: grid; grid-template-columns: repeat(3, minmax(260px, 1fr)); gap: var(--sp-4); align-items: start; overflow-x: auto; }
@@ -650,6 +693,18 @@ body.theme-dark .ev-meeting { color: #A9BDCC; background: rgba(169,189,204,.12);
 .chev-gate-no { font-size: 10px; font-weight: var(--fw-bold); letter-spacing: .02em; display: inline-flex; align-items: center; gap: 5px; }
 .chev-gate-no::before { content: ""; width: 7px; height: 7px; border-radius: 1px; transform: rotate(45deg); background: currentColor; }
 .chev-state { font-weight: var(--fw-semibold); }
+/* Étape cliquable : le bouton occupe toute la flèche et porte le texte (pas de texte coupé). */
+.chev:has(.chev-btn) { padding: 0; cursor: pointer; }
+.chev-btn { all: unset; box-sizing: border-box; width: 100%; min-height: 66px; display: flex; flex-direction: column; justify-content: center; gap: 3px;
+  padding: 8px 16px 10px 20px; cursor: pointer; position: relative; }
+.chev.first .chev-btn { padding-left: 12px; }
+.chev:has(.chev-btn):hover { filter: brightness(1.06); }
+.chev:has(.chev-btn:focus-visible) { outline: 3px solid var(--brand); outline-offset: -3px; }
+.chev-foot { flex-wrap: wrap; row-gap: 1px; }
+.chev-slip { font-weight: var(--fw-bold); padding: 0 4px; border-radius: 3px; background: rgba(255,255,255,.92); }
+.chev-slip.late { color: var(--danger); } .chev-slip.early { color: var(--ok); }
+.chev.s-upcoming .chev-slip { background: var(--surface); }
+.chev-tasks { opacity: .95; }
 .chev-legend { display: flex; gap: var(--sp-4); font-size: var(--fs-xs); color: var(--text-3); margin-top: var(--sp-3); flex-wrap: wrap; padding-left: 120px; }
 .chev-legend span { display: inline-flex; align-items: center; gap: 6px; }
 .chev-legend .lg { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
@@ -674,13 +729,22 @@ body.theme-dark .ev-meeting { color: #A9BDCC; background: rgba(169,189,204,.12);
 .ver-pill[aria-pressed="true"] .muted { color: inherit; opacity: .7; }
 
 /* Éditeur de timeline */
-.tl-head, .tl-step { display: grid; grid-template-columns: minmax(0,2fr) 70px 62px 70px 128px 30px; gap: var(--sp-2); align-items: center; }
+.tl-head, .tl-step { display: grid; grid-template-columns: minmax(0,2fr) 88px 132px 132px 58px 64px 118px 30px; gap: var(--sp-2); align-items: center; }
 .tl-head { padding: 0 10px 6px; font-size: var(--fs-xs); font-weight: var(--fw-semibold); color: var(--text-3); }
 .tl-step { padding: 5px 10px; border-radius: var(--r-sm); margin-bottom: 4px; border: 1px solid transparent; }
 .tl-step:hover { background: var(--surface-2); }
 .tl-step.is-gate { background: var(--gate-soft); border-color: var(--gate-border); }
 .tl-name-cell { display: flex; align-items: center; gap: 8px; min-width: 0; }
 .tl-name-cell .input { flex: 1; }
+.tl-week-cell { position: relative; }
+.tl-week-cell .input { padding-right: 26px; }
+.tl-week-auto { position: absolute; right: 3px; top: 50%; transform: translateY(-50%); width: 22px; height: 22px; border-radius: 5px; display: none; place-items: center; color: var(--brand-ink); }
+.tl-week-auto:hover { background: var(--brand-soft); }
+.tl-step.is-manual .tl-week-auto { display: grid; }
+.tl-step.is-manual .tl-week { border-color: var(--brand-border); background: var(--brand-soft); font-weight: var(--fw-semibold); }
+.tl-prog.is-computed { background: var(--surface-3); color: var(--text-2); cursor: help; }
+.tl-actual:disabled { background: transparent; border-color: transparent; color: transparent; }
+.tl-end { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; font-size: var(--fs-sm); color: var(--text-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .tl-mark { width: 12px; display: inline-grid; place-items: center; flex-shrink: 0; }
 .tl-phase { font-size: var(--fs-xs); color: var(--text-3); white-space: nowrap; }
 .option-card { display: flex; align-items: center; gap: var(--sp-2); padding: 7px 12px; border-radius: var(--r-sm); border: 1px solid var(--line-strong); background: var(--surface); font-size: var(--fs-md); font-weight: var(--fw-medium); cursor: pointer; }
@@ -741,6 +805,9 @@ body.theme-dark .ev-meeting { color: #A9BDCC; background: rgba(169,189,204,.12);
   .chev-row { flex-wrap: wrap; row-gap: 4px; }
   .chev { flex: 1 1 calc(25% - 3px); }
   .chev-legend { padding-left: 0; }
+  .tl-head { display: none; }
+  .tl-step { grid-template-columns: minmax(0,1fr) 88px 120px; row-gap: 6px; padding: 8px 10px; border-color: var(--line); }
+  .tl-name-cell { grid-column: 1 / -1; }
   .org-grid { grid-template-columns: repeat(3, minmax(0,1fr)); }
 }
 @media (max-width: 900px) {
@@ -804,6 +871,8 @@ body.theme-dark .ev-meeting { color: #A9BDCC; background: rgba(169,189,204,.12);
   <symbol id="i-arrow-up" viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></symbol>
   <symbol id="i-arrow-down" viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></symbol>
   <symbol id="i-sort" viewBox="0 0 24 24"><path d="M8 4v16M4 8l4-4 4 4M16 20V4M12 16l4 4 4-4"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></symbol>
+  <symbol id="i-undo" viewBox="0 0 24 24"><path d="M4 9h11a5 5 0 0 1 0 10H9"/><path d="m8 5-4 4 4 4"/></symbol>
   <symbol id="i-open" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"/></symbol>
 </svg>
 
@@ -910,6 +979,14 @@ const CONFIG = {
     { name: 'Confirmation de la date de réception des RMs', days: 11, phase: 'Phase 4' },
     { name: 'Première production', days: 71, phase: 'Phase 4' },
   ],
+  gateDecisions: {
+    go:            { label: 'GO',                 badge: 'b-ok',     passes: true },
+    go_conditions: { label: 'GO sous conditions', badge: 'b-warn',   passes: true },
+    no_go:         { label: 'NO GO',              badge: 'b-danger', passes: false },
+    postponed:     { label: 'Reportée',           badge: 'b-neutral', passes: false },
+  },
+  documentCategories: ['NPD Brief', 'Spécification', 'Artwork', 'BAT', 'Certificat / analyse', 'Compte-rendu', 'Autre'],
+  maxDocumentMb: 20,
   stepStatuses: {
     done:     { label: 'Terminé',  gateLabel: 'Franchie' },
     current:  { label: 'En cours', gateLabel: 'En cours' },
@@ -978,6 +1055,12 @@ const Dates = {
   short(value) { return Dates.fmt(value, { day: 'numeric', month: 'short' }); },
   long(value) { return Dates.fmt(value, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }); },
   monthLabel(key) { return Dates.fmt(key, { month: 'long', year: 'numeric' }); },
+  /** Année ISO de la semaine (le 31/12/2029 appartient à la semaine 1 de 2030). */
+  isoYear(key) {
+    const d = Dates.parse(key); const t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    t.setUTCDate(t.getUTCDate() + 4 - (t.getUTCDay() || 7));
+    return t.getUTCFullYear();
+  },
   isoWeek(key) {
     const d = Dates.parse(key); const t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
     const day = t.getUTCDay() || 7; t.setUTCDate(t.getUTCDate() + 4 - day);
@@ -1057,6 +1140,77 @@ const Timeline = {
         status: CONFIG.stepStatuses[s.status] ? s.status : 'upcoming', prog: Math.max(0, Math.min(100, Number(s.prog) || 0)) };
     });
   },
+  /** Planning des étapes à partir de la date de début (durées en jours calendaires).
+      Une étape commence le lendemain de la fin de la précédente ; une durée de 0 jour
+      correspond à un jalon le jour même. Renvoie, pour chaque étape, sa date de clôture
+      et le numéro de semaine ISO de cette date (S52 ou S53, puis S1 au changement d'année). */
+  schedule(startKey, items) {
+    // items : durées (nombres) ou étapes { days, actual_end }. Une étape clôturée en réel
+    // fixe sa date de clôture ; les étapes suivantes repartent du lendemain (prévision à jour).
+    if (!startKey || !/^\d{4}-\d{2}-\d{2}$/.test(startKey)) return items.map(() => null);
+    let cursor = startKey;
+    return items.map(it => {
+      const d = typeof it === 'object' && it !== null ? it.days : it;
+      const actual = typeof it === 'object' && it !== null && /^\d{4}-\d{2}-\d{2}$/.test(it.actual_end || '') ? it.actual_end : null;
+      const days = Math.max(0, parseInt(d, 10) || 0);
+      const end = actual || (days > 0 ? Dates.addDays(cursor, days - 1) : cursor);
+      if (actual || days > 0) cursor = Dates.addDays(end, 1);
+      return { end, actual: !!actual, week: 'S' + Dates.isoWeek(end), isoYear: Dates.isoYear(end) };
+    });
+  },
+  /** Recalcule les semaines automatiques et les dates de clôture prévues d'une liste d'étapes enregistrée. */
+  applySchedule(startKey, steps) {
+    const plan = Timeline.schedule(startKey, steps), manual = Timeline.manualFlags(steps, plan);
+    return steps.map((s, i) => plan[i] ? { ...s, end_date: plan[i].end, week_manual: manual[i], week: manual[i] ? s.week : plan[i].week, planned_end: s.planned_end || plan[i].end }
+      : { ...s, week_manual: manual[i] });
+  },
+  /** Semaine saisie à la main ? Oui si l'indicateur l'indique. Pour les étapes enregistrées avant
+      l'indicateur : une semaine différente de l'ancien et du nouveau calcul automatique est manuelle. */
+  manualFlags(steps, plan) {
+    let cumul = 0;
+    return steps.map((s, i) => {
+      cumul += parseInt(s.days, 10) || 0;
+      if (s.week_manual === true || s.week_manual === false) return s.week_manual;
+      return !!s.week && s.week !== Timeline.legacyWeek(cumul) && s.week !== plan[i]?.week;
+    });
+  },
+  /** Semaines à afficher : calcul automatique à jour, sauf semaines saisies à la main. */
+  displayWeeks(startKey, steps) {
+    const plan = Timeline.schedule(startKey, steps), manual = Timeline.manualFlags(steps, plan);
+    return steps.map((s, i) => (manual[i] || !plan[i] ? s.week || '' : plan[i].week));
+  },
+  /** Écart en jours entre la référence (planned_end) et la clôture prévue ou réelle. null si pas de référence. */
+  slipDays(planned, end) { return planned && end ? Dates.diffDays(planned, end) : null; },
+  fmtSlip(days) {
+    if (days === null || days === undefined || days === 0) return days === 0 ? 'À l\'heure' : '';
+    const sign = days > 0 ? '+' : '−', a = Math.abs(days);
+    return a >= 7 ? `${sign}${Math.round(a / 7)} sem.` : `${sign}${a} j`;
+  },
+  /** Prévision du projet : clôture de la dernière étape (recalculée) et sa référence. */
+  forecast(p) {
+    const steps = Array.isArray(p.timeline_steps) ? p.timeline_steps : [];
+    if (!steps.length || !p.start_date) return null;
+    const plan = Timeline.schedule(Dates.key(p.start_date), steps);
+    const last = plan[plan.length - 1], lastStep = steps[steps.length - 1];
+    const planned = lastStep.planned_end || null;
+    return { end: last.end, planned, slip: Timeline.slipDays(planned, last.end),
+      launchGap: p.launch_date ? Dates.diffDays(Dates.key(p.launch_date), last.end) : null };
+  },
+  /** Statistiques des tâches reliées à chaque étape d'un projet : clé d'étape → { total, done, open }. */
+  taskStats(projectId, tasks) {
+    const map = new Map();
+    tasks.filter(t => t.project_id === projectId && t.step_key).forEach(t => {
+      const k = t.step_key, e = map.get(k) || { total: 0, done: 0, open: 0 };
+      e.total++; if (t.status === 'done') e.done++; else e.open++;
+      map.set(k, e);
+    });
+    return map;
+  },
+  stepKey(step) { return Timeline.norm(step.label || step.name); },
+  /** Ancien calcul (semaines du projet, 5 jours par semaine) : sert à reconnaître les
+      semaines qui avaient été calculées automatiquement dans les projets existants. */
+  legacyWeek(cumulDays) { return 'S' + Math.ceil(cumulDays / 5); },
+
   /** Étape où se trouve le projet : la première « en cours / à risque », sinon la première non terminée. */
   stage(project) {
     const steps = Timeline.enrich(project.timeline_steps);
@@ -1094,8 +1248,9 @@ const Perm = {
 const Store = {
   db: null,
   me: null,
-  users: [], projects: [], tasks: [], meetings: [],
-  schema: { workspace: null },   // la migration PDQA a-t-elle été exécutée ?
+  users: [], projects: [], tasks: [], meetings: [], gateReviews: [], documents: [],
+  // Les migrations ont-elles été exécutées ? (null = inconnu, true/false = constaté)
+  schema: { workspace: null, gates: null, documents: null, audit: null, stepKey: null },
 
   init() {
     if (!window.supabase?.createClient) throw new Error('La librairie Supabase n\'a pas pu être chargée.');
@@ -1123,6 +1278,15 @@ const Store = {
     Store.tasks = t.data || [];
     Store.meetings = m.data || [];
     if (p.data?.length) Store.schema.workspace = Object.prototype.hasOwnProperty.call(p.data[0], 'workspace');
+    if (t.data?.length) Store.schema.stepKey = Object.prototype.hasOwnProperty.call(t.data[0], 'step_key');
+    await Promise.all([Store.loadOptional('gate_reviews', 'gateReviews', 'gates', 'decision_date'), Store.loadOptional('project_documents', 'documents', 'documents', 'created_at')]);
+  },
+
+  /** Charge une table ajoutée par la migration 003 ; si elle n'existe pas encore, l'application continue. */
+  async loadOptional(table, key, flag, orderBy) {
+    const { data, error } = await Store.db.from(table).select('*').order(orderBy, { ascending: false });
+    if (error) { Store.schema[flag] = !isMissingTable(error) && null; Store[key] = []; return; }
+    Store.schema[flag] = true; Store[key] = data || [];
   },
 
   normalizeProject(p) {
@@ -1141,6 +1305,14 @@ const Store = {
   project: id => (id ? Store.byId(Store.projects, id) : null),
   task: id => Store.tasks.find(t => t.id === id) || null,
   meeting: id => Store.meetings.find(m => m.id === id) || null,
+  /** Décisions et documents d'un projet (uniquement si le projet est visible dans l'espace). */
+  gateReviewsOf(ws, projectId) { return Store.projectIn(ws, projectId) ? Store.gateReviews.filter(g => g.project_id === projectId) : []; },
+  documentsOf(ws, projectId) { return Store.projectIn(ws, projectId) ? Store.documents.filter(d => d.project_id === projectId) : []; },
+  /** Dernière décision enregistrée pour une Gate (par date de décision, puis d'enregistrement). */
+  lastGateDecision(projectId, gateNo) {
+    return Store.gateReviews.filter(g => g.project_id === projectId && Number(g.gate_no) === Number(gateNo))
+      .sort((a, b) => cmp(b.decision_date, a.decision_date) || cmp(b.created_at, a.created_at))[0] || null;
+  },
 
   /** Espace auquel appartient une entité (tâche/meeting sans projet = espace client). */
   wsOfProject: p => (p?.workspace === 'pdqa' ? 'pdqa' : 'customer'),
@@ -1173,9 +1345,11 @@ const Store = {
     const errors = Store.validateTask(payload, ws);
     if (Object.keys(errors).length) throw Object.assign(new Error('Formulaire incomplet'), { fields: errors });
     const row = { status: 'todo', priority: 'medium', ...payload, title: payload.title.trim() };
+    if (!row.step_key) delete row.step_key;   // n'envoie pas la colonne si elle n'est pas utilisée (base pas encore migrée)
     const { data, error } = await Store.db.from('tasks').insert(row).select().single();
     if (error) throw error;
     Store.tasks.unshift(data);
+    Audit.log({ entity: 'task', entityId: data.id, projectId: data.project_id, action: 'create', summary: `Tâche créée : « ${data.title} »` });
     return data;
   },
 
@@ -1185,21 +1359,30 @@ const Store = {
     if (!current) throw new Error('Tâche introuvable dans cet espace.');
     const errors = Store.validateTask({ ...current, ...patch }, ws);
     if (Object.keys(errors).length) throw Object.assign(new Error(Object.values(errors)[0]), { fields: errors });
-    const { data, error } = await Store.db.from('tasks').update(patch).eq('id', id).select();
+    const before = { ...current };
+    const body = { ...patch };
+    if ('step_key' in body && !body.step_key && !before.step_key) delete body.step_key;
+    const { data, error } = await Store.db.from('tasks').update(body).eq('id', id).select();
     if (error) throw error;
     if (!data || !data.length) throw new Error('La base n\'a pas confirmé l\'enregistrement.');
     Object.assign(current, data[0]);
+    const changes = Audit.diff(before, current, Audit.taskFields);
+    if (changes.length) Audit.log({ entity: 'task', entityId: id, projectId: current.project_id, action: 'update', summary: `Tâche « ${current.title} » modifiée`, changes });
     return current;
   },
 
   async deleteTask(id, ws) {
-    if (!Store.taskIn(ws, id)) throw new Error('Tâche introuvable dans cet espace.');
+    const t = Store.taskIn(ws, id);
+    if (!t) throw new Error('Tâche introuvable dans cet espace.');
     const { error } = await Store.db.from('tasks').delete().eq('id', id);
     if (error) throw error;
-    Store.tasks = Store.tasks.filter(t => t.id !== id);
+    Store.tasks = Store.tasks.filter(x => x.id !== id);
+    Audit.log({ entity: 'task', entityId: id, projectId: t.project_id, action: 'delete', summary: `Tâche supprimée : « ${t.title} »` });
   },
 
   async refreshTable(table) {
+    if (table === 'gate_reviews') return Store.loadOptional('gate_reviews', 'gateReviews', 'gates', 'decision_date');
+    if (table === 'project_documents') return Store.loadOptional('project_documents', 'documents', 'documents', 'created_at');
     const order = { projects: ['created_at', false], tasks: ['created_at', false], meeting_minutes: ['meeting_date', false], users: ['name', true] }[table];
     const { data, error } = await Store.db.from(table).select('*').order(order[0], { ascending: order[1] });
     if (error) throw error;
@@ -1210,9 +1393,81 @@ const Store = {
   },
 };
 
+/* ---------- 7. HISTORIQUE DES MODIFICATIONS ----------
+   Chaque création, modification ou suppression faite dans l'application est inscrite
+   dans la table audit_log (qui, quoi, quand, valeurs avant/après). L'inscription ne
+   bloque jamais l'action elle-même : si elle échoue, l'action reste enregistrée et
+   l'échec est signalé dans la console. */
+const Audit = {
+  pending: [],
+  fmt: {
+    status: v => Rules.taskStatus(v).label,
+    priority: v => CONFIG.taskPriorities[v]?.label || v,
+    user: v => Store.user(v)?.name || (v ? 'utilisateur supprimé' : 'Non assigné'),
+    date: v => (v ? Dates.fmt(v) : '—'),
+    project: v => Store.project(v)?.project_name || (v ? 'projet supprimé' : 'Aucun'),
+    projectStatus: v => CONFIG.projectStatuses[v]?.label || v,
+    projectPriority: v => CONFIG.projectPriorities[v] || v,
+    text: v => (v === null || v === undefined || v === '' ? '—' : String(v)),
+  },
+  taskFields: { title: ['Titre', 'text'], status: ['Statut', 'status'], assignee_id: ['Responsable', 'user'], due_date: ['Échéance', 'date'],
+    priority: ['Priorité', 'priority'], project_id: ['Projet', 'project'], step_key: ['Étape', 'text'], description: ['Description', 'text'] },
+  projectFields: { project_name: ['Nom', 'text'], client_name: ['Client', 'text'], status: ['Statut', 'projectStatus'], priority: ['Priorité', 'projectPriority'],
+    start_date: ['Début', 'date'], launch_date: ['Lancement / fin', 'date'], version: ['Version', 'text'], description: ['Description', 'text'] },
+  /** Liste des champs modifiés entre deux états : [{ field, label, from, to }]. */
+  diff(before, after, fields) {
+    const norm = v => (v === undefined || v === '' ? null : v);
+    return Object.entries(fields).filter(([k]) => k in after && String(norm(before[k])) !== String(norm(after[k])))
+      .map(([k, [label, f]]) => ({ field: k, label, from: Audit.fmt[f](before[k]), to: Audit.fmt[f](after[k]) }));
+  },
+  /** Différences de timeline d'un projet (statuts d'étapes, semaines, clôtures réelles). */
+  timelineDiff(beforeSteps, afterSteps) {
+    const out = [], b = new Map(Timeline.enrich(beforeSteps).map(s => [Timeline.stepKey(s), s]));
+    Timeline.enrich(afterSteps).forEach(s => {
+      const o = b.get(Timeline.stepKey(s));
+      if (!o) { out.push({ field: 'step', label: `Étape « ${s.label} »`, from: '—', to: 'ajoutée' }); return; }
+      if (o.status !== s.status) out.push({ field: 'step', label: `Étape « ${s.label} »`, from: CONFIG.stepStatuses[o.status].label, to: CONFIG.stepStatuses[s.status].label });
+      if ((o.week || '') !== (s.week || '') && (o.week_manual || s.week_manual)) out.push({ field: 'week', label: `Semaine « ${s.label} »`, from: o.week || '—', to: s.week || '—' });
+      if ((o.actual_end || '') !== (s.actual_end || '') && s.actual_end) out.push({ field: 'actual', label: `Clôture réelle « ${s.label} »`, from: o.actual_end ? Dates.fmt(o.actual_end) : '—', to: Dates.fmt(s.actual_end) });
+      b.delete(Timeline.stepKey(s));
+    });
+    b.forEach(s => out.push({ field: 'step', label: `Étape « ${s.label} »`, from: 'présente', to: 'supprimée' }));
+    return out;
+  },
+  log({ entity, entityId, projectId, action, summary, changes = [] }) {
+    if (Store.schema.audit === false) return Promise.resolve();
+    const row = { entity, entity_id: entityId ? String(entityId) : null, project_id: projectId || null, action, summary, changes,
+      user_id: Store.me?.id || null, user_name: Store.me?.name || null };
+    const p = Promise.resolve(Store.db.from('audit_log').insert(row)).then(({ error } = {}) => {
+      if (error) { if (isMissingTable(error)) Store.schema.audit = false; else console.warn('Historique non enregistré :', error.message); }
+      else Store.schema.audit = true;
+    }).catch(e => console.warn('Historique non enregistré :', e?.message || e));
+    Audit.pending.push(p);
+    return p;
+  },
+  /** Attend que les inscriptions en cours soient terminées (avant d'afficher l'historique). */
+  flush() { const all = Audit.pending.splice(0); return Promise.all(all); },
+  async forProject(projectId, limit = 60) {
+    await Audit.flush();
+    const { data, error } = await Store.db.from('audit_log').select('*').eq('project_id', projectId).order('created_at', { ascending: false }).limit(limit);
+    if (error) { if (isMissingTable(error)) Store.schema.audit = false; return null; }
+    Store.schema.audit = true;
+    return data || [];
+  },
+};
+
+/** La table (ou colonne) n'existe pas encore : la migration n'a pas été exécutée. */
+function isMissingTable(err) {
+  return /does not exist|could not find the table|schema cache|PGRST205|42P01/i.test(String(err?.message || '') + ' ' + String(err?.code || ''));
+}
+
 /** Traduit une erreur technique en message compréhensible. */
 function friendlyError(err) {
   const msg = String(err?.message || err || '');
+  if (/step_key|gate_reviews|project_documents|audit_log|project-docs|bucket not found/i.test(msg))
+    return 'La base n\'est pas encore à jour : exécutez le script MIGRATION_003_GATES_DOCUMENTS_HISTORIQUE.sql dans Supabase.';
+  if (/exceeded the maximum allowed size|payload too large|entity too large/i.test(msg))
+    return `Fichier trop volumineux (${CONFIG.maxDocumentMb} Mo maximum).`;
   if (/failed to fetch|networkerror|load failed/i.test(msg))
     return 'Connexion à la base impossible. Vérifiez le réseau ou réactivez le projet dans Supabase.';
   if (/workspace|pdqa_data|description/i.test(msg) && /column|schema cache/i.test(msg))
@@ -1617,7 +1872,7 @@ const TaskEditor = {
     const task = options.taskId ? Store.taskIn(ws, options.taskId) : null;
     if (options.taskId && !task) { Toast.show('Tâche introuvable dans cet espace.', 'error'); return; }
     const v = task || { title: '', project_id: options.projectId || '', assignee_id: Store.me?.id || '', status: options.status || 'todo',
-      priority: 'medium', due_date: options.dueDate || '', description: '' };
+      priority: 'medium', due_date: options.dueDate || '', description: '', step_key: options.stepKey || '' };
     const lockedProject = !!options.projectId && !task;
     const typeSwitch = options.allowMeeting && !task ? `<div class="segmented" role="group" aria-label="Type d'élément">
         <button type="button" data-action="te-type" data-type="task" aria-pressed="true">Tâche</button>
@@ -1637,6 +1892,8 @@ const TaskEditor = {
             <select class="select" id="te_project" name="project_id" ${lockedProject ? 'disabled' : ''} aria-describedby="err_project_id">${UI.projectOptions(ws, v.project_id, projectPlaceholder)}</select>
             ${lockedProject ? `<input type="hidden" name="project_id" value="${esc(v.project_id)}"><span class="hint">Pré-rempli depuis la fiche projet.</span>` : ''}
             <span class="error-msg" id="err_project_id"></span></div>
+          <div class="field" id="te_step_field" data-task-only hidden><label class="label" for="te_step">Étape de la timeline <span class="muted">(facultatif)</span></label>
+            <select class="select" id="te_step" name="step_key"></select><span class="hint">L'avancement de l'étape suivra les tâches qui lui sont reliées.</span></div>
           <div class="field"><label class="label" for="te_assignee">Responsable</label>
             <select class="select" id="te_assignee" name="assignee_id" aria-describedby="err_assignee_id">${UI.userOptions(v.assignee_id)}</select>
             <span class="error-msg" id="err_assignee_id"></span></div>
@@ -1659,6 +1916,19 @@ const TaskEditor = {
         </div>
       </form>`, { type: 'drawer', label: task ? 'Modifier la tâche' : 'Nouvelle tâche' });
     panel.querySelector('#taskForm').addEventListener('submit', e => { e.preventDefault(); TaskEditor.save(e.target, task); });
+    panel.querySelector('#te_project').addEventListener('change', e => TaskEditor.fillSteps(e.target.value, ''));
+    TaskEditor.fillSteps(v.project_id, v.step_key || '');
+  },
+  /** Liste des étapes de la timeline du projet choisi (projets clients avec timeline uniquement). */
+  fillSteps(projectId, selected) {
+    const field = document.getElementById('te_step_field'), sel = document.getElementById('te_step'); if (!field || !sel) return;
+    const p = projectId ? Store.projectIn(App.ws, projectId) : null;
+    const steps = p && Store.schema.stepKey !== false ? Timeline.enrich(p.timeline_steps) : [];
+    field.hidden = !steps.length || document.querySelector('#taskForm [name="type"]')?.value === 'meeting';
+    sel.innerHTML = `<option value="">— Aucune étape —</option>` + steps.map(s => {
+      const k = Timeline.stepKey(s);
+      return `<option value="${esc(k)}" ${k === selected ? 'selected' : ''}>${s.gate ? `Gate ${Timeline.gateNumber(s.name)} : ${esc(Timeline.gateTitle(s.label))}` : esc(s.label)}${s.week ? ` (${esc(s.week)})` : ''}</option>`;
+    }).join('');
   },
 
   setType(btn) {
@@ -1667,6 +1937,7 @@ const TaskEditor = {
     form.querySelector('[name="type"]').value = type;
     form.querySelectorAll('[data-action="te-type"]').forEach(b => b.setAttribute('aria-pressed', String(b === btn)));
     form.querySelectorAll('[data-task-only]').forEach(el => { el.hidden = type === 'meeting'; });
+    if (type !== 'meeting') TaskEditor.fillSteps(form.querySelector('[name="project_id"]:not([type="hidden"])')?.value || form.querySelector('[name="project_id"]')?.value, '');
     document.getElementById('teTitle').textContent = type === 'meeting' ? 'Nouvelle réunion' : 'Nouvelle tâche';
     document.getElementById('teDueLabel').textContent = type === 'meeting' ? 'Date de réunion' : 'Échéance';
     document.querySelector('label[for="te_assignee"]').textContent = type === 'meeting' ? 'Participant' : 'Responsable';
@@ -1709,6 +1980,8 @@ const TaskEditor = {
       } else {
         const payload = { title: val('title'), project_id: val('project_id') || null, assignee_id: val('assignee_id') || null,
           status: val('status') || 'todo', priority: val('priority') || 'medium', due_date: val('due_date') || null, description: val('description') || null };
+        const stepField = document.getElementById('te_step_field');
+        payload.step_key = stepField && !stepField.hidden ? (val('step_key') || null) : null;
         if (task) { await Store.updateTask(task.id, payload, ws); Toast.show('Tâche enregistrée.'); }
         else { await Store.createTask(payload, ws); Toast.show('Tâche créée.'); }
       }
@@ -1721,7 +1994,7 @@ const TaskEditor = {
 };
 
 Object.assign(Actions, {
-  'new-task': el => TaskEditor.open({ projectId: el.dataset.project || '', dueDate: el.dataset.date || '', status: el.dataset.status || '', allowMeeting: el.dataset.meeting === '1' }),
+  'new-task': el => TaskEditor.open({ projectId: el.dataset.project || '', dueDate: el.dataset.date || '', status: el.dataset.status || '', allowMeeting: el.dataset.meeting === '1', stepKey: el.dataset.step || '' }),
   'edit-task': el => TaskEditor.open({ taskId: el.dataset.id }),
   'te-type': el => TaskEditor.setType(el),
   async 'delete-task'(el) {
@@ -1763,7 +2036,14 @@ function sortTasks(list, sort = 'due', dir = 'asc') {
   });
 }
 
-function taskTableHTML(tasks, state, { showProject = true, sortable = true } = {}) {
+/** Libellé de l'étape de timeline reliée à une tâche (ou ''). */
+function taskStepLabel(t) {
+  if (!t.step_key) return '';
+  const p = Store.project(t.project_id);
+  const s = p && Timeline.enrich(p.timeline_steps).find(x => Timeline.stepKey(x) === t.step_key);
+  return s ? (s.gate ? `Gate ${Timeline.gateNumber(s.name)} : ${Timeline.gateTitle(s.label)}` : s.label) : '';
+}
+function taskTableHTML(tasks, state, { showProject = true, sortable = true, showStep = false } = {}) {
   const head = (label, key) => sortable ? UI.sortHeader(label, key, state) : `<th>${esc(label)}</th>`;
   const rows = tasks.map(t => {
     const p = Store.project(t.project_id);
@@ -1771,7 +2051,8 @@ function taskTableHTML(tasks, state, { showProject = true, sortable = true } = {
     return `<tr class="${late ? 'is-late' : ''} ${done ? 'is-done' : ''}">
       <td style="width:44px"><button class="task-check" role="checkbox" aria-checked="${done}" data-action="toggle-task" data-id="${esc(t.id)}" aria-label="${done ? 'Rouvrir' : 'Marquer comme terminée'} : ${esc(t.title)}">${icon('check', 'sm')}</button></td>
       <td style="min-width:240px"><button class="link-btn cell-title" data-action="edit-task" data-id="${esc(t.id)}">${esc(t.title)}</button>${t.description ? `<div class="cell-sub truncate" style="max-width:420px">${esc(t.description)}</div>` : ''}</td>
-      ${showProject ? `<td>${p ? `<button class="link-muted" data-action="open-project" data-id="${esc(p.id)}">${esc(p.project_name)}</button>` : '<span class="muted">—</span>'}</td>` : ''}
+      ${showProject ? `<td>${p ? `<button class="link-muted" data-action="open-project" data-id="${esc(p.id)}">${esc(p.project_name)}</button>` : '<span class="muted">—</span>'}${taskStepLabel(t) ? `<div class="cell-sub truncate" style="max-width:220px">${esc(taskStepLabel(t))}</div>` : ''}</td>` : ''}
+      ${showStep ? `<td class="small">${taskStepLabel(t) ? esc(taskStepLabel(t)) : '<span class="muted">—</span>'}</td>` : ''}
       <td>${UI.person(t.assignee_id)}</td>
       <td><select class="select status-select s-${esc(t.status)}" data-change="task-status" data-id="${esc(t.id)}" aria-label="Statut de ${esc(t.title)}">${UI.options(CONFIG.taskStatuses.map(s => ({ value: s.id, label: s.label })), t.status)}</select></td>
       <td>${UI.taskPriority(t.priority)}</td>
@@ -1780,7 +2061,7 @@ function taskTableHTML(tasks, state, { showProject = true, sortable = true } = {
     </tr>`;
   }).join('');
   return `<div class="table-wrap"><table class="table"><thead><tr><th><span class="sr-only">Terminée</span></th>
-    ${head('Tâche', 'title')}${showProject ? head('Projet', 'project') : ''}${head('Responsable', 'assignee')}${head('Statut', 'status')}${head('Priorité', 'priority')}${head('Échéance', 'due')}<th><span class="sr-only">Actions</span></th>
+    ${head('Tâche', 'title')}${showProject ? head('Projet', 'project') : ''}${showStep ? '<th>Étape</th>' : ''}${head('Responsable', 'assignee')}${head('Statut', 'status')}${head('Priorité', 'priority')}${head('Échéance', 'due')}<th><span class="sr-only">Actions</span></th>
     </tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 
@@ -2267,13 +2548,22 @@ const Pipeline = {
     const step = sg.kind === 'step' ? sg.step : null;
     const state = step ? CONFIG.stepStatuses[step.status] : null;
     const late = Rules.isProjectLate(p);
+    const fc = Timeline.forecast(p);
+    const gateNo = step?.gate ? Timeline.gateNumber(step.name) : null;
+    const lastDec = gateNo ? Store.lastGateDecision(p.id, gateNo) : null;
+    const gateInfo = gateNo ? (lastDec ? `<span class="badge ${CONFIG.gateDecisions[lastDec.decision]?.badge || 'b-neutral'}">Gate ${gateNo} : ${esc(CONFIG.gateDecisions[lastDec.decision]?.label || lastDec.decision)}</span>`
+      : `<span class="badge b-gate">Décision Gate ${gateNo} attendue</span>`) : '';
+    const st = step ? Timeline.taskStats(p.id, Store.tasksIn('customer')).get(Timeline.stepKey(step)) : null;
     return `<button class="pipe-card ${step?.status === 'warning' ? 'is-risk' : ''}" role="listitem" data-action="open-project" data-id="${esc(p.id)}"
         title="Synchronisé avec la version ${esc(p.version || 'v1')} du one-pager${p.updated_at ? ', enregistrée le ' + esc(Dates.fmt(p.updated_at)) : ''}">
       <span class="pipe-card-top"><span class="pipe-card-name">${esc(p.project_name)}</span><span class="pipe-ver">${esc(p.version || 'v1')}</span></span>
       <span class="pipe-card-client">${esc(p.client_name || 'Client non renseigné')}</span>
       ${step?.custom ? `<span class="pipe-card-custom">Étape : ${esc(step.label)}</span>` : ''}
       ${step && step.status !== 'upcoming' ? `<span class="badge ${step.status === 'warning' ? 'b-danger' : 'b-info'}">${esc(state.label)}${step.prog ? ` · ${step.prog} %` : ''}</span>` : ''}
+      ${gateInfo}
+      ${st && st.open ? `<span class="pipe-card-tasks">${icon('list', 'sm')}${st.open} tâche${st.open > 1 ? 's' : ''} ouverte${st.open > 1 ? 's' : ''} sur cette étape</span>` : ''}
       ${pct !== null ? UI.progress(pct) : ''}
+      ${fc && fc.slip > 0 ? `<span class="pipe-card-slip">${icon('clock', 'sm')}Glissement ${esc(Timeline.fmtSlip(fc.slip))}</span>` : ''}
       <span class="pipe-card-foot">${lead ? `<span class="truncate">${esc(lead)}</span>` : '<span class="muted">Chef de projet à définir</span>'}
         <span class="due ${late ? 'overdue' : ''}">${late ? icon('alert', 'sm') : icon('rocket', 'sm')}${esc(p.launch_date ? Dates.short(p.launch_date) : '—')}</span></span>
       ${p.status === 'paused' ? '<span class="badge b-warn">En pause</span>' : ''}
@@ -2313,8 +2603,22 @@ const ProjectsPage = {
         <select class="select" data-change="projects-filter" data-key="lead" aria-label="Filtrer par chef de projet">${UI.options(leads.map(v => ({ value: v, label: v })), st.lead, { placeholder: 'Tous les chefs de projet' })}</select>
         <select class="select" data-change="projects-filter" data-key="status" aria-label="Filtrer par statut">${UI.options([...Object.entries(CONFIG.projectStatuses).map(([id, s]) => ({ value: id, label: s.label })), { value: 'late', label: 'En retard' }], st.status, { placeholder: 'Tous les statuts' })}</select>
         <span class="spacer"></span><span class="result-count" id="projCount" aria-live="polite"></span>
+        <button class="btn btn-glass btn-sm" data-action="projects-export" title="Exporter les projets affichés">${icon('download', 'sm')}Exporter en Excel</button>
       </div><div id="projTable"></div></div>`;
     ProjectsPage.renderList();
+  },
+  /** Lignes affichées, dans l'ordre du tri courant (utilisé par la liste et par l'export Excel). */
+  sortedRows() {
+    const st = App.view('projects', ProjectsPage.defaults);
+    const key = { name: r => r.p.project_name, group: r => r.group, lead: r => r.lead, status: r => CONFIG.projectStatuses[r.p.status]?.label,
+      start: r => Dates.key(r.p.start_date), due: r => Dates.key(r.p.launch_date), progress: r => r.progress, priority: r => -(Number(r.p.priority) || 0),
+      updated: r => r.p.updated_at || r.p.created_at }[st.sort] || (r => r.p.project_name);
+    const sign = st.dir === 'desc' ? -1 : 1;
+    return ProjectsPage.rows().sort((a, b) => {
+      const va = key(a), vb = key(b);
+      if (va === null || va === undefined || va === '') return 1; if (vb === null || vb === undefined || vb === '') return -1;
+      return sign * cmp(va, vb);
+    });
   },
   rows() {
     const ws = App.ws, st = App.view('projects', ProjectsPage.defaults), q = st.q.toLowerCase(), tasks = Store.tasksIn(ws);
@@ -2326,15 +2630,7 @@ const ProjectsPage = {
   renderList() {
     const ws = App.ws, pdqa = ws === 'pdqa', st = App.view('projects', ProjectsPage.defaults);
     const box = document.getElementById('projTable'); if (!box) return;
-    const key = { name: r => r.p.project_name, group: r => r.group, lead: r => r.lead, status: r => CONFIG.projectStatuses[r.p.status]?.label,
-      start: r => Dates.key(r.p.start_date), due: r => Dates.key(r.p.launch_date), progress: r => r.progress, priority: r => -(Number(r.p.priority) || 0),
-      updated: r => r.p.updated_at || r.p.created_at }[st.sort] || (r => r.p.project_name);
-    const sign = st.dir === 'desc' ? -1 : 1;
-    const rows = ProjectsPage.rows().sort((a, b) => {
-      const va = key(a), vb = key(b);
-      if (va === null || va === undefined || va === '') return 1; if (vb === null || vb === undefined || vb === '') return -1;   // vides en dernier
-      return sign * cmp(va, vb);
-    });
+    const rows = ProjectsPage.sortedRows();
     document.getElementById('projCount').textContent = `${rows.length} projet${rows.length > 1 ? 's' : ''}`;
     if (!rows.length) {
       const any = Store.projectsIn(ws).length;
@@ -2351,7 +2647,7 @@ const ProjectsPage = {
         <td>${esc(group || '—')}</td><td>${lead ? esc(lead) : '<span class="muted">—</span>'}</td>
         <td>${UI.projectStatusBadge(p.status)}${late ? ' <span class="badge b-danger">En retard</span>' : ''}</td>
         ${pdqa ? `<td>${UI.projectPriority(p.priority)}</td>` : ''}
-        <td><span class="due">${esc(Dates.fmt(p.start_date))}</span></td><td>${UI.projectDue(p)}</td><td>${UI.progress(progress)}</td>
+        <td><span class="due">${esc(Dates.fmt(p.start_date))}</span></td><td>${UI.projectDue(p)}${(() => { const fc = !pdqa && Timeline.forecast(p); return fc && fc.slip ? `<div class="cell-sub"><span class="slip ${fc.slip > 0 ? 'late' : 'early'}">${esc(Timeline.fmtSlip(fc.slip))}</span> sur la timeline</div>` : ''; })()}</td><td>${UI.progress(progress)}</td>
         <td class="col-actions">${Menu.html([
           { action: 'open-project', icon: 'open', label: 'Ouvrir', data: { id: p.id } },
           { action: 'edit-project', icon: 'edit', label: 'Modifier', data: { id: p.id } },
@@ -2362,6 +2658,7 @@ const ProjectsPage = {
   },
 };
 InputActions['projects-filter'] = ChangeActions['projects-filter'] = el => { App.view('projects', ProjectsPage.defaults)[el.dataset.key] = el.value; ProjectsPage.renderList(); };
+Actions['projects-export'] = () => Export.projects(ProjectsPage.sortedRows());
 Actions['projects-reset'] = () => { Object.assign(App.view('projects', ProjectsPage.defaults), ProjectsPage.defaults); ProjectsPage.render(document.getElementById('view')); };
 Routes.projects = { module: 'projects', render: v => ProjectsPage.render(v) };
 
@@ -2386,6 +2683,7 @@ Object.assign(Actions, {
       await Store.db.from('meeting_minutes').update({ project_id: null }).eq('project_id', p.id);
       const { error } = await Store.db.from('projects').delete().eq('id', p.id);
       if (error) throw error;
+      Audit.log({ entity: 'project', entityId: p.id, projectId: p.id, action: 'delete', summary: `Projet supprimé : « ${p.project_name} »` });
       await Promise.all([Store.refreshTable('projects'), Store.refreshTable('tasks'), Store.refreshTable('meeting_minutes')]);
       Toast.show('Projet supprimé.');
       if (App.page === 'projects') Router.refresh(); else Router.go(ws, 'projects');
@@ -2417,7 +2715,7 @@ function projectTasksHTML(p) {
   const done = tasks.filter(Rules.isTaskDone).length;
   return `<section class="card no-print mt-4" aria-labelledby="ptH"><div class="card-head"><h2 class="card-title" id="ptH">Tâches du projet <span class="muted small">${done}/${tasks.length} terminées</span></h2>
     <button class="btn btn-primary btn-sm" data-action="new-task" data-project="${esc(p.id)}">${icon('plus', 'sm')}Nouvelle tâche</button></div>
-    ${tasks.length ? `<div style="padding:var(--sp-3)">${taskTableHTML(tasks, st, { showProject: false })}</div>` : `<div class="card-body muted small">Aucune tâche pour ce projet.</div>`}</section>`;
+    ${tasks.length ? `<div style="padding:var(--sp-3)">${taskTableHTML(tasks, st, { showProject: false, showStep: (p.timeline_steps || []).length > 0 })}</div>` : `<div class="card-body muted small">Aucune tâche pour ce projet.${(p.timeline_steps || []).length ? ' Cliquez sur une étape de la timeline pour lui ajouter une tâche.' : ''}</div>`}</section>`;
 }
 
 /* ---------- One-pager des projets clients (logique d'origine conservée) ---------- */
@@ -2430,8 +2728,11 @@ const OnePager = {
         <button class="btn btn-glass" data-action="new-version" data-id="${esc(proj.id)}">${icon('copy', 'sm')}Nouvelle version</button>
         <button class="btn btn-glass" data-action="print">${icon('print', 'sm')}Imprimer</button>
         <button class="btn btn-primary" data-action="edit-project" data-id="${esc(proj.id)}">${icon('edit', 'sm')}Modifier</button>` }) +
-      `<div class="page-body"><div class="ver-pills" id="verPills"></div><div class="op-page card solid" id="opContent"></div>${projectTasksHTML(proj)}</div>`;
-    OnePager.render(proj);
+      `<div class="page-body"><div class="ver-pills" id="verPills"></div><div class="op-page card solid" id="opContent"></div>${projectTasksHTML(proj)}
+        <div class="grid g2 mt-4 project-extras">${GateReviews.sectionHTML(proj)}${Documents.sectionHTML(proj)}</div>
+        <div class="mt-4">${History.sectionHTML(proj)}</div></div>`;
+    OnePager.render(proj, true);
+    History.bind(proj);
     try {
       const { data: vers } = await Store.db.from('project_versions').select('*').eq('project_id', proj.id).order('created_at', { ascending: false });
       const pills = document.getElementById('verPills');
@@ -2447,18 +2748,22 @@ const OnePager = {
     const s = v.snapshot || {};
     OnePager.render({ ...s, id: el.dataset.proj, rag_timeline: s.rag_timeline || 'green', rag_team: s.rag_team || 'green', rag_fin: s.rag_fin || 'green' });
   },
-  render(p) {
+  /** live = version actuelle (étapes cliquables, tâches reliées) ; false = ancienne version affichée en lecture. */
+  render(p, live = false) {
     const box = document.getElementById('opContent'); if (!box) return;
     const od = p.org_data || {};
+    const fc = Timeline.forecast(p);
+    const slip = fc && fc.slip ? `<span class="slip ${fc.slip > 0 ? 'late' : 'early'}">${esc(Timeline.fmtSlip(fc.slip))}</span>` : '';
+    const launchWarn = fc && fc.launchGap > 0 ? `<div class="notice mb-4">${icon('alert')}<span>La timeline se termine le <b>${esc(Dates.fmt(fc.end))}</b>, soit ${fc.launchGap} jour(s) après la date de lancement prévue (${esc(Dates.fmt(p.launch_date))}). Mettez à jour la date de lancement ou la timeline.</span></div>` : '';
     const rag = OnePager.rag(p);
     const fin = (label, v, unit) => `<div class="op-fin-item"><div class="op-fin-lbl">${label}</div><div class="op-fin-val">${v !== null && v !== undefined && v !== '' ? `${esc(v)} ${unit}` : '<span class="muted">Non renseigné</span>'}</div></div>`;
     const hasFin = [p.forecast_revenue, p.budget_revenue, p.forecast_margin, p.budget_margin].some(v => v !== null && v !== undefined && v !== '');
     const meta = (label, value) => `<div class="op-mf"><span class="op-ml">${label}</span><span class="op-mv">${value}</span></div>`;
     box.innerHTML = `<div class="op-header"><div class="grow">
         <div class="op-title"><span class="op-client">${esc(p.client_name || 'Client non renseigné')}</span><span class="op-proj">${esc(p.project_name)}</span></div>
-        <div class="op-meta">${meta('Début', esc(Dates.fmt(p.start_date)))}${meta('Lancement', esc(Dates.fmt(p.launch_date)))}${meta('Version', esc(p.version || 'v1'))}${meta('Priorité', esc(CONFIG.projectPriorities[p.priority || 1]))}${meta('Statut', esc(CONFIG.projectStatuses[p.status]?.label || '—'))}</div></div>
+        <div class="op-meta">${meta('Début', esc(Dates.fmt(p.start_date)))}${meta('Lancement', esc(Dates.fmt(p.launch_date)))}${fc ? meta('Fin de timeline', `${esc(Dates.fmt(fc.end))} ${slip}`) : ''}${meta('Version', esc(p.version || 'v1'))}${meta('Priorité', esc(CONFIG.projectPriorities[p.priority || 1]))}${meta('Statut', esc(CONFIG.projectStatuses[p.status]?.label || '—'))}</div></div>
       <div class="op-rag-grp" aria-label="Météo du projet">${rag.map(r => `<div class="op-rag-item" title="${esc(r.title)}"><span class="op-rag-dot rag-${r.level}" aria-hidden="true"></span><span>${r.label}</span><span class="sr-only">${esc(r.title)}</span></div>`).join('')}</div></div>
-      <section class="op-sec"><h2 class="op-sec-title">Timeline</h2>${OnePager.timelineHTML(p.timeline_steps)}</section>
+      ${launchWarn}<section class="op-sec"><h2 class="op-sec-title">Timeline</h2>${OnePager.timelineHTML(p, live)}</section>
       <div class="op-mid"><section class="op-sec"><h2 class="op-sec-title">Équipe projet</h2>${OnePager.orgHTML(od)}</section>
         <section class="op-sec"><h2 class="op-sec-title">Finance</h2>${hasFin ? `<div class="op-fin"><div class="op-fin-grid">
           ${fin('Revenue forecast', p.forecast_revenue, 'k€')}${fin('Revenue budget', p.budget_revenue, 'k€')}${fin('Marge forecast', p.forecast_margin, '%')}${fin('Marge budget', p.budget_margin, '%')}</div>
@@ -2493,18 +2798,34 @@ const OnePager = {
   },
 
   /** Timeline en une rangée par phase ; les 4 Gates ont leur propre couleur. */
-  timelineHTML(rawSteps) {
-    const steps = Timeline.enrich(rawSteps);
+  timelineHTML(p, live = false) {
+    const steps = Timeline.enrich(p.timeline_steps);
     if (!steps.length) return '<p class="muted small">Aucune étape définie. Ajoutez la timeline via « Modifier ».</p>';
+    const plan = Timeline.schedule(Dates.key(p.start_date), p.timeline_steps);
+    const weeks = Timeline.displayWeeks(Dates.key(p.start_date), p.timeline_steps);
+    steps.forEach((s, i) => { s.week = weeks[i]; });
+    const stats = live ? Timeline.taskStats(p.id, Store.tasksIn('customer')) : new Map();
+    steps.forEach((s, i) => {
+      s.forecastEnd = plan[i]?.end || s.end_date || null;
+      s.slip = (s.status === 'done' || s.status === 'current' || s.status === 'warning') ? Timeline.slipDays(s.planned_end, s.forecastEnd) : null;
+      const t = stats.get(Timeline.stepKey(s));
+      s.tasks = t || null;
+      if (t && t.total) s.prog = Math.round(t.done / t.total * 100);   // l'avancement suit les tâches reliées
+    });
     const rows = CONFIG.phases.map(ph => ({ ph, steps: steps.filter(s => s.phase === ph.id) })).filter(r => r.steps.length);
     const other = steps.filter(s => !CONFIG.phases.some(ph => ph.id === s.phase));
     if (other.length) rows.push({ ph: { id: 'Autres', label: 'Étapes' }, steps: other });
     const chev = (s, first) => {
       const st = CONFIG.stepStatuses[s.status];
       const name = s.gate ? `<span class="chev-gate-no">Gate ${Timeline.gateNumber(s.name)}</span><span class="chev-name">${esc(Timeline.gateTitle(s.label))}</span>` : `<span class="chev-name">${esc(s.label)}</span>`;
-      return `<li class="chev s-${s.status} ${s.gate ? 'is-gate' : ''} ${first ? 'first' : ''}" title="${esc(s.label)} — ${esc(st.label)}${s.week ? ', ' + esc(s.week) : ''}">
-        ${name}<span class="chev-foot">${s.week ? `<span>${esc(s.week)}</span>` : ''}${s.gate ? `<span class="chev-state">${esc(st.gateLabel)}</span>` : s.prog > 0 && s.prog < 100 ? `<span>${s.prog} %</span>` : ''}</span>
-        <span class="sr-only">${esc(st.label)}</span>${s.prog > 0 && s.status !== 'done' ? `<span class="chev-bar"><span style="width:${s.prog}%"></span></span>` : ''}</li>`;
+      const tip = [`${s.label} — ${st.label}`, s.week && `semaine de clôture ${s.week}`, s.forecastEnd && `clôture ${s.actual_end ? 'réelle' : 'prévue'} le ${Dates.fmt(s.forecastEnd)}`,
+        s.planned_end && `référence ${Dates.fmt(s.planned_end)}`, s.tasks && `${s.tasks.done}/${s.tasks.total} tâche(s) terminée(s)`, live && 'cliquer pour ajouter une tâche'].filter(Boolean).join(' · ');
+      const slip = s.slip ? `<span class="chev-slip ${s.slip > 0 ? 'late' : 'early'}">${esc(Timeline.fmtSlip(s.slip))}</span>` : '';
+      const tasks = s.tasks ? `<span class="chev-tasks">${s.gate && s.tasks.open ? `${s.tasks.open} ouverte${s.tasks.open > 1 ? 's' : ''}` : `${s.tasks.done}/${s.tasks.total} tâche${s.tasks.total > 1 ? 's' : ''}`}</span>` : '';
+      const inner = `${name}<span class="chev-foot">${s.week ? `<span>${esc(s.week)}</span>` : ''}${s.gate ? `<span class="chev-state">${esc(st.gateLabel)}</span>` : s.prog > 0 && s.prog < 100 ? `<span>${s.prog} %</span>` : ''}${slip}${tasks}</span>
+        <span class="sr-only">${esc(st.label)}</span>${s.prog > 0 && s.status !== 'done' ? `<span class="chev-bar"><span style="width:${s.prog}%"></span></span>` : ''}`;
+      return `<li class="chev s-${s.status} ${s.gate ? 'is-gate' : ''} ${first ? 'first' : ''}" title="${esc(tip)}">${live
+        ? `<button class="chev-btn" data-action="new-task" data-project="${esc(p.id)}" data-step="${esc(Timeline.stepKey(s))}" aria-label="${esc(tip)}">${inner}</button>` : inner}</li>`;
     };
     return `<div class="tl-rows">${rows.map(r => `<div class="tl-row"><div class="tl-row-head"><span class="tl-row-ph">${esc(r.ph.id)}</span><span class="tl-row-lbl">${esc(r.ph.label)}</span></div>
         <ol class="chev-row">${r.steps.map((s, i) => chev(s, i === 0)).join('')}</ol></div>`).join('')}</div>
@@ -2558,9 +2879,11 @@ const ProjectForm = {
             <label class="option-card"><input type="radio" name="industrial_test" id="tlIndustrialTest" value="with" checked data-change="tl-template">Avec test industriel <span class="muted small">(56 j)</span></label>
             <label class="option-card"><input type="radio" name="industrial_test" id="tlNoIndustrialTest" value="without" data-change="tl-template">Sans test industriel <span class="muted small">(14 j)</span></label>
             <span class="spacer grow"></span><span class="badge b-space no-dot" id="tlTotalDays"></span></div>
-          <div class="tl-head"><span>Étape</span><span>Semaine</span><span>%</span><span>Durée (j)</span><span>Statut</span><span></span></div>
+          <p class="hint mb-4" id="tlHint"></p>
+          <div id="tlLaunch"></div>
+          <div class="tl-head"><span>Étape</span><span>Semaine</span><span>Clôture prévue</span><span>Clôture réelle</span><span>%</span><span>Durée (j)</span><span>Statut</span><span></span></div>
           <div id="tlSteps"></div>
-          <div class="row mt-4"><button class="btn btn-glass btn-sm" data-action="tl-add">${icon('plus', 'sm')}Étape personnalisée</button><span class="grow"></span><button class="btn btn-ghost btn-sm" data-action="tl-reset">Réinitialiser le modèle</button></div>
+          <div class="row mt-4"><button class="btn btn-glass btn-sm" data-action="tl-add">${icon('plus', 'sm')}Étape personnalisée</button><span class="grow"></span><button class="btn btn-ghost btn-sm" data-action="tl-rebaseline" title="Les dates prévues actuelles deviennent la nouvelle référence">Redéfinir la référence</button><button class="btn btn-ghost btn-sm" data-action="tl-reset">Réinitialiser le modèle</button></div>
         </section>
         <section class="card solid card-pad"><h2 class="section-title">Finance</h2><div class="form-grid">
           ${f('f_fr', 'Revenue forecast (k€)', p?.forecast_revenue, 'number', 'placeholder="700"')}${f('f_br', 'Revenue budget (k€)', p?.budget_revenue, 'number', 'placeholder="480"')}
@@ -2569,45 +2892,115 @@ const ProjectForm = {
         <div class="grid g2"><section class="card solid card-pad"><h2 class="section-title"><label for="f_risks">Risques</label></h2><textarea class="textarea" id="f_risks" rows="5" placeholder="1. Risque principal">${esc(p?.risks || '')}</textarea></section>
           <section class="card solid card-pad"><h2 class="section-title"><label for="f_actions">Actions</label></h2><textarea class="textarea" id="f_actions" rows="5" placeholder="1. Action en cours">${esc(p?.actions || '')}</textarea></section></div>
       </div>`;
+    ProjectForm.projectId = proj?.id || null;
+    ProjectForm.stats = proj ? Timeline.taskStats(proj.id, Store.tasksIn('customer')) : new Map();
     const steps = p?.timeline_steps || [];
     // Les étapes reconnues reprennent le libellé du modèle (accents corrigés) ; les étapes personnalisées restent telles quelles.
-    if (steps.length) { Timeline.enrich(steps).forEach(s => ProjectForm.addStep(s.label, s.week, s.prog, s.status, s.days || 0, s.phase || '')); ProjectForm.updateTotal(); }
-    else ProjectForm.applyTemplate(true);
-    document.getElementById('f_start').addEventListener('change', ProjectForm.autoWeeks);
-    document.getElementById('tlSteps').addEventListener('input', e => { if (e.target.classList.contains('tl-days')) ProjectForm.updateTotal(); });
+    if (steps.length) {
+      // Semaines saisies à la main : conservées. Pour les projets existants (sans indicateur),
+      // une semaine identique à l'ancien calcul automatique est considérée comme automatique.
+      const manualFlags = Timeline.manualFlags(steps, Timeline.schedule(Dates.key(p.start_date), steps));
+      Timeline.enrich(steps).forEach((s, i) => {
+        const manual = manualFlags[i];
+        ProjectForm.addStep(s.label, s.week, s.prog, s.status, s.days || 0, s.phase || '', manual, { planned: s.planned_end, actual: s.actual_end });
+      });
+      ProjectForm.recalc();
+    } else ProjectForm.applyTemplate(true);
+    document.getElementById('f_start').addEventListener('change', ProjectForm.recalc);
+    document.getElementById('f_launch').addEventListener('change', ProjectForm.recalc);
+    document.getElementById('tlSteps').addEventListener('change', e => {
+      const row = e.target.closest('.tl-step'); if (!row) return;
+      if (e.target.classList.contains('tl-status')) {
+        // Une étape passée à « Terminé » reçoit la date du jour comme clôture réelle (modifiable).
+        const actual = row.querySelector('.tl-actual'), done = e.target.value === 'done';
+        actual.disabled = !done;
+        if (done && !actual.value) actual.value = Dates.today();
+        if (!done) actual.value = '';
+        ProjectForm.recalc();
+      }
+      if (e.target.classList.contains('tl-actual')) ProjectForm.recalc();
+    });
+    document.getElementById('tlSteps').addEventListener('input', e => {
+      if (e.target.classList.contains('tl-days')) ProjectForm.recalc();
+      if (e.target.classList.contains('tl-week')) {
+        const row = e.target.closest('.tl-step');
+        ProjectForm.setManual(row, e.target.value.trim() !== '');
+        if (!e.target.value.trim()) ProjectForm.recalc();
+      }
+    });
   },
   applyTemplate(withTest) {
     document.getElementById('tlSteps').innerHTML = '';
     Timeline.template(withTest).forEach(s => ProjectForm.addStep(s.name, '', 0, 'upcoming', s.days, s.phase));
-    ProjectForm.updateTotal(); ProjectForm.autoWeeks();
+    ProjectForm.recalc();
   },
-  addStep(name = '', week = '', prog = 0, status = 'upcoming', days = 0, phase = '') {
+  addStep(name = '', week = '', prog = 0, status = 'upcoming', days = 0, phase = '', manual = false, ref = {}) {
     const row = document.createElement('div');
     row.className = 'tl-step' + (Timeline.isGate(name) ? ' is-gate' : ''); row.dataset.phase = phase || '';
     const opts = [['done', 'Terminé'], ['current', 'En cours'], ['warning', 'À risque'], ['upcoming', 'À venir']];
     const ph = CONFIG.phases.find(x => x.id === phase);
     row.innerHTML = `<div class="tl-name-cell"><span class="tl-mark">${Timeline.isGate(name) ? '<span class="gate-mark" title="Gate"></span><span class="sr-only">Gate</span>' : ''}</span><input class="input input-sm tl-name" value="${esc(name)}" placeholder="Nom de l'étape" aria-label="Nom de l'étape">${ph ? `<span class="tl-phase">${esc(ph.id)}</span>` : ''}</div>
-      <input class="input input-sm tl-week" value="${esc(week)}" placeholder="S6" aria-label="Semaine">
+      <div class="tl-week-cell"><input class="input input-sm tl-week" value="${esc(week)}" placeholder="S—" aria-label="Semaine de clôture">
+        <button type="button" class="tl-week-auto" data-action="tl-week-auto" title="Semaine saisie à la main : revenir au calcul automatique" aria-label="Revenir au calcul automatique de la semaine">${icon('undo', 'sm')}</button></div>
+      <span class="tl-end" aria-label="Date de clôture prévue"></span>
+      <input class="input input-sm tl-actual" type="date" value="${esc(status === 'done' ? (ref.actual || '') : '')}" ${status === 'done' ? '' : 'disabled'} aria-label="Date de clôture réelle" title="Date réelle de clôture (étape terminée)">
       <input class="input input-sm tl-prog" type="number" min="0" max="100" value="${Number(prog) || 0}" aria-label="Avancement en %">
       <input class="input input-sm tl-days" type="number" min="0" value="${Number(days) || 0}" aria-label="Durée en jours">
       <select class="select input-sm tl-status" aria-label="Statut de l'étape">${opts.map(([v, l]) => `<option value="${v}" ${status === v ? 'selected' : ''}>${l}</option>`).join('')}</select>
       <button class="btn btn-ghost btn-sm btn-icon" data-action="tl-remove" aria-label="Supprimer l'étape">${icon('x', 'sm')}</button>`;
+    row.dataset.planned = ref.planned || '';
     document.getElementById('tlSteps').appendChild(row);
+    ProjectForm.setManual(row, manual);
+    // Avancement calculé à partir des tâches reliées à l'étape (non modifiable à la main).
+    const st = ProjectForm.stats?.get(Timeline.norm(name));
+    if (st && st.total) {
+      const input = row.querySelector('.tl-prog');
+      input.value = Math.round(st.done / st.total * 100); input.readOnly = true; input.classList.add('is-computed');
+      input.title = `Calculé à partir des tâches reliées : ${st.done}/${st.total} terminée(s)`;
+    }
+  },
+  setManual(row, manual) {
+    row.dataset.manual = manual ? '1' : '';
+    row.classList.toggle('is-manual', manual);
   },
   updateTotal() {
     let total = 0; document.querySelectorAll('.tl-step .tl-days').forEach(i => { total += parseInt(i.value || 0, 10) || 0; });
     const el = document.getElementById('tlTotalDays'); if (el) el.textContent = `${total} jours au total`;
   },
-  /** Numéro de semaine cumulé (5 jours ouvrés par semaine) à partir de la date de début. */
-  autoWeeks() {
-    if (!document.getElementById('f_start')?.value) return;
-    let cumul = 0;
-    document.querySelectorAll('.tl-step').forEach(row => { cumul += parseInt(row.querySelector('.tl-days')?.value, 10) || 0; row.querySelector('.tl-week').value = 'S' + Math.ceil(cumul / 5); });
+  /** Recalcule la date et la semaine de clôture de chaque étape (semaine ISO du calendrier),
+      sauf pour les semaines saisies à la main. */
+  recalc() {
+    const start = document.getElementById('f_start')?.value || '';
+    const rows = [...document.querySelectorAll('.tl-step')];
+    const plan = Timeline.schedule(start, rows.map(r => ({ days: r.querySelector('.tl-days').value,
+      actual_end: r.querySelector('.tl-status').value === 'done' ? r.querySelector('.tl-actual').value : null })));
+    const startYear = start ? Number(start.slice(0, 4)) : null;
+    rows.forEach((row, i) => {
+      const p = plan[i], endEl = row.querySelector('.tl-end');
+      row.dataset.end = p ? p.end : '';
+      const slip = p ? Timeline.slipDays(row.dataset.planned, p.end) : null;
+      endEl.innerHTML = p ? `${esc(Dates.fmt(p.end, { day: '2-digit', month: 'short', ...(p.isoYear !== startYear ? { year: '2-digit' } : {}) }))}${slip ? ` <span class="slip ${slip > 0 ? 'late' : 'early'}">${esc(Timeline.fmtSlip(slip))}</span>` : ''}` : '—';
+      endEl.title = p ? `Clôture ${p.actual ? 'réelle' : 'prévue'} le ${Dates.long(p.end)} (semaine ${p.week.slice(1)} de ${p.isoYear})${row.dataset.planned ? ` — référence : ${Dates.fmt(row.dataset.planned)}` : ''}` : '';
+      if (row.dataset.manual !== '1') row.querySelector('.tl-week').value = p ? p.week : '';
+    });
+    // Alerte si la timeline se termine après la date de lancement saisie.
+    const last = plan.length ? plan[plan.length - 1] : null, launch = document.getElementById('f_launch')?.value;
+    const box = document.getElementById('tlLaunch');
+    if (box) box.innerHTML = last && launch && last.end > launch
+      ? `<div class="notice mb-4">${icon('alert')}<span class="grow">La timeline se termine le <b>${esc(Dates.fmt(last.end))}</b>, après la date de lancement saisie (${esc(Dates.fmt(launch))}).</span><button type="button" class="btn btn-glass btn-sm" data-action="tl-use-end" data-date="${last.end}">Utiliser le ${esc(Dates.short(last.end))} comme date de lancement</button></div>` : '';
+    const hint = document.getElementById('tlHint');
+    if (hint) hint.textContent = start ? 'Semaines du calendrier calculées depuis la date de début (durées en jours calendaires, semaine de clôture de chaque étape). Une semaine modifiée à la main est conservée. Une étape terminée prend sa date de clôture réelle, et les suivantes sont recalculées. L\'écart avec la référence (dates prévues au premier enregistrement) est affiché à côté de la clôture prévue.'
+      : 'Renseignez la date de début du projet pour calculer automatiquement la semaine de clôture de chaque étape.';
+    ProjectForm.updateTotal();
   },
   steps() {
     return [...document.querySelectorAll('.tl-step')].map(r => ({ name: r.querySelector('.tl-name').value, week: r.querySelector('.tl-week').value,
       prog: parseInt(r.querySelector('.tl-prog').value, 10) || 0, days: parseInt(r.querySelector('.tl-days').value, 10) || 0,
-      status: r.querySelector('.tl-status').value, phase: r.dataset.phase || '' }));
+      status: r.querySelector('.tl-status').value, phase: r.dataset.phase || '',
+      week_manual: r.dataset.manual === '1', end_date: r.dataset.end || null,
+      // Référence : fixée au premier enregistrement avec une date de début, puis conservée.
+      planned_end: r.dataset.planned || r.dataset.end || null,
+      actual_end: r.querySelector('.tl-status').value === 'done' ? (r.querySelector('.tl-actual').value || null) : null }));
   },
   async save() {
     const name = document.getElementById('f_project').value.trim();
@@ -2643,11 +3036,15 @@ const ProjectForm = {
     try {
       let projId = existId;
       if (existId) {
-        if (!Store.projectIn('customer', existId)) throw new Error('Projet introuvable dans cet espace.');
+        const before = Store.projectIn('customer', existId);
+        if (!before) throw new Error('Projet introuvable dans cet espace.');
         const { error } = await Store.db.from('projects').update(payload).eq('id', existId); if (error) throw error;
+        const changes = [...Audit.diff(before, payload, Audit.projectFields), ...Audit.timelineDiff(before.timeline_steps, payload.timeline_steps)];
+        Audit.log({ entity: 'project', entityId: existId, projectId: existId, action: 'update', summary: `One-pager enregistré (${payload.version})`, changes });
       } else {
         const { data, error } = await Store.db.from('projects').insert({ ...payload, created_by: Store.me?.id || null }).select().single(); if (error) throw error;
         projId = data.id;
+        Audit.log({ entity: 'project', entityId: projId, projectId: projId, action: 'create', summary: `Projet créé : « ${payload.project_name} »` });
       }
       await Store.db.from('project_versions').insert({ project_id: projId, version_number: payload.version, snapshot: payload, created_by: Store.me?.id || null });
       await Store.refreshTable('projects');
@@ -2659,9 +3056,16 @@ const ProjectForm = {
 Object.assign(Actions, {
   'save-project': () => ProjectForm.save(),
   'save-project-confirm': () => ProjectForm.doSave(),
-  'tl-add': () => ProjectForm.addStep(),
+  'tl-add': () => { ProjectForm.addStep(); ProjectForm.recalc(); },
+  'tl-week-auto': el => { ProjectForm.setManual(el.closest('.tl-step'), false); ProjectForm.recalc(); },
   'tl-reset': () => ProjectForm.applyTemplate(document.getElementById('tlIndustrialTest').checked),
-  'tl-remove': el => { el.closest('.tl-step')?.remove(); ProjectForm.updateTotal(); },
+  'tl-remove': el => { el.closest('.tl-step')?.remove(); ProjectForm.recalc(); },
+  'tl-use-end': el => { document.getElementById('f_launch').value = el.dataset.date; ProjectForm.recalc(); },
+  'tl-rebaseline': () => {
+    if (!confirm('Redéfinir la référence ?\nLes dates de clôture prévues actuelles deviennent la nouvelle référence : les écarts repartent de zéro.')) return;
+    document.querySelectorAll('.tl-step').forEach(r => { r.dataset.planned = r.dataset.end || ''; });
+    ProjectForm.recalc(); Toast.show('Nouvelle référence : elle sera enregistrée avec le projet.');
+  },
 });
 ChangeActions['tl-template'] = el => ProjectForm.applyTemplate(el.value === 'with');
 
@@ -2704,11 +3108,18 @@ const PdqaProject = {
     try {
       let pid = id;
       if (id) {
-        if (!Store.projectIn('pdqa', id)) throw new Error('Projet introuvable dans cet espace.');
+        const before = Store.projectIn('pdqa', id);
+        if (!before) throw new Error('Projet introuvable dans cet espace.');
         const { error } = await Store.db.from('projects').update(payload).eq('id', id); if (error) throw error;
+        const changes = Audit.diff(before, payload, Audit.projectFields);
+        const lead = (x) => x?.pdqa_data?.lead_id || null;
+        if (lead(before) !== lead(payload)) changes.push({ field: 'lead', label: 'Responsable', from: Audit.fmt.user(lead(before)), to: Audit.fmt.user(lead(payload)) });
+        if ((before.pdqa_data?.department || '') !== (payload.pdqa_data.department || '')) changes.push({ field: 'department', label: 'Département', from: before.pdqa_data?.department || '—', to: payload.pdqa_data.department || '—' });
+        Audit.log({ entity: 'project', entityId: id, projectId: id, action: 'update', summary: 'Initiative modifiée', changes });
       } else {
         const { data, error } = await Store.db.from('projects').insert({ ...payload, created_by: Store.me?.id || null }).select().single(); if (error) throw error;
         pid = data.id;
+        Audit.log({ entity: 'project', entityId: pid, projectId: pid, action: 'create', summary: `Initiative créée : « ${payload.project_name} »` });
       }
       await Store.refreshTable('projects'); Store.schema.workspace = true;
       Toast.show('Initiative enregistrée.');
@@ -2736,11 +3147,275 @@ const PdqaProject = {
             <dt>Partenaires</dt><dd>${(d.partners || []).length ? d.partners.map(x => `<span class="chip">${esc(x)}</span>`).join(' ') : '—'}</dd>
             <dt>Contributeurs</dt><dd>${people.length ? people.map(u => `<div class="person" style="margin-bottom:4px">${avatar(u, 22)}${esc(u.name)}</div>`).join('') : '—'}</dd>
           </dl></section>
-        </aside></div>${projectTasksHTML(p)}</div>`;
+        </aside></div>${projectTasksHTML(p)}
+        <div class="mt-4">${Documents.sectionHTML(p)}</div><div class="mt-4">${History.sectionHTML(p)}</div></div>`;
+    History.bind(p);
   },
 };
 Actions['save-pdqa'] = () => PdqaProject.save();
 Actions['chip-toggle'] = el => el.setAttribute('aria-pressed', String(el.getAttribute('aria-pressed') !== 'true'));
+
+/* ==========================================================================
+   Jalon — 05b · Décisions de Gate, documents, historique, export Excel
+   Sections ajoutées aux fiches projet. Chacune fonctionne même si la
+   migration 003 n'a pas encore été exécutée (un message l'indique alors).
+   ========================================================================== */
+
+/** Message affiché à la place d'une section tant que la base n'est pas à jour. */
+function migrationNotice(what) {
+  return `<div class="notice info">${icon('alert')}<span>${esc(what)} sera disponible après la mise à jour de la base : exécutez le script <b>MIGRATION_003_GATES_DOCUMENTS_HISTORIQUE.sql</b> dans Supabase.</span></div>`;
+}
+
+/* ---------- Décisions de Gate ---------- */
+const GateReviews = {
+  /** Les 4 Gates du projet, avec l'étape correspondante de sa timeline. */
+  gatesOf(p) {
+    const steps = Timeline.enrich(p.timeline_steps);
+    return [1, 2, 3, 4].map(n => {
+      const step = steps.find(s => s.gate && Timeline.gateNumber(s.name) === n) || null;
+      const tpl = CONFIG.timelineTemplate.find(s => Timeline.gateNumber(s.name) === n);
+      return { n, step, title: Timeline.gateTitle(step ? step.label : tpl.name) };
+    });
+  },
+  /** Une décision est attendue quand la Gate est l'étape en cours et qu'aucune décision « GO » n'a été prise. */
+  isPending(p, gate) {
+    if (!gate.step || !['current', 'warning'].includes(gate.step.status)) return false;
+    const last = Store.lastGateDecision(p.id, gate.n);
+    return !last || !CONFIG.gateDecisions[last.decision]?.passes;
+  },
+  decisionBadge(g) {
+    const d = CONFIG.gateDecisions[g.decision] || { label: g.decision, badge: 'b-neutral' };
+    return `<span class="badge ${d.badge}">${esc(d.label)}</span>`;
+  },
+  sectionHTML(p) {
+    if (Store.schema.gates === false) return `<section class="card no-print"><div class="card-head"><h2 class="card-title">Décisions de Gate</h2></div><div class="card-body">${migrationNotice('Le suivi des décisions de Gate')}</div></section>`;
+    const reviews = Store.gateReviewsOf('customer', p.id);
+    const rows = GateReviews.gatesOf(p).map(g => {
+      const hist = reviews.filter(r => Number(r.gate_no) === g.n).sort((a, b) => cmp(b.decision_date, a.decision_date) || cmp(b.created_at, a.created_at));
+      const last = hist[0], pending = GateReviews.isPending(p, g);
+      const who = last ? (last.deciders || []).map(id => Store.user(id)?.name).filter(Boolean).join(', ') : '';
+      return `<div class="gate-row ${pending ? 'is-pending' : ''}">
+        <span class="gate-mark" aria-hidden="true"></span>
+        <div class="grow"><div class="gate-row-title"><span class="gate-no">Gate ${g.n}</span>${esc(g.title)}</div>
+          ${last ? `<div class="cell-sub">${GateReviews.decisionBadge(last)} le ${esc(Dates.fmt(last.decision_date))}${who ? ` par ${esc(who)}` : ''}</div>
+            ${last.conditions ? `<div class="gate-cond"><b>Conditions :</b> ${esc(last.conditions)}</div>` : ''}${last.comment ? `<div class="cell-sub">${esc(last.comment)}</div>` : ''}`
+            : `<div class="cell-sub">${pending ? '<span class="badge b-gate">Décision attendue</span>' : 'Aucune décision enregistrée'}${g.step ? ` · étape ${esc(CONFIG.stepStatuses[g.step.status].label.toLowerCase())}` : ''}</div>`}
+          ${hist.length > 1 ? `<details class="gate-hist"><summary>Décisions précédentes (${hist.length - 1})</summary>${hist.slice(1).map(r => `<div class="cell-sub">${GateReviews.decisionBadge(r)} le ${esc(Dates.fmt(r.decision_date))}${r.conditions ? ` — ${esc(r.conditions)}` : ''}${r.comment ? ` — ${esc(r.comment)}` : ''}</div>`).join('')}</details>` : ''}
+        </div>
+        <button class="btn ${pending ? 'btn-primary' : 'btn-glass'} btn-sm" data-action="gate-decide" data-project="${esc(p.id)}" data-gate="${g.n}">Enregistrer une décision</button>
+      </div>`;
+    }).join('');
+    return `<section class="card no-print" aria-labelledby="gatesH"><div class="card-head"><h2 class="card-title" id="gatesH">Décisions de Gate</h2></div><div>${rows}</div></section>`;
+  },
+  open(projectId, gateNo) {
+    const p = Store.projectIn('customer', projectId); if (!p) return;
+    const g = GateReviews.gatesOf(p).find(x => x.n === Number(gateNo));
+    const panel = Overlay.open(`<form id="gateForm" novalidate>
+      <h2 class="modal-title"><span class="gate-mark" aria-hidden="true" style="margin-right:10px;vertical-align:2px"></span>Gate ${g.n} : ${esc(g.title)}</h2>
+      <div class="stack">
+        <fieldset class="field"><legend class="label">Décision <span class="req">*</span></legend><div class="decision-grid">
+          ${Object.entries(CONFIG.gateDecisions).map(([id, d], i) => `<label class="option-card"><input type="radio" name="decision" value="${id}" ${i === 0 ? 'checked' : ''}>${esc(d.label)}</label>`).join('')}</div></fieldset>
+        <div class="field"><label class="label" for="gd_date">Date de la décision <span class="req">*</span></label><input class="input" type="date" id="gd_date" value="${Dates.today()}"></div>
+        <div class="field"><span class="label">Décideurs</span><div class="part-grid">${Store.users.map(u => `<button type="button" class="part-chip" data-action="chip-toggle" data-group="deciders" data-value="${esc(u.id)}" aria-pressed="${u.id === Store.me.id}">${avatar(u, 24)}${esc(u.name)}</button>`).join('')}</div></div>
+        <div class="field" id="gd_cond_field" hidden><label class="label" for="gd_cond">Conditions <span class="req">*</span></label><textarea class="textarea" id="gd_cond" rows="3" placeholder="Conditions à lever et échéance"></textarea></div>
+        <div class="field"><label class="label" for="gd_comment">Commentaire <span class="muted">(facultatif)</span></label><textarea class="textarea" id="gd_comment" rows="2"></textarea></div>
+        ${g.step ? `<label class="check" id="gd_sync_wrap"><input type="checkbox" id="gd_sync" checked>Marquer la Gate comme franchie dans la timeline (clôture réelle = date de la décision)</label>` : '<p class="hint">Cette Gate ne figure pas dans la timeline du projet.</p>'}
+        <p class="error-msg" id="gd_err"></p>
+      </div>
+      <div class="modal-actions"><button type="button" class="btn btn-ghost" data-action="close-overlay">Annuler</button><button type="submit" class="btn btn-primary" id="gd_submit">Enregistrer la décision</button></div>
+    </form>`, { label: `Décision Gate ${g.n}` });
+    const form = panel.querySelector('#gateForm');
+    const sync = () => {
+      const dec = form.querySelector('[name="decision"]:checked').value;
+      panel.querySelector('#gd_cond_field').hidden = dec !== 'go_conditions';
+      const wrap = panel.querySelector('#gd_sync_wrap'); if (wrap) wrap.hidden = !CONFIG.gateDecisions[dec].passes;
+    };
+    form.addEventListener('change', sync); sync();
+    form.addEventListener('submit', e => { e.preventDefault(); GateReviews.save(p, g, panel); });
+  },
+  async save(p, g, panel) {
+    const err = panel.querySelector('#gd_err'); err.textContent = '';
+    const decision = panel.querySelector('[name="decision"]:checked').value;
+    const date = panel.querySelector('#gd_date').value, conditions = panel.querySelector('#gd_cond').value.trim();
+    const deciders = [...panel.querySelectorAll('[data-group="deciders"][aria-pressed="true"]')].map(b => b.dataset.value);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) { err.textContent = 'Indiquez la date de la décision.'; return; }
+    if (decision === 'go_conditions' && !conditions) { err.textContent = 'Précisez les conditions.'; panel.querySelector('#gd_cond').focus(); return; }
+    const syncTimeline = CONFIG.gateDecisions[decision].passes && panel.querySelector('#gd_sync')?.checked && g.step;
+    const btn = panel.querySelector('#gd_submit'); btn.disabled = true;
+    try {
+      const row = { project_id: p.id, gate_no: g.n, decision, decision_date: date, deciders, conditions: conditions || null,
+        comment: panel.querySelector('#gd_comment').value.trim() || null, created_by: Store.me?.id || null };
+      const { data, error } = await Store.db.from('gate_reviews').insert(row).select().single();
+      if (error) throw error;
+      Store.gateReviews.unshift(data); Store.schema.gates = true;
+      Audit.log({ entity: 'gate', entityId: data.id, projectId: p.id, action: 'create', summary: `Gate ${g.n} : décision « ${CONFIG.gateDecisions[decision].label} » du ${Dates.fmt(date)}`,
+        changes: conditions ? [{ field: 'conditions', label: 'Conditions', from: '—', to: conditions }] : [] });
+      if (syncTimeline) await GateReviews.markGatePassed(p, g.n, date);
+      Overlay.close(); Toast.show(`Décision enregistrée pour la Gate ${g.n}.`);
+      Router.refresh();
+    } catch (e) { err.textContent = friendlyError(e); }
+    finally { if (document.contains(btn)) btn.disabled = false; }
+  },
+  /** Met à jour la timeline du projet : Gate terminée à la date de décision, étape suivante en cours. */
+  async markGatePassed(p, gateNo, date) {
+    const steps = (p.timeline_steps || []).map(s => ({ ...s }));
+    const i = steps.findIndex(s => Timeline.isGate(s.name) && Timeline.gateNumber(s.name) === gateNo);
+    if (i < 0) return;
+    const before = p.timeline_steps;
+    steps[i] = { ...steps[i], status: 'done', prog: 100, actual_end: date };
+    const next = steps.slice(i + 1).find(s => s.status === 'upcoming');
+    if (next && !steps.slice(i + 1).some(s => s.status === 'current' || s.status === 'warning')) next.status = 'current';
+    const scheduled = Timeline.applySchedule(Dates.key(p.start_date), steps);
+    const { error } = await Store.db.from('projects').update({ timeline_steps: scheduled, updated_at: new Date().toISOString() }).eq('id', p.id);
+    if (error) throw error;
+    p.timeline_steps = scheduled;
+    Audit.log({ entity: 'project', entityId: p.id, projectId: p.id, action: 'update', summary: `Timeline mise à jour suite à la décision de la Gate ${gateNo}`, changes: Audit.timelineDiff(before, scheduled) });
+  },
+};
+Actions['gate-decide'] = el => GateReviews.open(el.dataset.project, el.dataset.gate);
+
+/* ---------- Documents des projets ---------- */
+const Documents = {
+  bucket: 'project-docs',
+  fmtSize(b) { if (!b && b !== 0) return ''; return b < 1024 ? `${b} o` : b < 1048576 ? `${Math.round(b / 1024)} Ko` : `${(b / 1048576).toFixed(1).replace('.', ',')} Mo`; },
+  sectionHTML(p) {
+    if (Store.schema.documents === false) return `<section class="card no-print"><div class="card-head"><h2 class="card-title">Documents</h2></div><div class="card-body">${migrationNotice('Le dépôt de documents')}</div></section>`;
+    const docs = Store.documentsOf(App.ws, p.id);
+    return `<section class="card no-print" aria-labelledby="docsH"><div class="card-head"><h2 class="card-title" id="docsH">Documents <span class="muted small">${docs.length}</span></h2>
+      <button class="btn btn-glass btn-sm" data-action="doc-upload" data-project="${esc(p.id)}">${icon('plus', 'sm')}Ajouter un document</button></div>
+      ${docs.length ? docs.map(d => `<div class="list-row doc-row">${icon('notes')}
+        <span class="grow"><button class="link-btn truncate" style="display:block;max-width:100%" data-action="doc-open" data-id="${esc(d.id)}" title="Ouvrir ${esc(d.name)}">${esc(d.name)}</button>
+          <span class="cell-sub">${esc(Documents.fmtSize(d.size_bytes))}${d.uploaded_by && Store.user(d.uploaded_by) ? `, ajouté par ${esc(Store.user(d.uploaded_by).name)}` : ''} le ${esc(Dates.fmt(d.created_at))}</span></span>
+        <span class="chip">${esc(d.category)}</span>
+        <button class="btn btn-ghost btn-sm btn-icon" data-action="doc-delete" data-id="${esc(d.id)}" aria-label="Supprimer ${esc(d.name)}">${icon('trash', 'sm')}</button></div>`).join('')
+        : '<div class="card-body muted small">Aucun document. Ajoutez le NPD Brief, la spécification, les artworks, le BAT…</div>'}</section>`;
+  },
+  open(projectId) {
+    const panel = Overlay.open(`<form id="docForm" novalidate><h2 class="modal-title">Ajouter un document</h2><div class="stack">
+      <div class="field"><label class="label" for="doc_file">Fichier <span class="req">*</span></label><input class="input" type="file" id="doc_file" style="padding-top:6px"><span class="hint">${CONFIG.maxDocumentMb} Mo maximum.</span></div>
+      <div class="field"><label class="label" for="doc_cat">Catégorie</label><select class="select" id="doc_cat">${UI.options(CONFIG.documentCategories.map(c => ({ value: c, label: c })), 'Autre')}</select></div>
+      <p class="error-msg" id="doc_err"></p></div>
+      <div class="modal-actions"><button type="button" class="btn btn-ghost" data-action="close-overlay">Annuler</button><button type="submit" class="btn btn-primary" id="doc_submit">Ajouter</button></div></form>`, { label: 'Ajouter un document' });
+    panel.querySelector('#docForm').addEventListener('submit', e => { e.preventDefault(); Documents.upload(projectId, panel); });
+  },
+  async upload(projectId, panel) {
+    const err = panel.querySelector('#doc_err'); err.textContent = '';
+    const file = panel.querySelector('#doc_file').files[0];
+    if (!Store.projectIn(App.ws, projectId)) { err.textContent = 'Projet introuvable dans cet espace.'; return; }
+    if (!file) { err.textContent = 'Choisissez un fichier.'; return; }
+    if (file.size > CONFIG.maxDocumentMb * 1048576) { err.textContent = `Fichier trop volumineux (${Documents.fmtSize(file.size)}, ${CONFIG.maxDocumentMb} Mo maximum).`; return; }
+    const safe = file.name.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^\w.\-]+/g, '_').slice(-120);
+    const path = `${projectId}/${Date.now()}-${safe}`;
+    const btn = panel.querySelector('#doc_submit'); btn.disabled = true; btn.textContent = 'Envoi…';
+    try {
+      const up = await Store.db.storage.from(Documents.bucket).upload(path, file, { contentType: file.type || undefined, upsert: false });
+      if (up.error) throw up.error;
+      const row = { project_id: projectId, name: file.name, category: panel.querySelector('#doc_cat').value, storage_path: path,
+        size_bytes: file.size, mime_type: file.type || null, uploaded_by: Store.me?.id || null };
+      const { data, error } = await Store.db.from('project_documents').insert(row).select().single();
+      if (error) { await Store.db.storage.from(Documents.bucket).remove([path]); throw error; }   // pas de fichier orphelin
+      Store.documents.unshift(data); Store.schema.documents = true;
+      Audit.log({ entity: 'document', entityId: data.id, projectId, action: 'create', summary: `Document ajouté : « ${file.name} » (${row.category})` });
+      Overlay.close(); Toast.show('Document ajouté.'); Router.refresh();
+    } catch (e) { err.textContent = friendlyError(e); }
+    finally { if (document.contains(btn)) { btn.disabled = false; btn.textContent = 'Ajouter'; } }
+  },
+  async download(id) {
+    const d = Store.documents.find(x => x.id === id);
+    if (!d || !Store.projectIn(App.ws, d.project_id)) { Toast.show('Document introuvable.', 'error'); return; }
+    const { data, error } = await Store.db.storage.from(Documents.bucket).createSignedUrl(d.storage_path, 120, { download: d.name });
+    if (error || !data?.signedUrl) { Toast.error(error || 'Lien de téléchargement indisponible.'); return; }
+    const a = document.createElement('a'); a.href = data.signedUrl; a.target = '_blank'; a.rel = 'noopener'; a.download = d.name;
+    document.body.appendChild(a); a.click(); a.remove();
+  },
+  async remove(id) {
+    const d = Store.documents.find(x => x.id === id);
+    if (!d || !Store.projectIn(App.ws, d.project_id)) return;
+    if (!confirm(`Supprimer le document « ${d.name} » ? Cette action est définitive.`)) return;
+    try {
+      const { error } = await Store.db.from('project_documents').delete().eq('id', id);
+      if (error) throw error;
+      await Store.db.storage.from(Documents.bucket).remove([d.storage_path]);
+      Store.documents = Store.documents.filter(x => x.id !== id);
+      Audit.log({ entity: 'document', entityId: id, projectId: d.project_id, action: 'delete', summary: `Document supprimé : « ${d.name} »` });
+      Toast.show('Document supprimé.'); Router.refresh();
+    } catch (e) { Toast.error(e); }
+  },
+};
+Object.assign(Actions, {
+  'doc-upload': el => Documents.open(el.dataset.project),
+  'doc-open': el => Documents.download(el.dataset.id),
+  'doc-delete': el => Documents.remove(el.dataset.id),
+});
+
+/* ---------- Historique des modifications d'un projet ---------- */
+const History = {
+  sectionHTML(p) {
+    return `<details class="card history no-print" id="historyBox" data-project="${esc(p.id)}"><summary class="card-head"><h2 class="card-title">Historique des modifications</h2><span class="muted small">Qui a modifié quoi, et quand</span></summary>
+      <div id="historyList" class="card-body"></div></details>`;
+  },
+  bind(p) {
+    const box = document.getElementById('historyBox'); if (!box) return;
+    box.addEventListener('toggle', () => { if (box.open) History.load(p.id); });
+  },
+  async load(projectId) {
+    const list = document.getElementById('historyList'); if (!list) return;
+    if (!Store.projectIn(App.ws, projectId)) return;
+    list.innerHTML = UI.loading();
+    const rows = await Audit.forProject(projectId);
+    if (!document.contains(list)) return;
+    if (rows === null) { list.innerHTML = Store.schema.audit === false ? migrationNotice('L\'historique des modifications') : `<p class="error-msg">L'historique n'a pas pu être chargé.</p>`; return; }
+    if (!rows.length) { list.innerHTML = '<p class="muted small">Aucune modification enregistrée depuis l\'activation de l\'historique.</p>'; return; }
+    list.innerHTML = `<ol class="history-list">${rows.map(r => {
+      const when = new Date(r.created_at);
+      const time = isNaN(when) ? '' : when.toLocaleString(CONFIG.locale, { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+      return `<li><div class="history-meta"><span>${esc(time)}</span><span>${esc(r.user_name || 'Utilisateur inconnu')}</span></div>
+        <div class="history-text">${esc(r.summary)}</div>
+        ${(r.changes || []).length ? `<ul class="history-changes">${r.changes.map(c => `<li><span class="muted">${esc(c.label)} :</span> ${esc(c.from)} <span aria-hidden="true">→</span><span class="sr-only">devient</span> <b>${esc(c.to)}</b></li>`).join('')}</ul>` : ''}</li>`;
+    }).join('')}</ol>`;
+  },
+};
+
+/* ---------- Export Excel de la liste des projets ---------- */
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    if ([...document.scripts].some(s => s.src === src)) { resolve(); return; }
+    const s = document.createElement('script'); s.src = src; s.onload = resolve;
+    s.onerror = () => reject(new Error('La bibliothèque d\'export n\'a pas pu être chargée. Vérifiez la connexion internet.'));
+    document.head.appendChild(s);
+  });
+}
+const Export = {
+  xlsxUrl: 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js',
+  /** Exporte les projets affichés (filtres et tri de la liste respectés). */
+  async projects(rows) {
+    try {
+      if (!window.XLSX) await loadScript(Export.xlsxUrl);
+      const ws = App.ws, pdqa = ws === 'pdqa', tasks = Store.tasksIn(ws);
+      const d = v => (v ? Dates.parse(v) : null);
+      const head = pdqa
+        ? ['Projet', 'Département', 'Responsable', 'Statut', 'Priorité', 'Début', 'Fin visée', 'Progression (%)', 'En retard', 'Partenaires', 'Contributeurs', 'Description']
+        : ['Projet', 'Client', 'Chef de projet', 'Statut', 'Priorité', 'Début', 'Lancement', 'Étape actuelle', 'Progression (%)', 'Fin de timeline prévue', 'Glissement (jours)', 'En retard', 'Version'];
+      const body = rows.map(({ p, lead, group, progress, late }) => {
+        const common = [p.project_name, group || '', lead || '', CONFIG.projectStatuses[p.status]?.label || p.status, CONFIG.projectPriorities[p.priority] || '', d(p.start_date), d(p.launch_date)];
+        if (pdqa) return [...common, progress ?? '', late ? 'Oui' : 'Non', (p.pdqa_data.partners || []).join(', '),
+          (p.pdqa_data.contributors || []).map(id => Store.user(id)?.name).filter(Boolean).join(', '), p.description || ''];
+        const sg = Timeline.stage(p), fc = Timeline.forecast(p);
+        return [...common, sg.kind === 'step' ? sg.step.label : sg.kind === 'launched' ? 'Toutes les étapes terminées' : 'Timeline non planifiée',
+          progress ?? '', d(fc?.end), fc?.slip ?? '', late ? 'Oui' : 'Non', p.version || 'v1'];
+      });
+      const sheet = XLSX.utils.aoa_to_sheet([head, ...body], { cellDates: true, dateNF: 'dd/mm/yyyy' });
+      sheet['!cols'] = head.map((h, i) => ({ wch: Math.min(48, Math.max(h.length + 2, ...body.map(r => String(r[i] instanceof Date ? '00/00/0000' : r[i] ?? '').length + 2))) }));
+      sheet['!autofilter'] = { ref: XLSX.utils.encode_range({ s: { r: 0, c: 0 }, e: { r: body.length, c: head.length - 1 } }) };
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, sheet, pdqa ? 'Projets PDQA' : 'Projets clients');
+      const file = `${CONFIG.appName}_projets_${pdqa ? 'PDQA' : 'clients'}_${Dates.today()}.xlsx`;
+      XLSX.writeFile(wb, file);
+      Toast.show(`${rows.length} projet(s) exporté(s) : ${file}`);
+      return { head, body, file };
+    } catch (e) { Toast.error(e); return null; }
+  },
+};
 
 /* ==========================================================================
    Jalon — 06 · Meeting Minutes, Analytiques, Utilisateurs
@@ -2785,10 +3460,10 @@ const Meetings = {
           <div id="actionRows"></div><button class="btn btn-glass btn-sm mt-4" data-action="mm-add">${icon('plus', 'sm')}Ajouter une action</button></section>
       </div>`;
     const actions = meet?.actions || [];
-    if (actions.length) actions.forEach(a => Meetings.addRow(a.title, a.assignee_id, a.due_date)); else Meetings.addRow();
+    if (actions.length) actions.forEach(a => Meetings.addRow(a.title, a.assignee_id, a.due_date, a.task_id)); else Meetings.addRow();
   },
-  addRow(title = '', assigneeId = '', due = '') {
-    const row = document.createElement('div'); row.className = 'mm-action-row';
+  addRow(title = '', assigneeId = '', due = '', taskId = '') {
+    const row = document.createElement('div'); row.className = 'mm-action-row'; row.dataset.taskId = taskId || '';
     row.innerHTML = `<input class="input input-sm ma-title" value="${esc(title)}" placeholder="Description de l'action" aria-label="Action">
       <select class="select input-sm ma-assign" aria-label="Responsable">${UI.userOptions(assigneeId, '— Responsable —')}</select>
       <input class="input input-sm ma-due" type="date" value="${esc(Dates.key(due) || '')}" aria-label="Échéance">
@@ -2802,30 +3477,60 @@ const Meetings = {
     if (!team || !date) { err.textContent = 'Le nom de l\'équipe et la date sont obligatoires.'; return; }
     if (ws === 'pdqa' && !projectId) { err.textContent = 'Dans l\'espace PDQA, un compte-rendu doit être rattaché à un projet.'; return; }
     const actions = [...document.querySelectorAll('.mm-action-row')].filter(r => r.querySelector('.ma-title'))
-      .map(r => ({ title: r.querySelector('.ma-title').value, assignee_id: r.querySelector('.ma-assign').value || null, due_date: r.querySelector('.ma-due').value || null }))
+      .map(r => ({ title: r.querySelector('.ma-title').value, assignee_id: r.querySelector('.ma-assign').value || null, due_date: r.querySelector('.ma-due').value || null, task_id: r.dataset.taskId || null }))
       .filter(a => a.title.trim());
     const participants = [...document.querySelectorAll('[data-group="participants"][aria-pressed="true"]')].map(b => b.dataset.value);
     const payload = { team_name: team, meeting_date: date, project_id: projectId, agenda: v('m_agenda') || null, decisions: v('m_decisions') || null, participants, actions };
     const mid = v('m_id');
+    const previous = mid ? Store.meetingIn(ws, mid) : null;
     try {
       const { data: saved, error } = mid
         ? await Store.db.from('meeting_minutes').update(payload).eq('id', mid).select().single()
         : await Store.db.from('meeting_minutes').insert({ ...payload, created_by: Store.me?.id || null }).select().single();
       if (error) throw error;
       const meetingId = saved?.id || mid;
-      const withAssignee = actions.filter(a => a.title.trim() && a.assignee_id);
-      // Comportement d'origine conservé : à chaque enregistrement, les tâches issues du
-      // meeting sont recréées (voir point ouvert signalé dans le rapport de livraison).
-      if (withAssignee.length) {
-        if (mid) await Store.db.from('tasks').delete().eq('meeting_ref', mid);
-        const { error: tErr } = await Store.db.from('tasks').insert(withAssignee.map(a => ({ title: `[${team}] ${a.title}`, project_id: projectId, assignee_id: a.assignee_id,
-          due_date: a.due_date || null, priority: 'medium', status: 'todo', description: `Action issue du meeting : ${team} du ${Dates.fmt(date)}`, meeting_ref: meetingId || null })));
-        if (tErr) throw tErr;
-        Toast.show(`Compte-rendu enregistré · ${withAssignee.length} tâche(s) créée(s).`);
-      } else Toast.show('Compte-rendu enregistré.');
+      const r = await Meetings.syncTasks({ meetingId, team, date, projectId, actions, previousTeam: previous?.team_name });
+      // Mémorise le lien action → tâche pour les prochaines modifications.
+      if (r.linked) { const { error: e2 } = await Store.db.from('meeting_minutes').update({ actions }).eq('id', meetingId); if (e2) throw e2; }
+      Audit.log({ entity: 'meeting', entityId: meetingId, projectId, action: mid ? 'update' : 'create', summary: `Compte-rendu « ${team} » du ${Dates.fmt(date)} ${mid ? 'modifié' : 'créé'}` });
+      const parts = [r.created && `${r.created} tâche(s) créée(s)`, r.updated && `${r.updated} mise(s) à jour`, r.removed && `${r.removed} supprimée(s)`, r.kept && `${r.kept} conservée(s) car déjà commencée(s)`].filter(Boolean);
+      Toast.show(`Compte-rendu enregistré${parts.length ? ' : ' + parts.join(', ') : ''}.`);
       await Promise.all([Store.refreshTable('meeting_minutes'), Store.refreshTable('tasks')]);
       Router.go(ws, 'meeting', meetingId);
     } catch (e) { Toast.error(e); }
+  },
+  /** Synchronise les tâches issues des actions du compte-rendu SANS perdre leur avancement :
+      • action déjà liée à une tâche → la tâche est mise à jour (titre, responsable, échéance) ; son statut est conservé ;
+      • nouvelle action avec responsable → une tâche est créée ;
+      • action supprimée → sa tâche est supprimée si elle n'a pas commencé (« À faire »), sinon conservée.
+      Les comptes-rendus enregistrés avant cette correction sont reconnus par le titre de la tâche. */
+  async syncTasks({ meetingId, team, date, projectId, actions, previousTeam }) {
+    const pool = Store.tasks.filter(t => t.meeting_ref === meetingId);
+    const out = { created: 0, updated: 0, removed: 0, kept: 0, linked: false };
+    const titleOf = (tm, a) => `[${tm}] ${a.title.trim()}`;
+    for (const a of actions) {
+      let task = a.task_id ? pool.find(t => t.id === a.task_id) : null;
+      if (!task) task = pool.find(t => t.title === titleOf(team, a) || (previousTeam && t.title === titleOf(previousTeam, a)));
+      if (task) {
+        pool.splice(pool.indexOf(task), 1);
+        const patch = { title: titleOf(team, a), assignee_id: a.assignee_id || task.assignee_id, due_date: a.due_date || null, project_id: projectId };
+        if (Object.keys(patch).some(k => String(patch[k] ?? '') !== String(task[k] ?? ''))) {
+          const { error } = await Store.db.from('tasks').update(patch).eq('id', task.id); if (error) throw error;
+          out.updated++;
+        }
+        if (a.task_id !== task.id) { a.task_id = task.id; out.linked = true; }
+      } else if (a.assignee_id) {
+        const { data, error } = await Store.db.from('tasks').insert({ title: titleOf(team, a), project_id: projectId, assignee_id: a.assignee_id, due_date: a.due_date || null,
+          priority: 'medium', status: 'todo', description: `Action issue du meeting : ${team} du ${Dates.fmt(date)}`, meeting_ref: meetingId }).select().single();
+        if (error) throw error;
+        a.task_id = data.id; out.linked = true; out.created++;
+      } else if (a.task_id) { a.task_id = null; out.linked = true; }
+    }
+    for (const t of pool) {
+      if (t.status === 'todo') { const { error } = await Store.db.from('tasks').delete().eq('id', t.id); if (error) throw error; out.removed++; }
+      else out.kept++;
+    }
+    return out;
   },
   view(view, m) {
     const p = Store.project(m.project_id);
@@ -2854,6 +3559,7 @@ Object.assign(Actions, {
     const m = Store.meetingIn(App.ws, el.dataset.id); if (!m || !confirm(`Supprimer le compte-rendu « ${m.team_name} » ?`)) return;
     const { error } = await Store.db.from('meeting_minutes').delete().eq('id', m.id);
     if (error) { Toast.error(error); return; }
+    Audit.log({ entity: 'meeting', entityId: m.id, projectId: m.project_id, action: 'delete', summary: `Compte-rendu « ${m.team_name} » supprimé` });
     Store.meetings = Store.meetings.filter(x => x.id !== m.id); Toast.show('Compte-rendu supprimé.');
     if (App.page === 'meetings') Router.refresh(); else Router.go(App.ws, 'meetings');
   },
@@ -2928,25 +3634,41 @@ const Users = {
     view.innerHTML = pageHeader({ title: 'Utilisateurs', sub: 'Équipe et fonctions. L\'accès à l\'espace PDQA dépend du champ « Fonction ».',
       actions: `<button class="btn btn-primary" data-action="new-user">${icon('plus', 'sm')}Ajouter</button>` }) +
       `<div class="page-body">${Store.users.length ? `<div class="grid g3">${Store.users.map(u => `<div class="card user-card">${avatar(u, 44)}<div class="grow"><div class="cell-title">${esc(u.name)}</div><div class="cell-sub">${esc(u.role || '')}</div>${u.email ? `<div class="cell-sub">${esc(u.email)}</div>` : ''}${Perm.canAccessPDQA(u) ? '<span class="badge b-space mt-4" style="margin-top:6px">Accès PDQA</span>' : ''}</div>
+        <button class="btn btn-ghost btn-sm btn-icon" data-action="edit-user" data-id="${esc(u.id)}" aria-label="Modifier ${esc(u.name)}">${icon('edit', 'sm')}</button>
         <button class="btn btn-ghost btn-sm btn-icon" data-action="delete-user" data-id="${esc(u.id)}" aria-label="Supprimer ${esc(u.name)}">${icon('trash', 'sm')}</button></div>`).join('')}</div>` : `<div class="card">${UI.empty({ icon: 'users', title: 'Aucun utilisateur' })}</div>`}</div>`;
   },
-  modal(fromLogin) {
-    const panel = Overlay.open(`<h2 class="modal-title">Nouvel utilisateur</h2><form id="userForm" novalidate class="stack">
-      <div class="field"><label class="label" for="nu_name">Nom complet <span class="req">*</span></label><input class="input" id="nu_name" placeholder="ex : Charlotte Dupont" autofocus></div>
-      <div class="field"><label class="label" for="nu_role">Fonction <span class="req">*</span></label><input class="input" id="nu_role" list="roleList" placeholder="ex : Project Manager"><datalist id="roleList">${CONFIG.pdqaRoles.map(r => `<option value="${esc(r)}">`).join('')}</datalist>
+  /** Création (user absent) ou modification d'un utilisateur. */
+  modal(fromLogin, user = null) {
+    const color = user?.avatar_color && CONFIG.avatarColors.includes(user.avatar_color) ? user.avatar_color : CONFIG.avatarColors[0];
+    const panel = Overlay.open(`<h2 class="modal-title">${user ? 'Modifier l\'utilisateur' : 'Nouvel utilisateur'}</h2><form id="userForm" novalidate class="stack">
+      <div class="field"><label class="label" for="nu_name">Nom complet <span class="req">*</span></label><input class="input" id="nu_name" value="${esc(user?.name || '')}" placeholder="ex : Charlotte Dupont" autofocus></div>
+      <div class="field"><label class="label" for="nu_role">Fonction <span class="req">*</span></label><input class="input" id="nu_role" value="${esc(user?.role || '')}" list="roleList" placeholder="ex : Project Manager"><datalist id="roleList">${CONFIG.pdqaRoles.map(r => `<option value="${esc(r)}">`).join('')}</datalist>
         <span class="hint">« ${esc(CONFIG.pdqaRoles.join(' » ou « '))} » donnent accès à l'espace PDQA.</span></div>
-      <div class="field"><label class="label" for="nu_email">Email <span class="muted">(facultatif)</span></label><input class="input" type="email" id="nu_email" placeholder="prenom@nutradia.be"></div>
-      <div class="field"><span class="label">Couleur de profil</span><div class="row" role="radiogroup" aria-label="Couleur de profil">${CONFIG.avatarColors.map((c, i) => `<label style="cursor:pointer"><input type="radio" name="nu_color" value="${c}" ${i === 0 ? 'checked' : ''} class="sr-only"><span class="avatar" style="width:30px;height:30px;background:${c}" aria-label="${c}"></span></label>`).join('')}</div></div>
+      <div class="field"><label class="label" for="nu_email">Email <span class="muted">(facultatif)</span></label><input class="input" type="email" id="nu_email" value="${esc(user?.email || '')}" placeholder="prenom@nutradia.be"></div>
+      <div class="field"><span class="label">Couleur de profil</span><div class="row" role="radiogroup" aria-label="Couleur de profil">${CONFIG.avatarColors.map((c, i) => `<label style="cursor:pointer"><input type="radio" name="nu_color" value="${c}" ${c === color ? 'checked' : ''} class="sr-only"><span class="avatar" style="width:30px;height:30px;background:${c}" aria-label="${c}"></span></label>`).join('')}</div></div>
       <p class="error-msg" id="err_user"></p>
-      <div class="modal-actions"><button type="button" class="btn btn-ghost" data-action="close-overlay">Annuler</button><button type="submit" class="btn btn-primary">Créer</button></div></form>`, { label: 'Nouvel utilisateur' });
+      <div class="modal-actions"><button type="button" class="btn btn-ghost" data-action="close-overlay">Annuler</button><button type="submit" class="btn btn-primary">${user ? 'Enregistrer' : 'Créer'}</button></div></form>`, { label: user ? 'Modifier l\'utilisateur' : 'Nouvel utilisateur' });
     const paint = () => panel.querySelectorAll('[name="nu_color"]').forEach(r => { r.nextElementSibling.style.outline = r.checked ? '3px solid var(--brand)' : 'none'; r.nextElementSibling.style.outlineOffset = '2px'; });
     panel.addEventListener('change', paint); paint();
     panel.querySelector('#userForm').addEventListener('submit', async e => {
       e.preventDefault();
       const name = panel.querySelector('#nu_name').value.trim(), role = panel.querySelector('#nu_role').value.trim();
       if (!name || !role) { panel.querySelector('#err_user').textContent = 'Le nom et la fonction sont obligatoires.'; return; }
-      const { error } = await Store.db.from('users').insert({ name, role, email: panel.querySelector('#nu_email').value.trim() || null, avatar_color: panel.querySelector('[name="nu_color"]:checked').value });
+      const row = { name, role, email: panel.querySelector('#nu_email').value.trim() || null, avatar_color: panel.querySelector('[name="nu_color"]:checked').value };
+      if (user) {
+        const { data, error } = await Store.db.from('users').update(row).eq('id', user.id).select();
+        if (error || !data?.length) { panel.querySelector('#err_user').textContent = friendlyError(error || 'La base n\'a pas confirmé l\'enregistrement.'); return; }
+        const changes = Audit.diff(user, row, { name: ['Nom', 'text'], role: ['Fonction', 'text'], email: ['Email', 'text'] });
+        if (changes.length) Audit.log({ entity: 'user', entityId: user.id, action: 'update', summary: `Utilisateur « ${name} » modifié`, changes });
+        const wasPdqa = Perm.canAccessPDQA(user), isPdqa = Perm.canAccessPDQA(row);
+        Overlay.close(); Toast.show(wasPdqa === isPdqa ? 'Utilisateur enregistré.' : `Utilisateur enregistré : accès PDQA ${isPdqa ? 'accordé' : 'retiré'}.`);
+        await Store.refreshTable('users');
+        if (user.id === Store.me?.id) { Store.me = Store.user(user.id); if (App.ws === 'pdqa' && !Perm.canAccessPDQA(Store.me)) { Router.go('customer', 'users'); return; } Shell.render(); }
+        Router.refresh(); return;
+      }
+      const { data: created, error } = await Store.db.from('users').insert(row).select().single();
       if (error) { panel.querySelector('#err_user').textContent = friendlyError(error); return; }
+      if (Store.me) Audit.log({ entity: 'user', entityId: created?.id, action: 'create', summary: `Utilisateur créé : « ${name} » (${role})` });
       Overlay.close(); Toast.show('Utilisateur créé.');
       if (fromLogin || !Store.me) Login.render(); else { await Store.refreshTable('users'); Router.refresh(); }
     });
@@ -2954,12 +3676,14 @@ const Users = {
 };
 Object.assign(Actions, {
   'new-user': el => Users.modal(el.dataset.from === 'login'),
+  'edit-user': el => { const u = Store.user(el.dataset.id); if (u) Users.modal(false, u); },
   async 'delete-user'(el) {
     const u = Store.user(el.dataset.id); if (!u) return;
     if (u.id === Store.me?.id) { Toast.show('Vous ne pouvez pas supprimer votre propre profil.', 'error'); return; }
     if (!confirm(`Supprimer l'utilisateur « ${u.name} » ?`)) return;
     const { error } = await Store.db.from('users').delete().eq('id', u.id);
     if (error) { Toast.error(error); return; }
+    Audit.log({ entity: 'user', entityId: u.id, action: 'delete', summary: `Utilisateur supprimé : « ${u.name} »` });
     await Store.refreshTable('users'); Toast.show('Utilisateur supprimé.'); Router.refresh();
   },
 });
@@ -2976,7 +3700,7 @@ function boot() {
       .catch(() => Login.render());
   } else Login.render();
 }
-window.Jalon = { CONFIG, Dates, Rules, Perm, Store, App, Router, Kanban, Calendar };   // utile pour le diagnostic et les tests
+window.Jalon = { CONFIG, Dates, Rules, Timeline, Perm, Store, App, Router, Kanban, Calendar };   // utile pour le diagnostic et les tests
 boot();
 
 </script>
