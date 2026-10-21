@@ -8,7 +8,7 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='14' y='14' width='36' height='36' rx='6' transform='rotate(45 32 32)' fill='%23FF9620'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Overpass:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
@@ -80,7 +80,7 @@
   --step-done: #2E8B57; --step-current: #2F62C4; --step-warning: #C0392B; --step-upcoming: #E4E4DF; --step-upcoming-ink: #555A63;
 
   /* Typographie */
-  --font: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  --font: "Overpass", "Segoe UI", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
   --fs-xs: 11.5px; --fs-sm: 12.5px; --fs-md: 13.5px; --fs-base: 14px;
   --fs-lg: 16px; --fs-xl: 19px; --fs-2xl: 26px; --fs-3xl: 32px;
   --fw-regular: 400; --fw-medium: 500; --fw-semibold: 600; --fw-bold: 700;
@@ -102,7 +102,6 @@
   --ease: cubic-bezier(.2,.7,.2,1);
   --t-fast: 120ms; --t-med: 200ms;
 
-  --sidebar-w: 244px;
 }
 
 /* 2. VARIANTES ============================================================= */
@@ -174,59 +173,7 @@ h1[tabindex="-1"]:focus { outline: none; box-shadow: none; }
 
 /* 5. NAVIGATION ============================================================ */
 .app { display: flex; min-height: 100vh; }
-.sidebar {
-  position: sticky; top: 0; height: 100vh; width: var(--sidebar-w); flex-shrink: 0;
-  display: flex; flex-direction: column; gap: var(--sp-5); padding: var(--sp-5) var(--sp-4);
-  background: var(--glass); border-right: 1px solid var(--line);
-  backdrop-filter: blur(var(--glass-blur)) saturate(1.15); -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.15);
-  z-index: 20;
-}
-.brand { display: flex; align-items: center; gap: 12px; padding: 2px var(--sp-2) 0; }
-/* Logo : un losange orange, le symbole du jalon sur un planning */
-.brand-mark { width: 18px; height: 18px; margin: 0 3px; flex-shrink: 0; border-radius: 3px; transform: rotate(45deg);
-  background: linear-gradient(135deg, #FFAA4A, var(--brand) 60%, var(--brand-strong));
-  box-shadow: 0 3px 10px rgba(255,150,32,.35); }
-.brand-mark.lg { width: 26px; height: 26px; margin: 0 6px; border-radius: 4px; }
-.brand-name { font-weight: var(--fw-bold); font-size: 20px; letter-spacing: -.015em; }
-
-.ws-switch { display: grid; gap: 2px; padding: 3px; border-radius: var(--r-md); background: var(--surface-3); }
-.ws-option { display: flex; align-items: flex-start; gap: 10px; padding: 8px 10px; border-radius: var(--r-sm);
-  color: var(--text-2); font-size: var(--fs-md); font-weight: var(--fw-semibold); line-height: 1.25;
-  transition: background var(--t-fast), color var(--t-fast); }
-.ws-option:hover { color: var(--text); background: var(--glass-strong); }
-.ws-option[aria-current="true"] { background: var(--surface); color: var(--text); box-shadow: var(--sh-2); }
-.ws-option small { display: block; font-weight: var(--fw-regular); color: var(--text-3); font-size: var(--fs-xs); margin-top: 2px; }
-.ws-dot { width: 8px; height: 8px; border-radius: 2px; transform: rotate(45deg); flex-shrink: 0; margin-top: 5px; }
-.ws-dot.customer { background: var(--brand); }
-.ws-dot.pdqa { background: #0F6E6A; }
-
-.nav { display: flex; flex-direction: column; gap: 1px; flex: 1; overflow-y: auto; }
-.nav-label { font-size: var(--fs-xs); font-weight: var(--fw-semibold); color: var(--text-3); padding: var(--sp-4) 10px var(--sp-1); }
-.nav-item { display: flex; align-items: center; gap: 11px; padding: 8px 10px; border-radius: var(--r-sm);
-  color: var(--text-2); font-size: var(--fs-md); font-weight: var(--fw-medium); text-decoration: none; position: relative;
-  transition: background var(--t-fast), color var(--t-fast); }
-.nav-item:hover { background: var(--surface-3); color: var(--text); }
-.nav-item[aria-current="page"] { background: var(--surface); color: var(--text); font-weight: var(--fw-semibold); box-shadow: var(--sh-2); }
-.nav-item[aria-current="page"] .ico { color: var(--space); }
-.nav-count { margin-left: auto; min-width: 20px; text-align: center; font-size: var(--fs-xs); font-weight: var(--fw-semibold);
-  padding: 1px 6px; border-radius: var(--r-pill); background: var(--danger-soft); color: var(--danger); }
-
-.sidebar-footer { border-top: 1px solid var(--line); padding-top: var(--sp-3); display: grid; gap: var(--sp-2); }
-.sidebar-footer .btn-glass { justify-content: flex-start; }
-.sidebar-footer .kbd { margin-left: auto; }
-.sidebar-footer .row .btn { padding: 0 8px; }
-.me-card { display: flex; align-items: center; gap: var(--sp-3); padding: var(--sp-1) var(--sp-1); }
-.me-name { font-size: var(--fs-md); font-weight: var(--fw-semibold); }
-.me-role { font-size: var(--fs-xs); color: var(--text-3); }
-
 .main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
-/* Bandeau d'espace : l'espace courant est visible dès l'arrivée sur la page */
-.space-banner { display: flex; align-items: center; gap: 10px; padding: 9px var(--sp-8);
-  font-size: var(--fs-sm); font-weight: var(--fw-semibold); color: var(--space-ink);
-  border-top: 3px solid var(--space); background: linear-gradient(90deg, var(--space-soft), transparent 60%);
-  border-bottom: 1px solid var(--line); }
-.space-dot { width: 8px; height: 8px; border-radius: 2px; transform: rotate(45deg); background: var(--space); }
-
 .page-header { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--sp-4);
   padding: var(--sp-6) var(--sp-8) var(--sp-5); flex-wrap: wrap; }
 .page-title { font-size: var(--fs-2xl); font-weight: var(--fw-semibold); letter-spacing: -.02em; line-height: 1.15; }
@@ -790,7 +737,7 @@ body.theme-dark .ev-meeting { color: #A9BDCC; background: rgba(169,189,204,.12);
 /* 8. ACCESSIBILITÉ, RESPONSIVE, IMPRESSION ===================================================== */
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
 @media (prefers-reduced-transparency: reduce) {
-  .card, .sidebar, .menu, .toast, .cmdk, .btn-glass { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; background: var(--surface) !important; }
+  .card, .menu, .toast, .cmdk, .btn-glass { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; background: var(--surface) !important; }
 }
 @media (max-width: 1240px) {
   .dash-grid, .detail-grid, .op-mid, .op-bottom { grid-template-columns: 1fr; }
@@ -811,15 +758,8 @@ body.theme-dark .ev-meeting { color: #A9BDCC; background: rgba(169,189,204,.12);
   .org-grid { grid-template-columns: repeat(3, minmax(0,1fr)); }
 }
 @media (max-width: 900px) {
-  :root { --sidebar-w: 72px; }
-  .sidebar { padding: var(--sp-4) var(--sp-2); align-items: center; }
-  .brand-name, .nav-item .txt, .nav-label, .ws-option .txt, .me-card .txt, .sidebar-footer .txt { display: none; }
-  .brand { padding: 0; } .ws-switch { width: 100%; } .ws-option { justify-content: center; } .ws-dot { margin-top: 0; }
-  .nav-item { justify-content: center; }
-  .nav-count { position: absolute; top: 0; right: 0; }
   .page-header, .page-body { padding-left: var(--sp-4); padding-right: var(--sp-4); }
   .pipe-scroll { margin: 0 calc(var(--sp-4) * -1); padding-left: var(--sp-4); padding-right: var(--sp-4); }
-  .space-banner { padding-left: var(--sp-4); }
   .g3, .g2, .form-grid { grid-template-columns: 1fr; }
   .cal-cell { min-height: 90px; }
   .list-progress { display: none; }
@@ -828,11 +768,191 @@ body.theme-dark .ev-meeting { color: #A9BDCC; background: rgba(169,189,204,.12);
   @page { size: A4 landscape; margin: 8mm; }
   * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
   body { background: #fff !important; }
-  .sidebar, .space-banner, .page-header, .ver-pills, .no-print, .toasts { display: none !important; }
+  .page-header, .ver-pills, .no-print, .toasts { display: none !important; }
   .page-body { padding: 0 !important; }
   .op-page { box-shadow: none !important; border: 0 !important; padding: 0 !important; }
   .chev { font-size: 9px; min-height: 54px; }
 }
+
+/* 9. LIGNE DE MÉTRO (refonte oct. 2026) ======================================
+   Le processus se lit comme un plan de métro : une couleur par phase, une
+   station par étape, les Gates en correspondances violettes. Aucun flou ni
+   dégradé : surfaces opaques, bandeau bleu nuit, police de signalétique. */
+:root {
+  --bar: #14213D; --bar-2: #22325A; --on-bar: #FFFFFF; --on-bar-2: #C3CCE0;
+  --ph1: var(--brand); --ph2: #2F6FB5; --ph3: #2E8B57; --ph4: #8A5A2B;
+  --bg: #F5F6F8; --surface-2: #F8F9FB; --surface-3: #EEF0F4;
+  --text: #161B2B; --text-2: #434A5C; --text-3: #5D6577;
+  --line: #E1E4EA; --line-strong: #CDD2DB;
+  --glass: var(--surface); --glass-strong: var(--surface); --glass-blur: 0px;
+  --fs-xs: 12.5px; --fs-sm: 13.5px; --fs-md: 14.5px; --fs-base: 15px;
+  --fs-lg: 17px; --fs-xl: 20px; --fs-2xl: 28px; --fs-3xl: 34px;
+  --focus: 0 0 0 3px rgba(255,150,32,.55);
+  --topbar-h: 56px;
+}
+body.theme-dark {
+  --bar: #0B1222; --bar-2: #1A2540; --on-bar: #F1F3F8; --on-bar-2: #A9B4CC;
+  --ph2: #6FA3E6; --ph3: #4FBF7F; --ph4: #C99460;
+  --glass: var(--surface); --glass-strong: var(--surface-2);
+}
+body { background: var(--bg); }
+::selection { background: var(--brand); color: var(--on-brand); }
+.card, .menu, .toast, .cmdk, .btn-glass { backdrop-filter: none; -webkit-backdrop-filter: none; }
+.card { background: var(--surface); }
+.btn-primary { background: var(--brand); border-color: transparent; box-shadow: none; }
+.btn-primary:hover { background: var(--brand-strong); box-shadow: none; }
+.btn-glass { background: var(--surface); box-shadow: none; }
+.btn-glass:hover { background: var(--surface-2); }
+.overlay { backdrop-filter: none; -webkit-backdrop-filter: none; background: rgba(20,33,61,.40); }
+
+/* Coque : bandeau + barre des modules (bureau) / barre d'onglets (mobile) */
+.app { display: block; min-height: 100vh; }
+.topbar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 40; height: var(--topbar-h);
+  display: flex; align-items: center; gap: var(--sp-4); padding: 0 var(--sp-8);
+  background: var(--bar); color: var(--on-bar); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 41; background: var(--bar); }
+.brand { display: flex; align-items: center; gap: 10px; color: var(--on-bar); text-decoration: none; flex-shrink: 0; }
+.brand-mark { width: 14px; height: 14px; margin: 0 3px; border-radius: 2px; transform: rotate(45deg); background: var(--brand); box-shadow: none; flex-shrink: 0; }
+.brand-mark.lg { width: 22px; height: 22px; margin: 0 5px; }
+.brand-name { font-weight: var(--fw-bold); font-size: 19px; letter-spacing: -.01em; }
+.login .brand-name { color: var(--text); }
+.ws-switch { display: inline-flex; gap: 2px; padding: 3px; border-radius: var(--r-md); background: var(--bar-2); }
+.ws-option { display: inline-flex; align-items: center; gap: 8px; height: 30px; padding: 0 12px; border-radius: var(--r-sm);
+  color: var(--on-bar-2); font-size: var(--fs-sm); font-weight: var(--fw-semibold); white-space: nowrap; }
+.ws-option:hover { color: var(--on-bar); }
+.ws-option[aria-current="true"] { background: var(--on-bar); color: var(--bar); }
+.ws-dot { width: 8px; height: 8px; border-radius: 2px; transform: rotate(45deg); flex-shrink: 0; }
+.ws-dot.customer { background: var(--brand); } .ws-dot.pdqa { background: #2BA59E; }
+.ws-label { font-size: var(--fs-sm); color: var(--on-bar-2); font-weight: var(--fw-semibold); white-space: nowrap; }
+.topbar .spacer { flex: 1; }
+.top-btn { display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 12px; border-radius: var(--r-sm);
+  color: var(--on-bar-2); font-size: var(--fs-sm); font-weight: var(--fw-semibold); }
+.top-btn:hover { background: var(--bar-2); color: var(--on-bar); }
+.top-btn[aria-pressed="true"] { background: var(--bar-2); color: var(--on-bar); }
+.top-btn .kbd { background: transparent; color: var(--on-bar-2); border-color: var(--bar-2); }
+.top-btn.icon-only { width: 36px; padding: 0; justify-content: center; }
+.me-card { display: flex; align-items: center; gap: 10px; padding-left: var(--sp-2); }
+.me-name { font-size: var(--fs-sm); font-weight: var(--fw-semibold); color: var(--on-bar); line-height: 1.2; }
+.me-role { font-size: var(--fs-xs); color: var(--on-bar-2); line-height: 1.2; }
+
+.modbar { display: flex; gap: var(--sp-1); padding: 0 var(--sp-8); background: var(--surface); border-bottom: 1px solid var(--line);
+  overflow-x: auto; scrollbar-width: none; position: sticky; top: calc(var(--topbar-h) + env(safe-area-inset-top, 0px)); z-index: 30; }
+.modbar::-webkit-scrollbar { display: none; }
+.mod-link { display: inline-flex; align-items: center; gap: 8px; height: 46px; padding: 0 12px; position: relative;
+  color: var(--text-2); font-size: var(--fs-md); font-weight: var(--fw-semibold); text-decoration: none; white-space: nowrap; }
+.mod-link:hover { color: var(--text); }
+.mod-link[aria-current="page"] { color: var(--text); }
+.mod-link[aria-current="page"]::after { content: ""; position: absolute; left: 10px; right: 10px; bottom: 0; height: 3px; border-radius: 3px 3px 0 0; background: var(--space); }
+.mod-link[aria-current="page"] .ico { color: var(--space); }
+.mod-link.end { margin-left: auto; }
+.nav-count { min-width: 20px; text-align: center; font-size: var(--fs-xs); font-weight: var(--fw-bold);
+  padding: 1px 6px; border-radius: var(--r-pill); background: var(--danger); color: #FFFFFF; }
+
+.tabbar { display: none; }
+.more-list { display: grid; gap: 4px; }
+.more-link { display: flex; align-items: center; gap: 12px; min-height: 48px; padding: 0 12px; border-radius: var(--r-md);
+  color: var(--text); text-decoration: none; font-size: var(--fs-base); font-weight: var(--fw-semibold); width: 100%; }
+.more-link:hover, .more-link[aria-current="page"] { background: var(--surface-3); }
+.more-sep { height: 1px; background: var(--line); margin: 8px 0; }
+
+/* Mode projection : tout grandit de 20 % pour la salle de réunion */
+body.is-projection { zoom: 1.2; }
+
+/* Actions toujours visibles au doigt (pas de survol sur tablette et téléphone) */
+@media (hover: none) { .kb-moves, .cal-add { opacity: 1; } }
+
+/* Plan du processus (pipeline) ------------------------------------------- */
+.metro { padding: var(--sp-4) var(--sp-5) var(--sp-2); margin-bottom: var(--sp-4); }
+.metro-head { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2) var(--sp-4); margin-bottom: var(--sp-2); }
+.metro-legend { display: flex; flex-wrap: wrap; gap: var(--sp-2) var(--sp-4); font-size: var(--fs-sm); color: var(--text-2); }
+.metro-legend span { display: inline-flex; align-items: center; gap: 7px; }
+.metro-legend i { width: 20px; height: 5px; border-radius: 3px; display: inline-block; }
+.metro-legend i.gate { width: 12px; height: 12px; border-radius: 3px; background: var(--gate); }
+.metro-ends { display: flex; gap: var(--sp-2); margin-left: auto; flex-wrap: wrap; }
+.metro-scroll { overflow-x: auto; margin: 0 calc(var(--sp-5) * -1); padding: 0 var(--sp-5); }
+.metro-svg { display: block; width: 100%; min-width: 1080px; height: auto; font-family: var(--font); }
+.m-seg { fill: none; stroke-width: 8; stroke-linecap: round; }
+.m-ph1 { stroke: var(--ph1); } .m-ph2 { stroke: var(--ph2); } .m-ph3 { stroke: var(--ph3); } .m-ph4 { stroke: var(--ph4); }
+.m-phase { font-size: 13px; font-weight: 700; }
+.m-phase.ph1 { fill: var(--brand-ink); } .m-phase.ph2 { fill: var(--ph2); } .m-phase.ph3 { fill: var(--ph3); } .m-phase.ph4 { fill: var(--ph4); }
+.m-st { cursor: pointer; outline: none; }
+.m-dot { fill: var(--surface); stroke-width: 4; }
+.m-dot.opt { stroke-dasharray: 3 2.5; }
+.m-gate { fill: var(--gate); stroke: var(--surface); stroke-width: 3; }
+.m-gate-t { fill: #FFFFFF; font-size: 11px; font-weight: 800; text-anchor: middle; }
+.m-name { fill: var(--text-2); font-size: 12px; }
+.m-st.is-gate .m-name { fill: var(--gate-ink); font-weight: 700; }
+.m-st.has .m-name { fill: var(--text); font-weight: 700; }
+.m-pill { fill: var(--bar); } .m-pill.risk { fill: var(--danger); }
+.m-pill-t { fill: #FFFFFF; font-size: 12px; font-weight: 800; text-anchor: middle; font-variant-numeric: tabular-nums; }
+.m-halo { fill: transparent; }
+.m-st:hover .m-halo, .m-st:focus-visible .m-halo { fill: var(--surface-3); }
+.m-st.is-sel .m-halo { fill: var(--brand-soft); stroke: var(--brand); stroke-width: 1.5; }
+.m-st:focus-visible .m-halo { stroke: var(--brand); stroke-width: 2.5; }
+
+/* Version verticale (téléphone) */
+.metro-v { display: none; list-style: none; }
+.mv-phase { font-size: var(--fs-sm); font-weight: var(--fw-bold); color: var(--c); padding: 12px 0 4px 34px; }
+.mv-st { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 44px; padding: 4px 8px 4px 0; text-align: left; position: relative; border-radius: var(--r-sm); }
+.mv-st::before { content: ""; position: absolute; left: 11px; top: 0; bottom: 0; width: 6px; background: var(--c); }
+.mv-st.first::before { top: 50%; } .mv-st.last::before { bottom: 50%; }
+.mv-mark { position: relative; z-index: 1; width: 28px; display: grid; place-items: center; flex-shrink: 0; }
+.mv-mark i { width: 16px; height: 16px; border-radius: 50%; background: var(--surface); border: 4px solid var(--c); display: block; }
+.mv-mark b { width: 26px; height: 26px; border-radius: 7px; background: var(--gate); color: #FFFFFF; font-size: 11px; display: grid; place-items: center; border: 2px solid var(--surface); }
+.mv-name { flex: 1; min-width: 0; font-size: var(--fs-md); color: var(--text-2); }
+.mv-st.has .mv-name { color: var(--text); font-weight: var(--fw-semibold); }
+.mv-count { min-width: 26px; height: 22px; padding: 0 7px; border-radius: 11px; background: var(--bar); color: #FFFFFF; font-size: var(--fs-xs); font-weight: var(--fw-bold); display: grid; place-items: center; }
+.mv-count.risk { background: var(--danger); }
+.mv-st[aria-pressed="true"] { background: var(--brand-soft); }
+
+/* Liste des projets sous le plan */
+.mlist-head { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3); padding: 14px var(--sp-5); border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+.mrow { display: grid; grid-template-columns: 32px minmax(0, 1.5fr) minmax(0, 1.2fr) auto; gap: var(--sp-3) var(--sp-4); align-items: center;
+  width: 100%; padding: 12px var(--sp-5); border-bottom: 1px solid var(--line); text-align: left; }
+.mrow:last-child { border-bottom: 0; }
+.mrow:hover { background: var(--surface-2); }
+.mbullet { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; color: #FFFFFF; font-size: 12px; font-weight: var(--fw-bold); background: var(--c); }
+.mbullet.gate { border-radius: 8px; background: var(--gate); }
+.mbullet.risk { background: var(--danger); }
+.mrow-name { font-weight: var(--fw-semibold); font-size: var(--fs-base); display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.mrow-sub { font-size: var(--fs-sm); color: var(--text-3); margin-top: 2px; }
+.mrow-info { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; min-width: 0; }
+.mrow-date { text-align: right; white-space: nowrap; }
+.mrow-date .cell-sub { margin-top: 2px; }
+
+/* Responsive ------------------------------------------------------------- */
+@media (max-width: 1100px) { .me-card .txt, .top-btn .txt { display: none; } }
+@media (max-width: 900px) {
+  .topbar { padding: 0 var(--sp-4); gap: var(--sp-2); }
+  .topbar .ws-switch, .topbar .ws-label, .topbar .top-theme, .topbar .top-proj, .topbar .top-logout { display: none; }
+  .modbar { display: none; }
+  .tabbar { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+    background: var(--surface); border-top: 1px solid var(--line);
+    padding: 4px max(4px, env(safe-area-inset-right, 0px)) calc(4px + env(safe-area-inset-bottom, 0px)) max(4px, env(safe-area-inset-left, 0px)); }
+  .tab { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 52px; position: relative;
+    color: var(--text-3); font-size: 11.5px; font-weight: var(--fw-semibold); text-decoration: none; border-radius: var(--r-sm); }
+  .tab .ico { width: 22px; height: 22px; }
+  .tab[aria-current="page"] { color: var(--text); }
+  .tab[aria-current="page"] .ico { color: var(--space); }
+  .tab .nav-count { position: absolute; top: 2px; left: 55%; }
+  .main { padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px)); }
+  .toasts { bottom: calc(80px + env(safe-area-inset-bottom, 0px)); right: var(--sp-4); left: var(--sp-4); }
+  .toast { min-width: 0; }
+  .view-switch .muted.small { flex-basis: 100%; order: 3; }
+  .mrow { grid-template-columns: 32px minmax(0, 1fr); }
+  .mrow-info { grid-column: 2; } .mrow-date { grid-column: 2; text-align: left; }
+}
+@media (max-width: 760px) {
+  .metro-scroll { display: none; }
+  .metro-v { display: block; }
+  .metro-legend { display: none; }
+}
+@media print { .topbar, .modbar, .tabbar { display: none !important; } body::before { display: none; } }
+/* Thème sombre : pastilles de comptage claires pour rester lisibles sur fond sombre */
+body.theme-dark .m-pill, body.theme-dark .mv-count { fill: var(--on-bar); background: var(--on-bar); color: var(--bar); }
+body.theme-dark .m-pill-t { fill: var(--bar); }
+body.theme-dark .m-pill.risk, body.theme-dark .mv-count.risk { fill: var(--danger); background: var(--danger); color: #2A0A06; }
+body.theme-dark .m-pill.risk + .m-pill-t { fill: #2A0A06; }
 
 </style>
 </head>
@@ -873,6 +993,7 @@ body.theme-dark .ev-meeting { color: #A9BDCC; background: rgba(169,189,204,.12);
   <symbol id="i-sort" viewBox="0 0 24 24"><path d="M8 4v16M4 8l4-4 4 4M16 20V4M12 16l4 4 4-4"/></symbol>
   <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></symbol>
   <symbol id="i-undo" viewBox="0 0 24 24"><path d="M4 9h11a5 5 0 0 1 0 10H9"/><path d="m8 5-4 4 4 4"/></symbol>
+  <symbol id="i-present" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M12 16v4M8 20h8"/></symbol>
   <symbol id="i-open" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"/></symbol>
 </svg>
 
@@ -1666,51 +1787,87 @@ function pageHeader({ title, sub = '', actions = '', crumbs = null }) {
   return `<header class="page-header"><div>${bc}<h1 class="page-title" tabindex="-1">${esc(title)}</h1>${sub ? `<p class="page-sub">${esc(sub)}</p>` : ''}</div><div class="page-actions">${actions}</div></header>`;
 }
 
-/* ---------- Coque : barre latérale + bandeau d'espace ---------- */
+/* ---------- Coque : bandeau bleu nuit + barre des modules (bureau) / onglets (mobile) ---------- */
 const Shell = {
+  /** Modules affichés dans la barre d'onglets du téléphone ; les autres passent dans « Plus ». */
+  TAB_MODULES: ['home', 'projects', 'tasks', 'calendar'],
+  TAB_LABELS: { home: 'Accueil' },
   render() {
     const root = document.getElementById('root');
     document.body.dataset.workspace = App.ws;
     if (!root.querySelector('.app')) {
-      root.innerHTML = `<div class="app"><aside class="sidebar" aria-label="Navigation principale"></aside>
-        <div class="main" id="main"><div class="space-banner" id="spaceBanner"></div><main id="view"></main></div></div>`;
+      root.innerHTML = `<div class="app"><header class="topbar" id="topbar"></header>
+        <nav class="modbar" id="modbar" aria-label="Modules"></nav>
+        <div class="main" id="main"><main id="view"></main></div>
+        <nav class="tabbar" id="tabbar" aria-label="Navigation principale"></nav></div>`;
     }
-    const wsList = Perm.workspacesFor(Store.me);
-    const me = Store.me;
-    const nav = CONFIG.modules[App.ws].map(m => {
+    const me = Store.me, w = CONFIG.workspaces[App.ws];
+    const current = m => Routes[App.page]?.module === m;
+    const link = (m, cls) => {
       const meta = CONFIG.moduleMeta[m];
-      const current = Routes[App.page]?.module === m;
-      const count = m === 'tasks' ? `<span class="nav-count" data-count="overdue" hidden></span>` : '';
-      return `<a class="nav-item" href="${Router.href(App.ws, m)}" ${current ? 'aria-current="page"' : ''}>${icon(meta.icon)}<span class="txt">${esc(meta.label)}</span>${count}</a>`;
-    }).join('');
-    const switcher = wsList.length > 1 ? `<div class="ws-switch" role="group" aria-label="Espace de travail">${wsList.map(ws => {
-      const w = CONFIG.workspaces[ws];
-      return `<button class="ws-option" data-action="switch-ws" data-ws="${ws}" aria-current="${ws === App.ws}"><span class="ws-dot ${ws}"></span><span class="txt">${esc(w.short)}<small>${esc(w.hint)}</small></span></button>`;
-    }).join('')}</div>` : '';
-    document.querySelector('.sidebar').innerHTML = `
-      <div class="brand"><span class="brand-mark" aria-hidden="true"></span><span class="brand-name">${esc(CONFIG.appName)}</span></div>
-      ${switcher}
-      <nav class="nav">${nav}
-        <div class="nav-label">Administration</div>
-        <a class="nav-item" href="${Router.href(App.ws, 'users')}" ${App.page === 'users' ? 'aria-current="page"' : ''}>${icon('users')}<span class="txt">Utilisateurs</span></a>
-      </nav>
-      <div class="sidebar-footer">
-        <button class="btn btn-glass btn-sm" data-action="open-search" title="Recherche (Ctrl+K)">${icon('search', 'sm')}<span class="txt">Rechercher</span><span class="kbd txt">Ctrl K</span></button>
-        <div class="me-card">${avatar(me, 34)}<div class="grow txt"><div class="me-name truncate">${esc(me.name)}</div><div class="me-role truncate">${esc(me.role || '')}</div></div></div>
-        <div class="row">
-          <button class="btn btn-ghost btn-sm grow" data-action="toggle-theme" aria-label="Changer de thème">${icon(document.body.classList.contains('theme-dark') ? 'sun' : 'moon', 'sm')}<span class="txt">Thème</span></button>
-          <button class="btn btn-ghost btn-sm grow" data-action="logout">${icon('logout', 'sm')}<span class="txt">Déconnexion</span></button>
-        </div>
-      </div>`;
-    const w = CONFIG.workspaces[App.ws];
-    document.getElementById('spaceBanner').innerHTML = `<span class="space-dot" aria-hidden="true"></span><span>${esc(w.label)}</span>`;
+      const label = cls === 'tab' ? (Shell.TAB_LABELS[m] || meta.label) : meta.label;
+      const count = m === 'tasks' ? '<span class="nav-count" data-count="overdue" hidden></span>' : '';
+      return `<a class="${cls}" href="${Router.href(App.ws, m)}" ${current(m) ? 'aria-current="page"' : ''}>${icon(meta.icon)}<span class="txt">${esc(label)}</span>${count}</a>`;
+    };
+    document.getElementById('topbar').innerHTML = `
+      <a class="brand" href="${Router.href(App.ws, 'home')}" aria-label="${esc(CONFIG.appName)}, tableau de bord"><span class="brand-mark" aria-hidden="true"></span><span class="brand-name">${esc(CONFIG.appName)}</span></a>
+      ${Shell.switcherHTML() || `<span class="ws-label">${esc(w.short)}</span>`}
+      <span class="spacer"></span>
+      <button class="top-btn" data-action="open-search" title="Rechercher (Ctrl+K)">${icon('search', 'sm')}<span class="txt">Rechercher</span><span class="kbd txt">Ctrl K</span></button>
+      <button class="top-btn icon-only top-proj" data-action="toggle-projection" aria-pressed="${Projection.on()}" title="Mode projection (texte agrandi pour la réunion)" aria-label="Mode projection">${icon('present', 'sm')}</button>
+      <button class="top-btn icon-only top-theme" data-action="toggle-theme" title="Changer de thème" aria-label="Changer de thème">${icon(document.body.classList.contains('theme-dark') ? 'sun' : 'moon', 'sm')}</button>
+      <div class="me-card">${avatar(me, 32)}<div class="txt"><div class="me-name">${esc(me.name)}</div><div class="me-role">${esc(me.role || '')}</div></div></div>
+      <button class="top-btn icon-only top-logout" data-action="logout" title="Déconnexion" aria-label="Déconnexion">${icon('logout', 'sm')}</button>`;
+    const mods = CONFIG.modules[App.ws];
+    document.getElementById('modbar').innerHTML = mods.map(m => link(m, 'mod-link')).join('') +
+      link('users', 'mod-link end');
+    const moreOn = !Shell.TAB_MODULES.includes(Routes[App.page]?.module);
+    document.getElementById('tabbar').innerHTML = Shell.TAB_MODULES.filter(m => mods.includes(m)).map(m => link(m, 'tab')).join('') +
+      `<button class="tab" data-action="open-more" ${moreOn ? 'aria-current="page"' : ''}>${icon('more')}<span>Plus</span></button>`;
     document.title = `${CONFIG.appName} — ${w.short}`;
     Shell.updateCounts();
   },
+  switcherHTML() {
+    const wsList = Perm.workspacesFor(Store.me);
+    if (wsList.length < 2) return '';
+    return `<div class="ws-switch" role="group" aria-label="Espace de travail">${wsList.map(ws => {
+      const w = CONFIG.workspaces[ws];
+      return `<button class="ws-option" data-action="switch-ws" data-ws="${ws}" aria-current="${ws === App.ws}" title="${esc(w.label)}"><span class="ws-dot ${ws}" aria-hidden="true"></span>${esc(w.tag)}</button>`;
+    }).join('')}</div>`;
+  },
+  /** Panneau « Plus » du téléphone : modules restants, espace, thème, déconnexion. */
+  openMore() {
+    const mods = [...CONFIG.modules[App.ws].filter(m => !Shell.TAB_MODULES.includes(m)), 'users'];
+    const wsList = Perm.workspacesFor(Store.me);
+    Overlay.open(`<div class="drawer-head"><h2 class="modal-title" style="margin:0">Plus</h2>
+        <button class="btn btn-ghost btn-icon" data-action="close-overlay" aria-label="Fermer">${icon('x')}</button></div>
+      <div class="drawer-body"><div class="more-list">
+        ${mods.map(m => `<a class="more-link" href="${Router.href(App.ws, m)}" ${Routes[App.page]?.module === m ? 'aria-current="page"' : ''}>${icon(CONFIG.moduleMeta[m].icon)}${esc(CONFIG.moduleMeta[m].label)}</a>`).join('')}
+        ${wsList.length > 1 ? `<div class="more-sep"></div>${wsList.map(ws => `<button class="more-link" data-action="switch-ws" data-ws="${ws}" ${ws === App.ws ? 'aria-current="page"' : ''}><span class="ws-dot ${ws}" aria-hidden="true"></span>${esc(CONFIG.workspaces[ws].short)}</button>`).join('')}` : ''}
+        <div class="more-sep"></div>
+        <button class="more-link" data-action="toggle-theme">${icon(document.body.classList.contains('theme-dark') ? 'sun' : 'moon')}${document.body.classList.contains('theme-dark') ? 'Thème clair' : 'Thème sombre'}</button>
+        <button class="more-link" data-action="logout">${icon('logout')}Déconnexion</button>
+      </div></div>`, { type: 'drawer', label: 'Plus' });
+  },
   updateCounts() {
-    const el = document.querySelector('[data-count="overdue"]'); if (!el) return;
     const n = Store.tasksIn(App.ws).filter(t => Rules.isTaskOverdue(t)).length;
-    el.hidden = !n; el.textContent = n; el.setAttribute('aria-label', `${n} tâche(s) en retard`);
+    document.querySelectorAll('[data-count="overdue"]').forEach(el => {
+      el.hidden = !n; el.textContent = n; el.setAttribute('aria-label', `${n} tâche(s) en retard`);
+    });
+  },
+};
+
+/* ---------- Mode projection (réunions) : texte agrandi, mémorisé sur cet appareil ---------- */
+const Projection = {
+  KEY: 'jalonProjection',
+  on() { return document.body.classList.contains('is-projection'); },
+  init() { let v = null; try { v = localStorage.getItem(Projection.KEY); } catch (e) { /* stockage indisponible */ } document.body.classList.toggle('is-projection', v === '1'); },
+  toggle() {
+    const on = !Projection.on();
+    document.body.classList.toggle('is-projection', on);
+    try { localStorage.setItem(Projection.KEY, on ? '1' : '0'); } catch (e) { /* ignore */ }
+    Shell.render();
+    Toast.show(on ? 'Mode projection activé.' : 'Mode projection désactivé.');
   },
 };
 
@@ -1824,6 +1981,8 @@ const Actions = {
   login: el => Login.as(el.dataset.id),
   logout: () => Login.logout(),
   'toggle-theme': () => Theme.toggle(),
+  'toggle-projection': () => Projection.toggle(),
+  'open-more': () => Shell.openMore(),
   'open-search': () => Search.open(),
   'close-overlay': () => Overlay.close(),
   'search-pick': el => { Overlay.close(); Actions[el.dataset.target]?.(el); },
@@ -2421,7 +2580,7 @@ const Home = {
         <button data-action="home-view" data-view="pipeline" aria-pressed="${pipeline}">Pipeline des projets</button></div>` : '';
     view.innerHTML = pageHeader({ title: `Bonjour ${first}`, sub: Dates.long(Dates.today()),
       actions: `<button class="btn btn-glass" data-action="new-task">${icon('plus', 'sm')}Tâche</button><button class="btn btn-primary" data-action="new-project">${icon('plus', 'sm')}Nouveau projet</button>` }) +
-      `<div class="page-body">${toggle ? `<div class="view-switch">${toggle}${pipeline ? '<span class="muted small grow">Chaque projet est placé à son étape actuelle, d\'après la dernière version de son one-pager.</span><span class="result-count" id="pipeCount"></span>' : ''}</div>` : ''}<div id="homeBody"></div></div>`;
+      `<div class="page-body">${toggle ? `<div class="view-switch">${toggle}${pipeline ? '<span class="muted small grow">Chaque projet est placé à son étape actuelle, d\'après la dernière version de son one-pager. Cliquez une station pour voir ses projets.</span><span class="result-count" id="pipeCount"></span>' : ''}</div>` : ''}<div id="homeBody"></div></div>`;
     if (pipeline) Pipeline.render(document.getElementById('homeBody')); else Home.summary(document.getElementById('homeBody'));
   },
   summary(box) {
@@ -2477,13 +2636,22 @@ const Home = {
 };
 Actions['home-view'] = el => { App.view('home', Home.defaults).view = el.dataset.view; Home.render(document.getElementById('view')); };
 
-/* ---------- Pipeline des projets clients (Kanban des étapes) ----------
-   Colonnes = étapes du modèle de timeline client, regroupées par phase.
+/* ---------- Pipeline des projets clients : plan du processus ----------
+   Le modèle de timeline client se lit comme un plan de métro : une ligne de couleur
+   par phase, une station par étape, les 4 Gates en correspondances violettes.
    Chaque projet est placé à son étape actuelle, lue dans timeline_steps du projet,
-   c'est-à-dire la dernière version enregistrée de son one-pager. Lecture seule :
-   pour faire avancer un projet, on met à jour son one-pager. */
+   c'est-à-dire la dernière version enregistrée de son one-pager. Cliquer une station
+   filtre la liste des projets en dessous. Lecture seule : pour faire avancer un
+   projet, on met à jour son one-pager. */
 const Pipeline = {
-  defaults: { status: 'open', client: '', lead: '', hideEmpty: false },
+  defaults: { status: 'open', client: '', lead: '', station: '' },
+  /** Libellés courts des stations, dans l'ordre de CONFIG.timelineTemplate (le libellé complet reste au survol et dans la liste). */
+  SHORT: ['GO / NO GO', 'NPD Brief', 'Faisabilité', 'Commande MP éch.', 'Réception MP éch.', 'PLM + prévalidation', 'Échantillons',
+    'Validation client', 'Kick-off', 'Planif. test indus.', 'Commande MP test', 'Réception MP test', 'Validation du test',
+    'Pricing + contrat', 'Spec définitive', 'BoM Odoo', 'Commande Odoo', 'Artworks reçus', 'Revue artworks', 'Placement P0',
+    'BAT', 'Approbation client', 'Date de production', 'Réunion 1re prod.', 'Date des RMs', '1re production'],
+  phaseClass(phaseId) { return 'ph' + (CONFIG.phases.findIndex(ph => ph.id === phaseId) + 1); },
+
   render(box) {
     const st = App.view('pipeline', Pipeline.defaults);
     const all = Store.projectsIn('customer');
@@ -2492,91 +2660,144 @@ const Pipeline = {
         <select class="select" data-change="pipe-filter" data-key="status" aria-label="Filtrer par statut">${UI.options([{ value: 'open', label: 'Actifs et en pause' }, { value: 'active', label: 'Actifs' }, { value: 'paused', label: 'En pause' }, { value: 'done', label: 'Terminés' }], st.status, { placeholder: 'Tous les statuts' })}</select>
         <select class="select" data-change="pipe-filter" data-key="client" aria-label="Filtrer par client">${UI.options(clients.map(v => ({ value: v, label: v })), st.client, { placeholder: 'Tous les clients' })}</select>
         <select class="select" data-change="pipe-filter" data-key="lead" aria-label="Filtrer par chef de projet">${UI.options(leads.map(v => ({ value: v, label: v })), st.lead, { placeholder: 'Tous les chefs de projet' })}</select>
-        <div class="segmented" role="group" aria-label="Aller à une phase">${CONFIG.phases.map(ph => `<button data-action="pipe-jump" data-phase="${esc(ph.id)}" title="${esc(ph.label)}">${esc(ph.id)}</button>`).join('')}</div>
-        <span class="spacer"></span>
-        <label class="check"><input type="checkbox" data-change="pipe-toggle" ${st.hideEmpty ? 'checked' : ''}>Masquer les étapes vides</label>
-      </div><div class="pipe-scroll" id="pipeBoard" tabindex="0" aria-label="Pipeline des projets, défilement horizontal"></div>`;
+      </div>
+      <section class="card metro" aria-label="Plan du processus" id="pipeMap"></section>
+      <section class="card" aria-labelledby="pipeListH" id="pipeList"></section>`;
+    // Clavier : Entrée ou Espace sur une station du plan.
+    document.getElementById('pipeMap').addEventListener('keydown', e => {
+      const el = e.target.closest?.('[data-action="pipe-station"]');
+      if (el && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); Actions['pipe-station'](el); }
+    });
     Pipeline.renderBoard();
   },
+
   projects() {
     const st = App.view('pipeline', Pipeline.defaults);
     return Store.projectsIn('customer').filter(p =>
       (!st.status || (st.status === 'open' ? p.status !== 'done' : p.status === st.status)) &&
       (!st.client || p.client_name === st.client) && (!st.lead || Rules.projectLeadName(p) === st.lead));
   },
-  renderBoard() {
-    const board = document.getElementById('pipeBoard'); if (!board) return;
-    const st = App.view('pipeline', Pipeline.defaults);
-    const tpl = CONFIG.timelineTemplate;
-    const cols = { unplanned: [], launched: [] }; tpl.forEach((_, i) => { cols[i] = []; });
-    const list = Pipeline.projects();
-    list.forEach(p => {
+
+  /** Projets placés : { p, sg, key } avec key = index de l'étape modèle, 'unplanned' ou 'launched'. */
+  placed() {
+    return Pipeline.projects().map(p => {
       const sg = Timeline.stage(p);
-      if (sg.kind === 'step') cols[sg.step.anchorIndex].push({ p, sg }); else cols[sg.kind].push({ p, sg });
+      return { p, sg, key: sg.kind === 'step' ? String(sg.step.anchorIndex) : sg.kind };
     });
-    Object.values(cols).forEach(c => c.sort((a, b) => cmp(Dates.key(a.p.launch_date), Dates.key(b.p.launch_date))));
-    const atRisk = list.filter(p => Timeline.stage(p).atRisk).length;
-    document.getElementById('pipeCount').textContent = `${list.length} projet${list.length > 1 ? 's' : ''}${atRisk ? `, ${atRisk} à risque` : ''}`;
-
-    // Colonnes visibles, groupées par phase.
-    const visible = i => !st.hideEmpty || cols[i].length;
-    const groups = [];
-    if (cols.unplanned.length) groups.push({ id: 'unplanned', label: 'Sans timeline', sub: 'À planifier', cols: [{ key: 'unplanned', title: 'Timeline non planifiée', items: cols.unplanned }] });
-    CONFIG.phases.forEach(ph => {
-      const c = tpl.map((s, i) => ({ s, i })).filter(({ s, i }) => s.phase === ph.id && visible(i))
-        .map(({ s, i }) => ({ key: i, n: i + 1, title: s.name, gate: Timeline.isGate(s.name), items: cols[i], optional: s.industrialTest }));
-      if (c.length) groups.push({ id: ph.id, label: ph.id, sub: ph.label, cols: c });
-    });
-    if (!st.hideEmpty || cols.launched.length) groups.push({ id: 'launched', label: 'Lancés', sub: 'Toutes les étapes terminées', cols: [{ key: 'launched', title: 'Timeline terminée', items: cols.launched }] });
-
-    if (!list.length) { board.innerHTML = `<div class="card">${UI.empty({ icon: 'layers', title: 'Aucun projet ne correspond aux filtres', sub: 'Modifiez les filtres du pipeline.' })}</div>`; return; }
-    board.innerHTML = `<div class="pipe">${groups.map(g => `<section class="pipe-phase" data-phase="${esc(g.id)}" aria-label="${esc(g.label)} ${esc(g.sub)}">
-        <header class="pipe-phase-head"><span class="pipe-phase-id">${esc(g.label)}</span><span class="pipe-phase-sub">${esc(g.sub)}</span></header>
-        <div class="pipe-cols">${g.cols.map(c => Pipeline.colHTML(c)).join('')}</div></section>`).join('')}</div>`;
   },
-  colHTML(c) {
-    const title = c.gate ? `<span class="pipe-gate-no">Gate ${Timeline.gateNumber(c.title)}</span><span class="pipe-col-name">${esc(Timeline.gateTitle(c.title))}</span>`
-      : `<span class="pipe-col-name">${esc(c.title)}</span>`;
-    return `<div class="pipe-col ${c.gate ? 'is-gate' : ''}" role="list" aria-label="${esc(c.title)} : ${c.items.length} projet(s)">
-      <div class="pipe-col-head">${c.gate ? '<span class="gate-mark" aria-hidden="true"></span>' : c.n ? `<span class="pipe-col-n">${c.n}</span>` : ''}
-        <span class="grow">${title}${c.optional ? '<span class="pipe-col-opt">Avec test industriel</span>' : ''}</span><span class="pipe-count">${c.items.length}</span></div>
-      <div class="pipe-cards">${c.items.map(Pipeline.cardHTML).join('') || '<div class="pipe-empty" aria-hidden="true"></div>'}</div></div>`;
+
+  renderBoard() {
+    const map = document.getElementById('pipeMap'), listBox = document.getElementById('pipeList'); if (!map || !listBox) return;
+    const st = App.view('pipeline', Pipeline.defaults);
+    const items = Pipeline.placed();
+    const counts = {};
+    items.forEach(({ key, sg }) => { const c = counts[key] || (counts[key] = { n: 0, risk: 0 }); c.n++; if (sg.step?.status === 'warning') c.risk++; });
+    if (st.station && !counts[st.station]) st.station = '';   // la station choisie n'a plus de projet après un filtre
+    const atRisk = items.filter(x => x.sg.atRisk).length;
+    const countEl = document.getElementById('pipeCount');
+    if (countEl) countEl.textContent = `${items.length} projet${items.length > 1 ? 's' : ''}${atRisk ? `, ${atRisk} à risque` : ''}`;
+    map.innerHTML = Pipeline.mapHTML(counts, st.station);
+    listBox.innerHTML = Pipeline.listHTML(items, st.station);
   },
-  cardHTML({ p, sg }) {
+
+  mapHTML(counts, sel) {
+    const tpl = CONFIG.timelineTemplate, gap = 44, left = 34, lineY = 112;
+    const x = i => left + i * gap, width = x(tpl.length - 1) + 150, height = 250;
+    const ends = [['unplanned', 'Sans timeline'], ['launched', 'Lancés']].filter(([k]) => counts[k])
+      .map(([k, l]) => `<button class="filter-chip" data-action="pipe-station" data-key="${k}" aria-pressed="${sel === k}">${l} · ${counts[k].n}</button>`).join('');
+    const legend = CONFIG.phases.map((ph, i) => `<span><i style="background:var(--ph${i + 1})"></i>${esc(ph.id)} · ${esc(ph.label)}</span>`).join('') +
+      '<span><i class="gate"></i>Gate (décision)</span>';
+    // Segments : chaque tronçon prend la couleur de la phase de la station d'arrivée.
+    const segs = tpl.slice(1).map((s, i) => `<line class="m-seg m-${Pipeline.phaseClass(s.phase)}" x1="${x(i)}" y1="${lineY}" x2="${x(i + 1)}" y2="${lineY}"/>`).join('');
+    const phaseLabels = CONFIG.phases.map(ph => {
+      const i = tpl.findIndex(s => s.phase === ph.id);
+      return `<text class="m-phase ${Pipeline.phaseClass(ph.id)}" x="${x(i) - 8}" y="22">${esc(ph.id)} · ${esc(ph.label)}</text>`;
+    }).join('');
+    const stations = tpl.map((s, i) => {
+      const gate = Timeline.isGate(s.name), c = counts[String(i)], cls = Pipeline.phaseClass(s.phase);
+      const full = gate ? `Gate ${Timeline.gateNumber(s.name)} : ${Timeline.gateTitle(s.name)}` : s.name;
+      const label = `${full}${s.industrialTest ? ' (avec test industriel)' : ''} : ${c ? c.n : 0} projet(s)${c?.risk ? `, ${c.risk} à risque` : ''}`;
+      const mark = gate
+        ? `<rect class="m-gate" x="${x(i) - 14}" y="${lineY - 14}" width="28" height="28" rx="8"/><text class="m-gate-t" x="${x(i)}" y="${lineY + 4}">G${Timeline.gateNumber(s.name)}</text>`
+        : `<circle class="m-dot m-${cls} ${s.industrialTest ? 'opt' : ''}" cx="${x(i)}" cy="${lineY}" r="8"/>`;
+      const pill = c ? `<rect class="m-pill ${c.risk ? 'risk' : ''}" x="${x(i) - 14}" y="${lineY - 52}" width="28" height="22" rx="11"/><text class="m-pill-t" x="${x(i)}" y="${lineY - 36.5}">${c.n}</text>` : '';
+      return `<g class="m-st ${gate ? 'is-gate' : ''} ${c ? 'has' : ''} ${sel === String(i) ? 'is-sel' : ''}" data-action="pipe-station" data-key="${i}" tabindex="0" role="button" aria-pressed="${sel === String(i)}" aria-label="${esc(label)}">
+        <title>${esc(label)}</title><rect class="m-halo" x="${x(i) - 20}" y="${lineY - 58}" width="40" height="90" rx="10"/>
+        ${pill}${mark}<text class="m-name" x="${x(i) - 4}" y="${lineY + 30}" transform="rotate(38 ${x(i) - 4} ${lineY + 30})">${esc(Pipeline.SHORT[i] || s.name)}</text></g>`;
+    }).join('');
+    // Version verticale pour le téléphone : même plan, une station par ligne.
+    const vert = CONFIG.phases.map((ph, pi) => {
+      const rows = tpl.map((s, i) => ({ s, i })).filter(({ s }) => s.phase === ph.id);
+      return `<li class="mv-phase" style="--c:var(--ph${pi + 1})">${esc(ph.id)} · ${esc(ph.label)}</li>` + rows.map(({ s, i }, k) => {
+        const gate = Timeline.isGate(s.name), c = counts[String(i)];
+        return `<li><button class="mv-st ${c ? 'has' : ''} ${k === 0 ? 'first' : ''} ${k === rows.length - 1 ? 'last' : ''}" style="--c:var(--ph${pi + 1})" data-action="pipe-station" data-key="${i}" aria-pressed="${sel === String(i)}">
+          <span class="mv-mark">${gate ? `<b>G${Timeline.gateNumber(s.name)}</b>` : '<i></i>'}</span>
+          <span class="mv-name">${esc(gate ? `Gate ${Timeline.gateNumber(s.name)} : ${Timeline.gateTitle(s.name)}` : s.name)}</span>
+          ${c ? `<span class="mv-count ${c.risk ? 'risk' : ''}">${c.n}</span>` : ''}</button></li>`;
+      }).join('');
+    }).join('');
+    return `<div class="metro-head"><div class="metro-legend">${legend}</div><div class="metro-ends">${ends}</div></div>
+      <div class="metro-scroll" tabindex="-1"><svg class="metro-svg" viewBox="0 0 ${width} ${height}" role="group" aria-label="Plan du processus de développement client">
+        ${phaseLabels}${segs}${stations}</svg></div>
+      <ol class="metro-v" aria-label="Plan du processus de développement client">${vert}</ol>`;
+  },
+
+  /** Ordre d'affichage : sans timeline, puis les étapes du modèle, puis les projets lancés. */
+  rank(key) { return /^\d+$/.test(key) ? Number(key) : key === 'launched' ? 999 : -1; },
+
+  stationLabel(key) {
+    if (key === 'unplanned') return 'Sans timeline';
+    if (key === 'launched') return 'Lancés';
+    const s = CONFIG.timelineTemplate[Number(key)];
+    return s ? (Timeline.isGate(s.name) ? `Gate ${Timeline.gateNumber(s.name)} : ${Timeline.gateTitle(s.name)}` : s.name) : '';
+  },
+
+  listHTML(items, sel) {
+    const shown = (sel ? items.filter(x => x.key === sel) : items).slice().sort((a, b) =>
+      (b.sg.atRisk - a.sg.atRisk) || (Rules.isProjectLate(b.p) - Rules.isProjectLate(a.p)) ||
+      (Pipeline.rank(a.key) - Pipeline.rank(b.key)) || cmp(Dates.key(a.p.launch_date), Dates.key(b.p.launch_date)));
+    const head = `<div class="mlist-head"><h2 class="card-title" id="pipeListH">${sel ? `${esc(Pipeline.stationLabel(sel))} <span class="muted small">${shown.length} projet${shown.length > 1 ? 's' : ''}</span>` : `Tous les projets <span class="muted small">${shown.length}</span>`}</h2>
+      ${sel ? '<button class="btn btn-glass btn-sm" data-action="pipe-station" data-key="">Afficher tous les projets</button>' : ''}</div>`;
+    if (!items.length) return head + UI.empty({ icon: 'layers', title: 'Aucun projet ne correspond aux filtres', sub: 'Modifiez les filtres du pipeline.' });
+    return head + shown.map(Pipeline.rowHTML).join('');
+  },
+
+  rowHTML({ p, sg }) {
     const lead = Rules.projectLeadName(p);
-    const pct = Rules.projectProgress(p, []);
     const step = sg.kind === 'step' ? sg.step : null;
-    const state = step ? CONFIG.stepStatuses[step.status] : null;
-    const late = Rules.isProjectLate(p);
-    const fc = Timeline.forecast(p);
+    const late = Rules.isProjectLate(p), fc = Timeline.forecast(p);
     const gateNo = step?.gate ? Timeline.gateNumber(step.name) : null;
+    const risk = step?.status === 'warning';
+    const phaseNo = step ? CONFIG.phases.findIndex(ph => ph.id === step.phase) + 1 : 0;
+    const bullet = risk ? '<span class="mbullet risk" aria-hidden="true">!</span>'
+      : gateNo ? `<span class="mbullet gate" aria-hidden="true">G${gateNo}</span>`
+      : `<span class="mbullet" style="--c:${phaseNo ? `var(--ph${phaseNo})` : 'var(--neutral)'}" aria-hidden="true">${phaseNo || '–'}</span>`;
+    const where = step ? (gateNo ? `Gate ${gateNo} : ${Timeline.gateTitle(step.label)}` : step.label) : sg.kind === 'launched' ? 'Toutes les étapes terminées' : 'Timeline non planifiée';
     const lastDec = gateNo ? Store.lastGateDecision(p.id, gateNo) : null;
     const gateInfo = gateNo ? (lastDec ? `<span class="badge ${CONFIG.gateDecisions[lastDec.decision]?.badge || 'b-neutral'}">Gate ${gateNo} : ${esc(CONFIG.gateDecisions[lastDec.decision]?.label || lastDec.decision)}</span>`
       : `<span class="badge b-gate">Décision Gate ${gateNo} attendue</span>`) : '';
-    const st = step ? Timeline.taskStats(p.id, Store.tasksIn('customer')).get(Timeline.stepKey(step)) : null;
-    return `<button class="pipe-card ${step?.status === 'warning' ? 'is-risk' : ''}" role="listitem" data-action="open-project" data-id="${esc(p.id)}"
-        title="Synchronisé avec la version ${esc(p.version || 'v1')} du one-pager${p.updated_at ? ', enregistrée le ' + esc(Dates.fmt(p.updated_at)) : ''}">
-      <span class="pipe-card-top"><span class="pipe-card-name">${esc(p.project_name)}</span><span class="pipe-ver">${esc(p.version || 'v1')}</span></span>
-      <span class="pipe-card-client">${esc(p.client_name || 'Client non renseigné')}</span>
-      ${step?.custom ? `<span class="pipe-card-custom">Étape : ${esc(step.label)}</span>` : ''}
-      ${step && step.status !== 'upcoming' ? `<span class="badge ${step.status === 'warning' ? 'b-danger' : 'b-info'}">${esc(state.label)}${step.prog ? ` · ${step.prog} %` : ''}</span>` : ''}
-      ${gateInfo}
-      ${st && st.open ? `<span class="pipe-card-tasks">${icon('list', 'sm')}${st.open} tâche${st.open > 1 ? 's' : ''} ouverte${st.open > 1 ? 's' : ''} sur cette étape</span>` : ''}
-      ${pct !== null ? UI.progress(pct) : ''}
-      ${fc && fc.slip > 0 ? `<span class="pipe-card-slip">${icon('clock', 'sm')}Glissement ${esc(Timeline.fmtSlip(fc.slip))}</span>` : ''}
-      <span class="pipe-card-foot">${lead ? `<span class="truncate">${esc(lead)}</span>` : '<span class="muted">Chef de projet à définir</span>'}
-        <span class="due ${late ? 'overdue' : ''}">${late ? icon('alert', 'sm') : icon('rocket', 'sm')}${esc(p.launch_date ? Dates.short(p.launch_date) : '—')}</span></span>
-      ${p.status === 'paused' ? '<span class="badge b-warn">En pause</span>' : ''}
+    const stats = step ? Timeline.taskStats(p.id, Store.tasksIn('customer')).get(Timeline.stepKey(step)) : null;
+    const state = step && step.status !== 'upcoming' ? `<span class="badge ${risk ? 'b-danger' : 'b-info'}">${esc(CONFIG.stepStatuses[step.status].label)}${step.prog ? ` · ${step.prog} %` : ''}</span>` : '';
+    return `<button class="mrow" data-action="open-project" data-id="${esc(p.id)}" title="Synchronisé avec la version ${esc(p.version || 'v1')} du one-pager${p.updated_at ? ', enregistrée le ' + esc(Dates.fmt(p.updated_at)) : ''}">
+      ${bullet}
+      <span class="grow" style="min-width:0"><span class="mrow-name">${esc(p.project_name)}<span class="pipe-ver">${esc(p.version || 'v1')}</span></span>
+        <span class="mrow-sub">${esc(p.client_name || 'Client non renseigné')} · ${esc(where)}${lead ? ` · ${esc(lead)}` : ''}</span></span>
+      <span class="mrow-info">${state}${gateInfo}
+        ${stats && stats.open ? `<span class="pipe-card-tasks">${icon('list', 'sm')}${stats.open} tâche${stats.open > 1 ? 's' : ''} ouverte${stats.open > 1 ? 's' : ''}</span>` : ''}
+        ${fc && fc.slip > 0 ? `<span class="pipe-card-slip">${icon('clock', 'sm')}Glissement ${esc(Timeline.fmtSlip(fc.slip))}</span>` : ''}
+        ${p.status === 'paused' ? '<span class="badge b-warn">En pause</span>' : ''}</span>
+      <span class="mrow-date"><span class="due ${late ? 'overdue' : ''}">${late ? icon('alert', 'sm') : icon('rocket', 'sm')}${esc(p.launch_date ? Dates.fmt(p.launch_date) : 'Lancement à définir')}</span>
+        ${p.launch_date ? `<div class="cell-sub">semaine ${Dates.isoWeek(Dates.key(p.launch_date))}</div>` : ''}</span>
     </button>`;
   },
 };
-Actions['pipe-jump'] = el => {
-  const target = [...document.querySelectorAll('.pipe-phase')].find(x => x.dataset.phase === el.dataset.phase);
-  const scroller = document.getElementById('pipeBoard');
-  if (target && scroller) scroller.scrollTo({ left: target.offsetLeft, behavior: 'smooth' });   // offsetLeft est relatif à .pipe
+Actions['pipe-station'] = el => {
+  const st = App.view('pipeline', Pipeline.defaults);
+  st.station = st.station === el.dataset.key ? '' : el.dataset.key;
+  Pipeline.renderBoard();
+  document.getElementById('pipeList')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 };
 ChangeActions['pipe-filter'] = el => { App.view('pipeline', Pipeline.defaults)[el.dataset.key] = el.value; Pipeline.renderBoard(); };
-ChangeActions['pipe-toggle'] = el => { App.view('pipeline', Pipeline.defaults).hideEmpty = el.checked; Pipeline.renderBoard(); };
 Actions['dash-go'] = el => {
   const t = el.dataset.target;
   if (t.startsWith('projects')) { Object.assign(App.view('projects', ProjectsPage.defaults), ProjectsPage.defaults, { status: t === 'projects-active' ? 'active' : '' }); Router.go(App.ws, 'projects'); }
@@ -2779,7 +3000,7 @@ const OnePager = {
         data: { labels: ['Forecast', 'Budget'], datasets: [
           { type: 'bar', label: 'Revenue (k€)', data: [p.forecast_revenue || 0, p.budget_revenue || 0], backgroundColor: 'rgba(255,150,32,.8)', borderRadius: 4, maxBarThickness: 48, yAxisID: 'y' },
           { type: 'line', label: 'Marge %', data: [p.forecast_margin || 0, p.budget_margin || 0], borderColor: ink, backgroundColor: ink, pointRadius: 4, yAxisID: 'y2', tension: 0 }] },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { size: 11, family: 'IBM Plex Sans' }, boxWidth: 10, color: muted } } },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { size: 11, family: 'Overpass' }, boxWidth: 10, color: muted } } },
           scales: { x: { ticks: { color: muted }, grid: { display: false } }, y: { beginAtZero: true, position: 'left', ticks: { font: { size: 10 }, color: muted }, grid: { color: grid } },
             y2: { beginAtZero: true, position: 'right', grid: { drawOnChartArea: false }, ticks: { callback: v => v + '%', font: { size: 10 }, color: muted }, max: 60 } } },
       });
@@ -3692,6 +3913,7 @@ Routes.users = { module: 'users', render: v => Users.render(v) };
 /* ---------- Démarrage ---------- */
 function boot() {
   Theme.init();
+  Projection.init();
   installGlobalHandlers();
   try { Store.init(); } catch (err) { document.getElementById('root').innerHTML = `<div class="login"><div class="notice">${icon('alert')}<span>${esc(err.message)}</span></div></div>`; return; }
   const remembered = Session.read();
