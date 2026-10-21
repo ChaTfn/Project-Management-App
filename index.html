@@ -954,6 +954,55 @@ body.theme-dark .m-pill-t { fill: var(--bar); }
 body.theme-dark .m-pill.risk, body.theme-dark .mv-count.risk { fill: var(--danger); background: var(--danger); color: #2A0A06; }
 body.theme-dark .m-pill.risk + .m-pill-t { fill: #2A0A06; }
 
+/* Avancement des projets (vue de synthèse) ------------------------------- */
+:root { --ph1-ink: var(--brand-ink); --ph2-ink: #22548C; --ph3-ink: #1F6B41; --ph4-ink: #6E4520; }
+body.theme-dark { --ph2-ink: #8DB8F0; --ph3-ink: #6FD39A; --ph4-ink: #D9AE80; }
+.board-tools { row-gap: var(--sp-2); }
+.board-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.board-chips .filter-chip { display: inline-flex; align-items: center; gap: 6px; height: 32px; }
+.board-chips .filter-chip b { font-weight: var(--fw-bold); }
+.filter-chip.t-ok b { color: var(--ok); } .filter-chip.t-warn b { color: var(--warn); }
+.filter-chip.t-danger b { color: var(--danger); } .filter-chip.t-gate b { color: var(--gate-ink); }
+.filter-chip[aria-pressed="true"] b { color: inherit; }
+.board-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--sp-2) var(--sp-4); padding: 14px var(--sp-5); border-bottom: 1px solid var(--line); }
+.metro-legend i.here { width: 12px; height: 12px; border-radius: 50%; background: transparent; border: 2.5px solid var(--text); }
+.board-cols, .brow { display: grid; grid-template-columns: minmax(200px, 1.15fr) minmax(280px, 2fr) minmax(170px, 1fr) minmax(120px, .6fr); gap: var(--sp-5); }
+.board-cols { padding: 8px var(--sp-5); font-size: var(--fs-xs); font-weight: var(--fw-semibold); color: var(--text-3); background: var(--surface-2); border-bottom: 1px solid var(--line); }
+.brow { width: 100%; padding: 14px var(--sp-5); border-bottom: 1px solid var(--line); text-align: left; align-items: center; position: relative; }
+.brow:last-child { border-bottom: 0; }
+.brow:hover { background: var(--surface-2); }
+.brow.m-late { box-shadow: inset 4px 0 0 var(--danger); }
+.brow.m-risk { box-shadow: inset 4px 0 0 var(--warn); }
+.brow > span { min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.brow-name { font-weight: var(--fw-bold); font-size: var(--fs-base); }
+.brow-meteo { display: flex !important; flex-direction: row !important; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 3px; }
+.brow-why { font-size: var(--fs-xs); color: var(--text-3); }
+.brow-where { font-size: var(--fs-sm); color: var(--text-2); }
+.bg-title { font-size: var(--fs-sm); font-weight: var(--fw-semibold); color: var(--gate-ink); display: flex; align-items: center; gap: 7px; }
+.brow-gate .badge, .brow-launch .slip { align-self: flex-start; }
+.brow-launch { align-items: flex-end; text-align: right; }
+.bl-svg { display: block; width: 100%; height: auto; max-height: 40px; overflow: visible; }
+.bl-seg { stroke-width: 5; stroke-linecap: round; }
+.bl-seg.todo { opacity: .22; }
+.bl-dot { fill: var(--surface); stroke: var(--c); stroke-width: 2.5; }
+.bl-dot.done { fill: var(--c); }
+.bl-gate { fill: var(--gate-soft); stroke: var(--gate); stroke-width: 2; }
+.bl-gate.done { fill: var(--gate); }
+.bl-here { fill: none; stroke: var(--text); stroke-width: 3; }
+.bl-here.risk { stroke: var(--danger); }
+.bl-empty { font-size: var(--fs-sm); color: var(--text-3); padding: 6px 0; }
+@media (max-width: 1100px) {
+  .board-cols { display: none; }
+  .brow { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); row-gap: var(--sp-3); }
+  .brow-line { grid-column: 1 / -1; order: 3; }
+  .brow-gate { order: 4; } .brow-launch { order: 5; }
+}
+@media (max-width: 560px) {
+  .brow { grid-template-columns: minmax(0, 1fr); }
+  .brow-launch { align-items: flex-start; text-align: left; }
+  .board-tools .select { flex: 1 1 140px; min-width: 0; }
+}
+
 </style>
 </head>
 <body data-workspace="customer">
@@ -2570,18 +2619,20 @@ Routes.calendar = { module: 'calendar', render: v => Calendar.render(v) };
 
 /* ---------- Tableau de bord ---------- */
 const Home = {
-  defaults: { view: 'summary' },
+  defaults: { view: 'board' },
   render(view) {
     const ws = App.ws, me = Store.me, st = App.view('home', Home.defaults);
     const pipeline = ws === 'customer' && st.view === 'pipeline';
+    const board = ws === 'customer' && st.view === 'board';
     const first = (me.name || '').split(' ')[0];
     const toggle = ws === 'customer' ? `<div class="segmented" role="group" aria-label="Vue du tableau de bord">
-        <button data-action="home-view" data-view="summary" aria-pressed="${!pipeline}">Synthèse</button>
-        <button data-action="home-view" data-view="pipeline" aria-pressed="${pipeline}">Pipeline des projets</button></div>` : '';
+        <button data-action="home-view" data-view="board" aria-pressed="${board}">Avancement</button>
+        <button data-action="home-view" data-view="pipeline" aria-pressed="${pipeline}">Pipeline</button>
+        <button data-action="home-view" data-view="summary" aria-pressed="${!pipeline && !board}">Mes tâches</button></div>` : '';
     view.innerHTML = pageHeader({ title: `Bonjour ${first}`, sub: Dates.long(Dates.today()),
       actions: `<button class="btn btn-glass" data-action="new-task">${icon('plus', 'sm')}Tâche</button><button class="btn btn-primary" data-action="new-project">${icon('plus', 'sm')}Nouveau projet</button>` }) +
       `<div class="page-body">${toggle ? `<div class="view-switch">${toggle}${pipeline ? '<span class="muted small grow">Chaque projet est placé à son étape actuelle, d\'après la dernière version de son one-pager. Cliquez une station pour voir ses projets.</span><span class="result-count" id="pipeCount"></span>' : ''}</div>` : ''}<div id="homeBody"></div></div>`;
-    if (pipeline) Pipeline.render(document.getElementById('homeBody')); else Home.summary(document.getElementById('homeBody'));
+    if (board) Board.render(document.getElementById('homeBody')); else if (pipeline) Pipeline.render(document.getElementById('homeBody')); else Home.summary(document.getElementById('homeBody'));
   },
   summary(box) {
     const ws = App.ws, me = Store.me, today = Dates.today();
@@ -2634,6 +2685,189 @@ const Home = {
       <div class="card-body">${rows.length ? rows.map(([d, n]) => `<div class="bar-row"><span class="bar-name">${esc(d)}</span><span class="bar-track"><span class="bar-fill" style="display:block;width:${n / max * 100}%;background:var(--space)"></span></span><span class="bar-val">${n}</span></div>`).join('') : '<span class="muted small">Aucune initiative en cours.</span>'}</div></section>`;
   },
 };
+/* ---------- Avancement des projets clients : une ligne par projet ----------
+   Vue de synthèse : pour chaque projet, sa météo (dans les temps, à risque, en
+   retard), sa position sur sa propre ligne de métro, sa prochaine Gate et son
+   lancement. Les mêmes informations s'exportent en Excel (onglet « Avancement »
+   + onglet « Étapes » avec le détail de chaque étape de chaque projet). */
+const Board = {
+  defaults: { meteo: '', client: '', sort: 'urgency' },
+  METEO: {
+    late:      { label: 'En retard',      badge: 'b-danger',  rank: 0 },
+    risk:      { label: 'À risque',       badge: 'b-warn',    rank: 1 },
+    ok:        { label: 'Dans les temps', badge: 'b-ok',      rank: 2 },
+    unplanned: { label: 'À planifier',    badge: 'b-neutral', rank: 3 },
+    paused:    { label: 'En pause',       badge: 'b-neutral', rank: 4 },
+    done:      { label: 'Lancé',          badge: 'b-neutral', rank: 5 },
+  },
+  GATE_SOON_DAYS: 30,
+
+  /** Toutes les informations d'avancement d'un projet (utilisées par l'écran ET par l'export). */
+  info(p) {
+    const today = Dates.today(), start = Dates.key(p.start_date);
+    const sg = Timeline.stage(p), steps = sg.steps;
+    const plan = steps.length ? Timeline.schedule(start, p.timeline_steps) : [];
+    const weeks = steps.length ? Timeline.displayWeeks(start, p.timeline_steps) : [];
+    const fc = Timeline.forecast(p), late = Rules.isProjectLate(p, today);
+    const step = sg.kind === 'step' ? sg.step : null;
+    const reasons = [];
+    if (late) reasons.push('date de lancement dépassée');
+    if (sg.atRisk) reasons.push('étape à risque');
+    if (fc && fc.slip > 0) reasons.push(`glissement ${Timeline.fmtSlip(fc.slip)}`);
+    if (fc && fc.launchGap > 0) reasons.push('timeline au-delà du lancement');
+    // Prochaine Gate non franchie, avec sa date de clôture prévue.
+    const gi = steps.findIndex(s => s.gate && s.status !== 'done');
+    const gate = gi < 0 ? null : {
+      no: Timeline.gateNumber(steps[gi].name), title: Timeline.gateTitle(steps[gi].label),
+      date: plan[gi]?.end || null, week: weeks[gi] || '',
+      pending: ['current', 'warning'].includes(steps[gi].status),
+      decision: Store.lastGateDecision(p.id, Timeline.gateNumber(steps[gi].name)),
+    };
+    if (gate) gate.inDays = gate.date ? Dates.diffDays(today, gate.date) : null;
+    if (gate && gate.inDays !== null && gate.inDays < 0) reasons.push(`Gate ${gate.no} dépassée de ${-gate.inDays} j`);
+    const meteo = p.status === 'done' || sg.kind === 'launched' ? 'done' : p.status === 'paused' ? 'paused'
+      : late ? 'late' : reasons.length ? 'risk' : sg.kind === 'unplanned' ? 'unplanned' : 'ok';
+    const done = steps.filter(s => s.status === 'done').length;
+    return { p, sg, steps, plan, weeks, fc, late, step, meteo, reasons, gate,
+      position: step ? sg.position + 1 : sg.kind === 'launched' ? steps.length : 0,
+      progress: steps.length ? Math.round(done / steps.length * 100) : null,
+      lead: Rules.projectLeadName(p),
+      phase: step ? CONFIG.phases.find(ph => ph.id === step.phase) : null };
+  },
+
+  rows() {
+    const st = App.view('board', Board.defaults);
+    const all = Store.projectsIn('customer').map(Board.info);
+    const soon = r => r.gate && r.gate.inDays !== null && r.gate.inDays <= Board.GATE_SOON_DAYS;
+    const list = all.filter(r => (!st.client || r.p.client_name === st.client) &&
+      (!st.meteo || (st.meteo === 'gate' ? soon(r) : st.meteo === 'open' ? !['done'].includes(r.meteo) : r.meteo === st.meteo)));
+    const by = {
+      urgency: (a, b) => Board.METEO[a.meteo].rank - Board.METEO[b.meteo].rank || cmp(a.gate?.date, b.gate?.date) || cmp(Dates.key(a.p.launch_date), Dates.key(b.p.launch_date)),
+      launch: (a, b) => cmp(Dates.key(a.p.launch_date), Dates.key(b.p.launch_date)),
+      gate: (a, b) => cmp(a.gate?.date, b.gate?.date),
+      client: (a, b) => cmp(a.p.client_name, b.p.client_name) || cmp(a.p.project_name, b.p.project_name),
+      name: (a, b) => cmp(a.p.project_name, b.p.project_name),
+    }[st.sort] || (() => 0);
+    return { all, list: list.sort(by), soon };
+  },
+
+  render(box) {
+    const st = App.view('board', Board.defaults);
+    const { all, list, soon } = Board.rows();
+    const count = k => all.filter(r => r.meteo === k).length;
+    const clients = uniqueSorted(all.map(r => r.p.client_name));
+    const chip = (value, label, n, tone = '') => `<button class="filter-chip ${tone}" data-action="board-meteo" data-value="${value}" aria-pressed="${st.meteo === value}">${label} <b class="num">${n}</b></button>`;
+    box.innerHTML = `<div class="toolbar card board-tools">
+        <div class="board-chips" role="group" aria-label="Filtrer par météo">
+          ${chip('', 'Tous', all.length)}${chip('ok', 'Dans les temps', count('ok'), 't-ok')}${chip('risk', 'À risque', count('risk'), 't-warn')}${chip('late', 'En retard', count('late'), 't-danger')}${chip('gate', `Gate dans les ${Board.GATE_SOON_DAYS} j`, all.filter(soon).length, 't-gate')}
+        </div>
+        <span class="spacer"></span>
+        <select class="select" data-change="board-filter" data-key="client" aria-label="Filtrer par client">${UI.options(clients.map(v => ({ value: v, label: v })), st.client, { placeholder: 'Tous les clients' })}</select>
+        <select class="select" data-change="board-filter" data-key="sort" aria-label="Trier">${UI.options([{ value: 'urgency', label: 'Trier : urgence' }, { value: 'gate', label: 'Trier : prochaine Gate' }, { value: 'launch', label: 'Trier : lancement' }, { value: 'client', label: 'Trier : client' }, { value: 'name', label: 'Trier : nom' }], st.sort)}</select>
+        <button class="btn btn-glass" data-action="board-export">${icon('download', 'sm')}Exporter en Excel</button>
+      </div>
+      <section class="card board" aria-labelledby="boardH">
+        <div class="board-head"><h2 class="card-title" id="boardH">Où en est chaque projet</h2>
+          <div class="metro-legend">${CONFIG.phases.map((ph, i) => `<span><i style="background:var(--ph${i + 1})"></i>${esc(ph.label)}</span>`).join('')}<span><i class="gate"></i>Gate</span><span><i class="here"></i>Étape actuelle</span></div></div>
+        <div class="board-cols" aria-hidden="true"><span>Projet</span><span>Avancement</span><span>Prochaine Gate</span><span>Lancement</span></div>
+        ${list.length ? list.map(Board.rowHTML).join('') : UI.empty({ icon: 'layers', title: all.length ? 'Aucun projet ne correspond aux filtres' : 'Aucun projet client', sub: all.length ? 'Modifiez ou retirez les filtres.' : 'Créez le premier projet pour le voir ici.' })}
+      </section>`;
+  },
+
+  /** Ligne de métro du projet : ses propres étapes, la position actuelle mise en évidence. */
+  lineHTML(r) {
+    const steps = r.steps; if (!steps.length) return '<div class="bl-empty">Timeline non planifiée : ajoutez-la depuis le one-pager.</div>';
+    const gap = 20, pad = 12, y = 16, w = pad * 2 + (steps.length - 1) * gap;
+    const x = i => pad + i * gap;
+    const cur = r.sg.kind === 'step' ? r.sg.position : steps.length;
+    const ph = s => Math.max(1, CONFIG.phases.findIndex(p => p.id === s.phase) + 1);
+    const segs = steps.slice(1).map((s, k) => {
+      const i = k + 1;
+      return `<line class="bl-seg ${i <= cur ? '' : 'todo'}" style="stroke:var(--ph${ph(s)})" x1="${x(i - 1)}" y1="${y}" x2="${x(i)}" y2="${y}"/>`;
+    }).join('');
+    const marks = steps.map((s, i) => {
+      const here = i === cur, tip = `${s.gate ? `Gate ${Timeline.gateNumber(s.name)} : ${Timeline.gateTitle(s.label)}` : s.label} — ${CONFIG.stepStatuses[s.status].label}${r.weeks[i] ? ` · ${r.weeks[i]}` : ''}`;
+      let m;
+      if (s.gate) m = `<rect class="bl-gate ${s.status === 'done' ? 'done' : ''}" x="${x(i) - 7}" y="${y - 7}" width="14" height="14" rx="4"/>`;
+      else m = `<circle class="bl-dot ${s.status === 'done' ? 'done' : ''}" style="--c:var(--ph${ph(s)})" cx="${x(i)}" cy="${y}" r="4.5"/>`;
+      const ring = here ? `<circle class="bl-here ${s.status === 'warning' ? 'risk' : ''}" cx="${x(i)}" cy="${y}" r="11"/>` : '';
+      return `<g><title>${esc(tip)}</title>${ring}${m}</g>`;
+    }).join('');
+    return `<svg class="bl-svg" viewBox="0 0 ${w} 32" role="img" aria-label="Étape ${r.position} sur ${steps.length}">${segs}${marks}</svg>`;
+  },
+
+  rowHTML(r) {
+    const { p, step, gate, fc } = r, m = Board.METEO[r.meteo];
+    const where = step ? (step.gate ? `Gate ${Timeline.gateNumber(step.name)} : ${Timeline.gateTitle(step.label)}` : step.label)
+      : r.sg.kind === 'launched' ? 'Toutes les étapes terminées' : 'Timeline non planifiée';
+    const gateCell = !gate ? `<span class="muted">${r.steps.length ? 'Toutes franchies' : '—'}</span>`
+      : `<span class="bg-title"><span class="gate-mark sm" aria-hidden="true"></span>Gate ${gate.no} · ${esc(gate.title)}</span>
+         <span class="cell-sub">${gate.date ? `${esc(gate.week || 'S' + Dates.isoWeek(gate.date))} · ${esc(Dates.short(gate.date))}${gate.inDays !== null ? (gate.inDays < 0 ? ` · <span class="t-danger">dépassée de ${-gate.inDays} j</span>` : gate.inDays === 0 ? " · aujourd'hui" : ` · dans ${gate.inDays} j`) : ''}` : 'Date à définir'}</span>
+         ${gate.pending ? (gate.decision && !CONFIG.gateDecisions[gate.decision.decision]?.passes
+            ? `<span class="badge ${CONFIG.gateDecisions[gate.decision.decision]?.badge || 'b-neutral'}">${esc(CONFIG.gateDecisions[gate.decision.decision]?.label || '')}</span>`
+            : '<span class="badge b-gate">Décision attendue</span>') : ''}`;
+    return `<button class="brow m-${r.meteo}" data-action="open-project" data-id="${esc(p.id)}">
+      <span class="brow-proj"><span class="brow-name">${esc(p.project_name)}</span>
+        <span class="cell-sub">${esc(p.client_name || 'Client non renseigné')}${r.lead ? ` · ${esc(r.lead)}` : ''}</span>
+        <span class="brow-meteo"><span class="badge ${m.badge}">${esc(m.label)}</span>${r.reasons.length && r.meteo !== 'late' ? `<span class="brow-why">${esc(r.reasons.join(', '))}</span>` : ''}</span></span>
+      <span class="brow-line">${Board.lineHTML(r)}
+        <span class="brow-where">${r.phase ? `<b style="color:var(--ph${CONFIG.phases.indexOf(r.phase) + 1}-ink)">${esc(r.phase.label)}</b> · ` : ''}${r.steps.length ? esc(where) : ''}${r.steps.length ? ` <span class="muted">· étape ${r.position}/${r.steps.length}</span>` : ''}</span></span>
+      <span class="brow-gate">${gateCell}</span>
+      <span class="brow-launch"><span class="due ${r.late ? 'overdue' : ''}">${r.late ? icon('alert', 'sm') : ''}${esc(p.launch_date ? Dates.fmt(p.launch_date) : 'À définir')}</span>
+        ${p.launch_date ? `<span class="cell-sub">semaine ${Dates.isoWeek(Dates.key(p.launch_date))}</span>` : ''}
+        ${fc && fc.slip ? `<span class="slip ${fc.slip > 0 ? 'late' : 'early'}">${esc(Timeline.fmtSlip(fc.slip))}</span>` : ''}</span>
+    </button>`;
+  },
+
+  /** Export Excel : onglet « Avancement » (une ligne par projet) + onglet « Étapes » (une ligne par étape). */
+  async exportExcel() {
+    try {
+      if (!window.XLSX) await loadScript(Export.xlsxUrl);
+      const { list } = Board.rows();
+      const d = v => (v ? Dates.parse(v) : null);
+      const head = ['Projet', 'Client', 'Chef de projet', 'Météo', 'Raison', 'Statut du projet', 'Phase', 'Étape actuelle', 'Statut de l\'étape',
+        'Étape n°', 'Nb d\'étapes', 'Avancement (%)', 'Prochaine Gate', 'Gate : date prévue', 'Gate : semaine', 'Décision Gate attendue',
+        'Fin de timeline prévue', 'Glissement (jours)', 'Lancement', 'Semaine de lancement', 'Version one-pager', 'Mis à jour le'];
+      const body = list.map(r => {
+        const { p, step, gate, fc } = r;
+        return [p.project_name, p.client_name || '', r.lead || '', Board.METEO[r.meteo].label, r.reasons.join(', '),
+          CONFIG.projectStatuses[p.status]?.label || p.status || '', r.phase ? `${r.phase.id} · ${r.phase.label}` : '',
+          step ? step.label : r.sg.kind === 'launched' ? 'Toutes les étapes terminées' : 'Timeline non planifiée',
+          step ? CONFIG.stepStatuses[step.status].label : '', r.position || '', r.steps.length || '', r.progress ?? '',
+          gate ? `Gate ${gate.no} : ${gate.title}` : '', d(gate?.date), gate?.week || '', gate ? (gate.pending ? 'Oui' : 'Non') : '',
+          d(fc?.end), fc?.slip ?? '', d(p.launch_date), p.launch_date ? Dates.isoWeek(Dates.key(p.launch_date)) : '',
+          p.version || 'v1', d(p.updated_at)];
+      });
+      const sHead = ['Projet', 'Client', 'Phase', 'N°', 'Étape', 'Gate', 'Statut', 'Avancement (%)', 'Semaine de clôture',
+        'Clôture prévue', 'Clôture réelle', 'Référence', 'Écart (jours)', 'Durée (jours)', 'Étape actuelle'];
+      const sBody = [];
+      list.forEach(r => r.steps.forEach((s, i) => {
+        const end = r.plan[i]?.end || s.end_date || null;
+        sBody.push([r.p.project_name, r.p.client_name || '', s.phase, i + 1, s.gate ? Timeline.gateTitle(s.label) : s.label,
+          s.gate ? `Gate ${Timeline.gateNumber(s.name)}` : '', CONFIG.stepStatuses[s.status].label, s.prog || (s.status === 'done' ? 100 : 0),
+          r.weeks[i] || '', d(end), d(s.actual_end), d(s.planned_end), Timeline.slipDays(s.planned_end, end) ?? '',
+          Number(s.days) || 0, r.sg.kind === 'step' && r.sg.position === i ? 'Oui' : '']);
+      }));
+      const sheet = (h, rows) => {
+        const sh = XLSX.utils.aoa_to_sheet([h, ...rows], { cellDates: true, dateNF: 'dd/mm/yyyy' });
+        sh['!cols'] = h.map((t, i) => ({ wch: Math.min(48, Math.max(t.length + 2, ...rows.map(x => String(x[i] instanceof Date ? '00/00/0000' : x[i] ?? '').length + 2))) }));
+        sh['!autofilter'] = { ref: XLSX.utils.encode_range({ s: { r: 0, c: 0 }, e: { r: rows.length, c: h.length - 1 } }) };
+        return sh;
+      };
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, sheet(head, body), 'Avancement');
+      XLSX.utils.book_append_sheet(wb, sheet(sHead, sBody), 'Étapes');
+      const file = `${CONFIG.appName}_avancement_projets_${Dates.today()}.xlsx`;
+      XLSX.writeFile(wb, file);
+      Toast.show(`${list.length} projet(s) exporté(s) : ${file}`);
+      return { head, body, sHead, sBody, file };
+    } catch (e) { Toast.error(e); return null; }
+  },
+};
+Actions['board-meteo'] = el => { const st = App.view('board', Board.defaults); st.meteo = st.meteo === el.dataset.value ? '' : el.dataset.value; Board.render(document.getElementById('homeBody')); };
+Actions['board-export'] = () => Board.exportExcel();
+ChangeActions['board-filter'] = el => { App.view('board', Board.defaults)[el.dataset.key] = el.value; Board.render(document.getElementById('homeBody')); };
+
 Actions['home-view'] = el => { App.view('home', Home.defaults).view = el.dataset.view; Home.render(document.getElementById('view')); };
 
 /* ---------- Pipeline des projets clients : plan du processus ----------
