@@ -828,7 +828,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .top-btn { display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 12px; border-radius: var(--r-sm);
   color: var(--on-bar-2); font-size: var(--fs-sm); font-weight: var(--fw-semibold); }
 .top-btn:hover { background: var(--bar-2); color: var(--on-bar); }
-.top-btn[aria-pressed="true"] { background: var(--bar-2); color: var(--on-bar); }
+.top-btn[aria-current="page"], .top-btn[aria-pressed="true"] { background: var(--bar-2); color: var(--on-bar); }
 .top-btn .kbd { background: transparent; color: var(--on-bar-2); border-color: var(--bar-2); }
 .top-btn.icon-only { width: 36px; padding: 0; justify-content: center; }
 .me-card { display: flex; align-items: center; gap: 10px; padding-left: var(--sp-2); }
@@ -924,7 +924,7 @@ body.is-projection { zoom: 1.2; }
 @media (max-width: 1100px) { .me-card .txt, .top-btn .txt { display: none; } }
 @media (max-width: 900px) {
   .topbar { padding: 0 var(--sp-4); gap: var(--sp-2); }
-  .topbar .ws-switch, .topbar .ws-label, .topbar .top-theme, .topbar .top-proj, .topbar .top-logout { display: none; }
+  .topbar .ws-switch, .topbar .ws-label, .topbar .top-theme, .topbar .top-users, .topbar .top-proj, .topbar .top-logout { display: none; }
   .modbar { display: none; }
   .tabbar { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
     background: var(--surface); border-top: 1px solid var(--line);
@@ -1054,6 +1054,111 @@ body.theme-dark { --ph2-ink: #8DB8F0; --ph3-ink: #6FD39A; --ph4-ink: #D9AE80; }
   .tiles.lg .tile-title { font-size: var(--fs-lg); }
   .tiles.lg .tile-sub { font-size: var(--fs-xs); }
 }
+
+/* Kanban de synthèse étape par étape ------------------------------------- */
+.bk-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--sp-2) var(--sp-4); margin-bottom: var(--sp-3); }
+.bk-bar .segmented button { display: inline-flex; align-items: center; gap: 7px; }
+.bk-dot { width: 10px; height: 4px; border-radius: 2px; display: inline-block; }
+.bk-scroll { position: relative; overflow-x: auto; padding-bottom: var(--sp-3); scroll-padding-left: 0; }
+.bk { display: flex; gap: var(--sp-4); width: max-content; align-items: stretch; }
+.bk-phase { display: flex; flex-direction: column; gap: 8px; }
+.bk-phase-head { display: flex; align-items: baseline; gap: 8px; padding: 0 2px 8px; border-bottom: 4px solid var(--c); position: sticky; left: 0; }
+.bk-phase-name { font-weight: var(--fw-bold); font-size: var(--fs-lg); }
+.bk-cols { display: flex; gap: 8px; flex: 1; }
+.bk-col { width: 214px; flex-shrink: 0; display: flex; flex-direction: column; background: var(--surface-3); border-radius: var(--r-md); border: 1px solid transparent; padding: 0; border-top: 0; }
+.bk-col.is-gate { background: var(--gate-soft); border-color: var(--gate-border); }
+.bk-head { display: flex; align-items: flex-start; gap: 8px; padding: 10px 10px 8px; min-height: 62px; }
+.bk-mark { width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0; display: grid; place-items: center; font-size: 11px; font-weight: var(--fw-bold);
+  background: var(--surface); color: var(--text-2); box-shadow: inset 0 0 0 3px var(--c); }
+.bk-mark.gate { border-radius: 7px; background: var(--gate); color: #FFFFFF; box-shadow: none; width: 26px; }
+.bk-title { flex: 1; min-width: 0; font-size: var(--fs-sm); font-weight: var(--fw-semibold); line-height: 1.3; color: var(--text-2); }
+.bk-col.is-gate .bk-title { color: var(--gate-ink); }
+.bk-gno { display: block; font-size: var(--fs-xs); color: var(--gate); }
+.bk-opt { display: block; font-size: 11.5px; font-weight: var(--fw-regular); color: var(--text-3); margin-top: 2px; }
+.bk-count { font-size: var(--fs-sm); font-weight: var(--fw-bold); color: var(--text-3); padding-top: 2px; }
+.bk-cards { display: grid; gap: 6px; padding: 0 6px 6px; align-content: start; flex: 1; }
+.bk-empty { min-height: 40px; border: 1.5px dashed var(--line-strong); border-radius: var(--r-sm); opacity: .55; }
+.bk-card { display: flex; flex-direction: column; gap: 5px; width: 100%; text-align: left; padding: 10px 11px; border-radius: var(--r-sm);
+  background: var(--surface); border: 1px solid var(--line); transition: box-shadow var(--t-fast), transform var(--t-fast) var(--ease), border-color var(--t-fast); }
+.bk-card:hover { box-shadow: 0 6px 16px rgba(20,33,61,.12); transform: translateY(-2px); }
+.bk-card:active { transform: translateY(0) scale(.985); }
+.bk-card.m-late { border-color: var(--danger); } .bk-card.m-risk { border-color: var(--warn); }
+.bk-name { font-weight: var(--fw-bold); font-size: var(--fs-md); line-height: 1.3; }
+.bk-state { font-size: var(--fs-xs); color: var(--text-3); }
+.bk-prog { display: block; height: 4px; border-radius: 2px; background: var(--surface-3); overflow: hidden; margin-top: 2px; }
+.bk-prog i { display: block; height: 100%; background: var(--c, var(--bar)); border-radius: inherit; }
+.bk-foot { display: flex; justify-content: space-between; align-items: center; gap: 6px; flex-wrap: wrap; }
+.bk-foot .bg-title, .bk-foot .due { font-size: var(--fs-xs); }
+
+/* Processus en habillage de la page Projets ------------------------------- */
+.process { padding: var(--sp-4) var(--sp-5) var(--sp-5); margin-bottom: var(--sp-5); overflow: hidden; }
+.process-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px var(--sp-4); margin-bottom: var(--sp-4); }
+.pr-row .tl-row-head { border-left-width: 4px; }
+.pr-chev { min-height: 58px; }
+.chev.ph1 { background: var(--ph1); color: var(--on-brand); }
+.chev.ph2 { background: var(--ph2); } .chev.ph3 { background: var(--ph3); } .chev.ph4 { background: var(--ph4); }
+body.theme-dark .chev.ph2, body.theme-dark .chev.ph3, body.theme-dark .chev.ph4 { color: #0E1424; }
+.chev.is-opt { background-image: repeating-linear-gradient(135deg, rgba(255,255,255,.16) 0 6px, transparent 6px 12px); }
+.pr-chev:hover { filter: brightness(1.07); }
+@media (max-width: 560px) { .pr-row .chev { flex: 1 1 calc(50% - 3px); } }
+
+/* Mouvement ------------------------------------------------------------------
+   Un seul langage : les éléments arrivent comme une rame qui entre en station
+   (glissement court, décélération franche), et les lignes se tracent de gauche
+   à droite. Joué à l'ouverture d'un module (classe .is-entering, retirée après
+   1,1 s), jamais lors d'un simple filtre. */
+:root { --ease-out: cubic-bezier(.16, 1, .3, 1); }
+#view { view-transition-name: page; }
+::view-transition-old(root), ::view-transition-new(root) { animation: none; }
+::view-transition-old(page) { animation: vt-out 150ms ease-in both; }
+::view-transition-new(page) { animation: vt-in 340ms var(--ease-out) both; }
+html[data-nav="out"]::view-transition-new(page) { animation-name: vt-in-back; }
+@keyframes vt-out { to { opacity: 0; } }
+@keyframes vt-in { from { opacity: 0; transform: translateX(28px); } }
+@keyframes vt-in-back { from { opacity: 0; transform: translateX(-28px); } }
+
+@keyframes arrive { from { opacity: 0; transform: translateY(14px); } }
+@keyframes arrive-side { from { opacity: 0; transform: translateX(-14px); } }
+@keyframes reveal-x { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes grow-x { from { transform: scaleX(0); } }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+@keyframes pop { from { opacity: 0; transform: scale(.4); } }
+@keyframes ring { from { box-shadow: 0 0 0 4px var(--surface), 0 0 0 4px var(--tc); } }
+
+.is-entering .page-header { animation: arrive 360ms var(--ease-out) both; }
+.is-entering .tile { animation: arrive 460ms var(--ease-out) both; animation-delay: calc(80ms + min(var(--i, 0), 9) * 45ms); }
+.is-entering .tile-ico { animation: ring 700ms var(--ease-out) both; animation-delay: calc(260ms + min(var(--i, 0), 9) * 45ms); }
+.is-entering .mbar i { transform-origin: left; animation: grow-x 700ms var(--ease-out) both; animation-delay: 380ms; }
+.is-entering .hub-alert { animation: arrive-side 420ms var(--ease-out) both; animation-delay: 60ms; }
+.is-entering .process { animation: arrive 400ms var(--ease-out) both; }
+.is-entering .pr-chev { animation: reveal-x 420ms var(--ease-out) both; animation-delay: calc(140ms + var(--k, 0) * 26ms); }
+.is-entering .bk-card, .is-entering .brow, .is-entering .mrow { animation: arrive 420ms var(--ease-out) both; animation-delay: calc(120ms + min(var(--i, 0), 14) * 28ms); }
+.is-entering .bl-svg { animation: reveal-x 800ms var(--ease-out) both; animation-delay: calc(200ms + min(var(--i, 0), 14) * 28ms); }
+.is-entering .m-seg { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 520ms var(--ease-out) forwards; animation-delay: calc(var(--k, 0) * 32ms); }
+.is-entering .m-st .m-dot, .is-entering .m-st .m-gate, .is-entering .m-pill { transform-box: fill-box; transform-origin: center; animation: pop 360ms var(--ease-out) both; animation-delay: calc(120ms + var(--k, 0) * 32ms); }
+.is-entering .metro-v li { animation: arrive-side 380ms var(--ease-out) both; animation-delay: calc(min(var(--k, 0), 30) * 18ms); }
+.is-entering .chev-row .chev:not(.pr-chev) { animation: reveal-x 380ms var(--ease-out) both; }
+.is-entering .table-wrap { animation: arrive 380ms var(--ease-out) both; animation-delay: 100ms; }
+.is-entering .kb-card, .is-entering .cal-month, .is-entering .cal-week, .is-entering .meeting-card, .is-entering .kpi-strip, .is-entering .dash-grid { animation: arrive 400ms var(--ease-out) both; animation-delay: 120ms; }
+
+/* Retours d'action */
+.tile:active { transform: translateY(0) scale(.985); }
+.tile:hover .tile-ico { box-shadow: 0 0 0 3px var(--surface), 0 0 0 7px var(--tc); }
+.tile-ico { transition: box-shadow 220ms var(--ease-out); }
+.filter-chip, .segmented button { transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast), transform var(--t-fast); }
+.filter-chip:active, .segmented button:active { transform: scale(.96); }
+.m-st .m-dot, .m-st .m-gate { transition: transform 200ms var(--ease-out); transform-box: fill-box; transform-origin: center; }
+.m-st:hover .m-dot, .m-st:hover .m-gate { transform: scale(1.25); }
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(page), ::view-transition-new(page) { animation: none !important; }
+  .is-entering * { animation: none !important; }
+  .tile:hover .tile-ico { transition: none; }
+}
+.process .tl-row { grid-template-columns: 132px minmax(0, 1fr); }
+.bk-cols { align-items: flex-start; }
+.bk-col { min-height: 180px; }
+@media (max-width: 1100px) { .process .tl-row { grid-template-columns: 1fr; } }
 
 </style>
 </head>
@@ -1852,12 +1957,25 @@ const Router = {
     if (location.hash === target) Router.render(); else location.hash = target;
   },
   /** Redirection sans ajouter d'entrée dans l'historique. */
-  redirect(ws, page) { history.replaceState(null, '', Router.href(ws, page)); Router.render(); },
+  redirect(ws, page) { history.replaceState(null, '', Router.href(ws, page)); Router.renderNow(); },
   parse() {
     const [ws, page, param] = location.hash.replace(/^#\/?/, '').split('/');
     return { ws: ws || 'customer', page: page || 'home', param: param ? decodeURIComponent(param) : null };
   },
+  /** Changement de page : transition (glissement vers la droite quand on descend d'un niveau, vers la gauche quand on remonte). */
   render() {
+    const depth = Router.depth(Router.parse().page);
+    document.documentElement.dataset.nav = depth < (Router._depth ?? 0) ? 'out' : 'in';
+    Router._depth = depth;
+    const animate = document.startViewTransition && Store.me && document.getElementById('view') && !matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (animate) document.startViewTransition(() => Router.renderNow()); else Router.renderNow();
+  },
+  /** Profondeur de chaque page dans la navigation « poupées russes ». */
+  depth(page) {
+    return { home: 0, me: 1, projects: 1, tasks: 1, calendar: 1, meetings: 1, analytics: 1, users: 1, kanban: 2, pipeline: 2, 'projects-board': 2, 'projects-all': 2,
+      'projects-by': 2, 'tasks-by': 2, 'tasks-all': 2, 'projects-group': 3, 'tasks-group': 3, project: 4, meeting: 4, 'project-edit': 5, 'meeting-edit': 5 }[page] ?? 2;
+  },
+  renderNow() {
     if (!Store.me) return Login.render();
     let { ws, page, param } = Router.parse();
     if (!CONFIG.workspaces[ws]) return Router.redirect('customer', 'home');
@@ -1872,6 +1990,8 @@ const Router = {
     Menu.closeAll(); Overlay.closeAll();
     Shell.render();
     const view = document.getElementById('view');
+    view.classList.remove('is-entering'); void view.offsetWidth; view.classList.add('is-entering');
+    clearTimeout(Router._enterTimer); Router._enterTimer = setTimeout(() => view.classList.remove('is-entering'), 1400);
     try { route.render(view, param); }
     catch (err) { console.error(err); view.innerHTML = UI.empty({ icon: 'alert', title: 'Cette page n\'a pas pu s\'afficher', sub: friendlyError(err) }); }
     document.getElementById('main')?.scrollTo?.(0, 0);
@@ -1917,12 +2037,12 @@ const Shell = {
       <span class="spacer"></span>
       <button class="top-btn" data-action="open-search" title="Rechercher (Ctrl+K)">${icon('search', 'sm')}<span class="txt">Rechercher</span><span class="kbd txt">Ctrl K</span></button>
       <button class="top-btn icon-only top-proj" data-action="toggle-projection" aria-pressed="${Projection.on()}" title="Mode projection (texte agrandi pour la réunion)" aria-label="Mode projection">${icon('present', 'sm')}</button>
+      <a class="top-btn icon-only top-users" href="${Router.href(App.ws, 'users')}" ${App.page === 'users' ? 'aria-current="page"' : ''} title="Utilisateurs (administration)" aria-label="Utilisateurs">${icon('users', 'sm')}</a>
       <button class="top-btn icon-only top-theme" data-action="toggle-theme" title="Changer de thème" aria-label="Changer de thème">${icon(document.body.classList.contains('theme-dark') ? 'sun' : 'moon', 'sm')}</button>
       <div class="me-card">${avatar(me, 32)}<div class="txt"><div class="me-name">${esc(me.name)}</div><div class="me-role">${esc(me.role || '')}</div></div></div>
       <button class="top-btn icon-only top-logout" data-action="logout" title="Déconnexion" aria-label="Déconnexion">${icon('logout', 'sm')}</button>`;
     const mods = CONFIG.modules[App.ws];
-    document.getElementById('modbar').innerHTML = mods.map(m => link(m, 'mod-link')).join('') +
-      link('users', 'mod-link end');
+    document.getElementById('modbar').innerHTML = mods.map(m => link(m, 'mod-link')).join('');
     const moreOn = !Shell.TAB_MODULES.includes(Routes[App.page]?.module);
     document.getElementById('tabbar').innerHTML = Shell.TAB_MODULES.filter(m => mods.includes(m)).map(m => link(m, 'tab')).join('') +
       `<button class="tab" data-action="open-more" ${moreOn ? 'aria-current="page"' : ''}>${icon('more')}<span>Plus</span></button>`;
@@ -1939,7 +2059,7 @@ const Shell = {
   },
   /** Panneau « Plus » du téléphone : modules restants, espace, thème, déconnexion. */
   openMore() {
-    const mods = [...CONFIG.modules[App.ws].filter(m => !Shell.TAB_MODULES.includes(m)), 'users'];
+    const mods = CONFIG.modules[App.ws].filter(m => !Shell.TAB_MODULES.includes(m));
     const wsList = Perm.workspacesFor(Store.me);
     Overlay.open(`<div class="drawer-head"><h2 class="modal-title" style="margin:0">Plus</h2>
         <button class="btn btn-ghost btn-icon" data-action="close-overlay" aria-label="Fermer">${icon('x')}</button></div>
@@ -1948,6 +2068,7 @@ const Shell = {
         ${wsList.length > 1 ? `<div class="more-sep"></div>${wsList.map(ws => `<button class="more-link" data-action="switch-ws" data-ws="${ws}" ${ws === App.ws ? 'aria-current="page"' : ''}><span class="ws-dot ${ws}" aria-hidden="true"></span>${esc(CONFIG.workspaces[ws].short)}</button>`).join('')}` : ''}
         <div class="more-sep"></div>
         <button class="more-link" data-action="toggle-theme">${icon(document.body.classList.contains('theme-dark') ? 'sun' : 'moon')}${document.body.classList.contains('theme-dark') ? 'Thème clair' : 'Thème sombre'}</button>
+        <a class="more-link" href="${Router.href(App.ws, 'users')}" ${App.page === 'users' ? 'aria-current="page"' : ''}>${icon('users')}Utilisateurs</a>
         <button class="more-link" data-action="logout">${icon('logout')}Déconnexion</button>
       </div></div>`, { type: 'drawer', label: 'Plus' });
   },
@@ -2744,7 +2865,7 @@ const Home = {
    lancement. Les mêmes informations s'exportent en Excel (onglet « Avancement »
    + onglet « Étapes » avec le détail de chaque étape de chaque projet). */
 const Board = {
-  defaults: { meteo: '', client: '', sort: 'urgency' },
+  defaults: { meteo: '', client: '', sort: 'urgency', hideEmpty: false },
   METEO: {
     late:      { label: 'En retard',      badge: 'b-danger',  rank: 0 },
     risk:      { label: 'À risque',       badge: 'b-warn',    rank: 1 },
@@ -2808,7 +2929,7 @@ const Board = {
 
   /** opts : { scope, hideClient } — la vue (kanban ou lignes) est mémorisée par page. */
   render(box, opts = {}) {
-    Board.box = box; Board.opts = opts;
+    Board.box = box; Board.opts = opts; Board._n = 0;
     const st = App.view('board', Board.defaults);
     const mode = App.view('boardMode', {})[App.page] || (opts.scope ? 'lines' : 'kanban');
     const { all, list, soon } = Board.rows();
@@ -2830,36 +2951,51 @@ const Board = {
         <div class="board-head"><h2 class="card-title" id="boardH">Où en est chaque projet</h2>
           <div class="metro-legend">${CONFIG.phases.map((ph, i) => `<span><i style="background:var(--ph${i + 1})"></i>${esc(ph.label)}</span>`).join('')}<span><i class="gate"></i>Gate</span><span><i class="here"></i>Étape actuelle</span></div></div>
         <div class="board-cols" aria-hidden="true"><span>Projet</span><span>Avancement</span><span>Prochaine Gate</span><span>Lancement</span></div>
-        ${list.length ? list.map(Board.rowHTML).join('') : empty}
+        ${list.length ? list.map((r, i) => Board.rowHTML(r, i)).join('') : empty}
       </section>`}`;
   },
 
-  /** Kanban de synthèse : une colonne par phase, une carte par projet (même tri et mêmes filtres que les lignes). */
+  /** Kanban de synthèse : une colonne par étape du processus, regroupées par phase (les Gates en violet). */
   kanbanHTML(list) {
-    const cols = [{ key: 'unplanned', label: 'À planifier', sub: 'Sans timeline', c: 'var(--neutral)' },
-      ...CONFIG.phases.map((ph, i) => ({ key: ph.id, label: ph.label, sub: ph.id, c: `var(--ph${i + 1})` })),
-      { key: 'launched', label: 'Lancés', sub: 'Toutes les étapes terminées', c: 'var(--neutral)' }];
-    const colOf = r => r.sg.kind === 'step' ? r.step.phase : r.sg.kind;
-    return `<div class="bk-scroll" tabindex="0" aria-label="Kanban des projets par phase"><div class="bk">${cols.map(col => {
-      const items = list.filter(r => colOf(r) === col.key);
-      if (!items.length && (col.key === 'unplanned' || col.key === 'launched')) return '';
-      return `<section class="bk-col" style="--c:${col.c}" aria-label="${esc(col.label)} : ${items.length} projet(s)">
-        <header class="bk-head"><span class="bk-title">${esc(col.label)}</span><span class="bk-sub">${esc(col.sub)}</span><span class="bk-count num">${items.length}</span></header>
-        <div class="bk-cards">${items.map(Board.cardHTML).join('') || '<div class="kb-empty">Aucun projet</div>'}</div></section>`;
-    }).join('')}</div></div>`;
+    const st = App.view('board', Board.defaults), tpl = CONFIG.timelineTemplate;
+    const keyOf = r => (r.sg.kind === 'step' ? String(r.step.anchorIndex) : r.sg.kind);
+    const by = {}; list.forEach(r => { (by[keyOf(r)] = by[keyOf(r)] || []).push(r); });
+    const show = k => !st.hideEmpty || (by[k] || []).length;
+    const col = (k, head, cls = '', ph = 0) => `<section class="bk-col ${cls}" style="--c:${ph ? `var(--ph${ph})` : 'var(--neutral)'}" aria-label="${esc(head.label)} : ${(by[k] || []).length} projet(s)">
+        <header class="bk-head">${head.mark}<span class="bk-title">${head.html}</span><span class="bk-count num">${(by[k] || []).length}</span></header>
+        <div class="bk-cards">${(by[k] || []).map(Board.cardHTML).join('') || '<div class="bk-empty" aria-hidden="true"></div>'}</div></section>`;
+    const groups = [];
+    if ((by.unplanned || []).length) groups.push({ id: 'unplanned', label: 'À planifier', sub: 'Sans timeline', ph: 0,
+      cols: [col('unplanned', { label: 'Timeline non planifiée', html: 'Timeline non planifiée', mark: '' })] });
+    CONFIG.phases.forEach((phase, pi) => {
+      const cols = tpl.map((s, i) => ({ s, i })).filter(({ s, i }) => s.phase === phase.id && show(String(i))).map(({ s, i }) => {
+        const gate = Timeline.isGate(s.name), no = Timeline.gateNumber(s.name);
+        return col(String(i), { label: s.name,
+          html: gate ? `<b class="bk-gno">Gate ${no}</b>${esc(Timeline.gateTitle(s.name))}` : `${esc(s.name)}${s.industrialTest ? '<span class="bk-opt">Avec test industriel</span>' : ''}`,
+          mark: gate ? `<span class="bk-mark gate" aria-hidden="true">G${no}</span>` : `<span class="bk-mark" aria-hidden="true">${i + 1}</span>` }, gate ? 'is-gate' : '', pi + 1);
+      });
+      if (cols.length) groups.push({ id: phase.id, label: phase.label, sub: phase.id, ph: pi + 1, cols });
+    });
+    if ((by.launched || []).length) groups.push({ id: 'launched', label: 'Lancés', sub: 'Toutes les étapes terminées', ph: 0,
+      cols: [col('launched', { label: 'Timeline terminée', html: 'Timeline terminée', mark: '' })] });
+    return `<div class="bk-bar"><div class="segmented" role="group" aria-label="Aller à une phase">${CONFIG.phases.map((ph, i) => `<button data-action="bk-jump" data-phase="${esc(ph.id)}"><i class="bk-dot" style="background:var(--ph${i + 1})"></i>${esc(ph.label)}</button>`).join('')}</div>
+        <label class="check"><input type="checkbox" id="bk_hide" data-change="bk-hide" ${st.hideEmpty ? 'checked' : ''}>Masquer les étapes sans projet</label></div>
+      <div class="bk-scroll" id="bkScroll" tabindex="0" aria-label="Kanban des projets par étape, défilement horizontal"><div class="bk">${groups.map(g => `<div class="bk-phase" data-phase="${esc(g.id)}" style="--c:${g.ph ? `var(--ph${g.ph})` : 'var(--neutral)'}">
+        <div class="bk-phase-head"><span class="bk-phase-name">${esc(g.label)}</span><span class="bk-sub">${esc(g.sub)}</span></div>
+        <div class="bk-cols">${g.cols.join('')}</div></div>`).join('')}</div></div>`;
   },
 
   cardHTML(r) {
     const { p, step, gate } = r, m = Board.METEO[r.meteo];
-    const where = step ? (step.gate ? `Gate ${Timeline.gateNumber(step.name)} : ${Timeline.gateTitle(step.label)}` : step.label) : '';
-    return `<button class="bk-card m-${r.meteo}" data-action="open-project" data-id="${esc(p.id)}">
+    const stepState = step && step.status !== 'upcoming' ? `${CONFIG.stepStatuses[step.status].label}${step.prog ? ` · ${step.prog} %` : ''}` : '';
+    return `<button class="bk-card m-${r.meteo}" data-action="open-project" data-id="${esc(p.id)}" style="--i:${Board._n = (Board._n || 0) + 1}">
       <span class="bk-name">${esc(p.project_name)}</span>
       <span class="cell-sub">${esc(p.client_name || 'Client non renseigné')}${r.lead ? ` · ${esc(r.lead)}` : ''}</span>
-      <span class="brow-meteo"><span class="badge ${m.badge}">${esc(m.label)}</span></span>
-      ${r.steps.length ? Board.lineHTML(r) : ''}
-      ${where ? `<span class="bk-where">${esc(where)} <span class="muted">· ${r.position}/${r.steps.length}</span></span>` : ''}
-      <span class="bk-foot">${gate ? `<span class="bg-title"><span class="gate-mark sm" aria-hidden="true"></span>G${gate.no}${gate.week ? ` · ${esc(gate.week)}` : ''}${gate.inDays !== null && gate.inDays < 0 ? ' <span class="t-danger">dépassée</span>' : ''}</span>` : '<span></span>'}
-        <span class="due ${r.late ? 'overdue' : ''}">${r.late ? icon('alert', 'sm') : icon('rocket', 'sm')}${p.launch_date ? `S${Dates.isoWeek(Dates.key(p.launch_date))} · ${esc(Dates.short(p.launch_date))}` : 'À définir'}</span></span>
+      <span class="brow-meteo"><span class="badge ${m.badge}">${esc(m.label)}</span>${stepState ? `<span class="bk-state">${esc(stepState)}</span>` : ''}</span>
+      ${r.steps.length ? `<span class="bk-prog" aria-label="Étape ${r.position} sur ${r.steps.length}"><i style="width:${Math.round(r.position / r.steps.length * 100)}%"></i></span>` : ''}
+      <span class="bk-foot">${gate && !(step && step.gate) ? `<span class="bg-title"><span class="gate-mark sm" aria-hidden="true"></span>G${gate.no}${gate.week ? ` · ${esc(gate.week)}` : ''}${gate.inDays !== null && gate.inDays < 0 ? ' <span class="t-danger">dépassée</span>' : ''}</span>`
+        : gate?.pending ? '<span class="badge b-gate">Décision attendue</span>' : '<span></span>'}
+        <span class="due ${r.late ? 'overdue' : ''}">${r.late ? icon('alert', 'sm') : icon('rocket', 'sm')}${p.launch_date ? `S${Dates.isoWeek(Dates.key(p.launch_date))}` : '—'}</span></span>
     </button>`;
   },
 
@@ -2885,7 +3021,7 @@ const Board = {
     return `<svg class="bl-svg" viewBox="0 0 ${w} 32" role="img" aria-label="Étape ${r.position} sur ${steps.length}">${segs}${marks}</svg>`;
   },
 
-  rowHTML(r) {
+  rowHTML(r, i = 0) {
     const { p, step, gate, fc } = r, m = Board.METEO[r.meteo];
     const where = step ? (step.gate ? `Gate ${Timeline.gateNumber(step.name)} : ${Timeline.gateTitle(step.label)}` : step.label)
       : r.sg.kind === 'launched' ? 'Toutes les étapes terminées' : 'Timeline non planifiée';
@@ -2895,7 +3031,7 @@ const Board = {
          ${gate.pending ? (gate.decision && !CONFIG.gateDecisions[gate.decision.decision]?.passes
             ? `<span class="badge ${CONFIG.gateDecisions[gate.decision.decision]?.badge || 'b-neutral'}">${esc(CONFIG.gateDecisions[gate.decision.decision]?.label || '')}</span>`
             : '<span class="badge b-gate">Décision attendue</span>') : ''}`;
-    return `<button class="brow m-${r.meteo}" data-action="open-project" data-id="${esc(p.id)}">
+    return `<button class="brow m-${r.meteo}" data-action="open-project" data-id="${esc(p.id)}" style="--i:${i}">
       <span class="brow-proj"><span class="brow-name">${esc(p.project_name)}</span>
         <span class="cell-sub">${esc(p.client_name || 'Client non renseigné')}${r.lead ? ` · ${esc(r.lead)}` : ''}</span>
         <span class="brow-meteo"><span class="badge ${m.badge}">${esc(m.label)}</span>${r.reasons.length && r.meteo !== 'late' ? `<span class="brow-why">${esc(r.reasons.join(', '))}</span>` : ''}</span></span>
@@ -2956,6 +3092,11 @@ const Board = {
 };
 Actions['board-meteo'] = el => { const st = App.view('board', Board.defaults); st.meteo = st.meteo === el.dataset.value ? '' : el.dataset.value; Board.render(Board.box, Board.opts); };
 Actions['board-export'] = () => Board.exportExcel();
+Actions['bk-jump'] = el => {
+  const sc = document.getElementById('bkScroll'), t = sc && [...sc.querySelectorAll('.bk-phase')].find(x => x.dataset.phase === el.dataset.phase);
+  if (t) sc.scrollTo({ left: t.offsetLeft, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+};
+ChangeActions['bk-hide'] = el => { App.view('board', Board.defaults).hideEmpty = el.checked; Board.render(Board.box, Board.opts); };
 ChangeActions['board-filter'] = el => { App.view('board', Board.defaults)[el.dataset.key] = el.value; Board.render(Board.box, Board.opts); };
 Actions['board-mode'] = el => { App.view('boardMode', {})[App.page] = el.dataset.mode; Board.render(Board.box, Board.opts); };
 
@@ -3033,7 +3174,7 @@ const Pipeline = {
     const legend = CONFIG.phases.map((ph, i) => `<span><i style="background:var(--ph${i + 1})"></i>${esc(ph.id)} · ${esc(ph.label)}</span>`).join('') +
       '<span><i class="gate"></i>Gate (décision)</span>';
     // Segments : chaque tronçon prend la couleur de la phase de la station d'arrivée.
-    const segs = tpl.slice(1).map((s, i) => `<line class="m-seg m-${Pipeline.phaseClass(s.phase)}" x1="${x(i)}" y1="${lineY}" x2="${x(i + 1)}" y2="${lineY}"/>`).join('');
+    const segs = tpl.slice(1).map((s, i) => `<line class="m-seg m-${Pipeline.phaseClass(s.phase)}" pathLength="1" style="--k:${i}" x1="${x(i)}" y1="${lineY}" x2="${x(i + 1)}" y2="${lineY}"/>`).join('');
     const phaseLabels = CONFIG.phases.map(ph => {
       const i = tpl.findIndex(s => s.phase === ph.id);
       return `<text class="m-phase ${Pipeline.phaseClass(ph.id)}" x="${x(i) - 8}" y="22">${esc(ph.id)} · ${esc(ph.label)}</text>`;
@@ -3046,16 +3187,16 @@ const Pipeline = {
         ? `<rect class="m-gate" x="${x(i) - 14}" y="${lineY - 14}" width="28" height="28" rx="8"/><text class="m-gate-t" x="${x(i)}" y="${lineY + 4}">G${Timeline.gateNumber(s.name)}</text>`
         : `<circle class="m-dot m-${cls} ${s.industrialTest ? 'opt' : ''}" cx="${x(i)}" cy="${lineY}" r="8"/>`;
       const pill = c ? `<rect class="m-pill ${c.risk ? 'risk' : ''}" x="${x(i) - 14}" y="${lineY - 52}" width="28" height="22" rx="11"/><text class="m-pill-t" x="${x(i)}" y="${lineY - 36.5}">${c.n}</text>` : '';
-      return `<g class="m-st ${gate ? 'is-gate' : ''} ${c ? 'has' : ''} ${sel === String(i) ? 'is-sel' : ''}" data-action="pipe-station" data-key="${i}" tabindex="0" role="button" aria-pressed="${sel === String(i)}" aria-label="${esc(label)}">
+      return `<g style="--k:${i}" class="m-st ${gate ? 'is-gate' : ''} ${c ? 'has' : ''} ${sel === String(i) ? 'is-sel' : ''}" data-action="pipe-station" data-key="${i}" tabindex="0" role="button" aria-pressed="${sel === String(i)}" aria-label="${esc(label)}">
         <title>${esc(label)}</title><rect class="m-halo" x="${x(i) - 20}" y="${lineY - 58}" width="40" height="90" rx="10"/>
         ${pill}${mark}<text class="m-name" x="${x(i) - 4}" y="${lineY + 30}" transform="rotate(38 ${x(i) - 4} ${lineY + 30})">${esc(Pipeline.SHORT[i] || s.name)}</text></g>`;
     }).join('');
     // Version verticale pour le téléphone : même plan, une station par ligne.
     const vert = CONFIG.phases.map((ph, pi) => {
       const rows = tpl.map((s, i) => ({ s, i })).filter(({ s }) => s.phase === ph.id);
-      return `<li class="mv-phase" style="--c:var(--ph${pi + 1})">${esc(ph.id)} · ${esc(ph.label)}</li>` + rows.map(({ s, i }, k) => {
+      return `<li class="mv-phase" style="--c:var(--ph${pi + 1});--k:${rows[0]?.i ?? 0}">${esc(ph.id)} · ${esc(ph.label)}</li>` + rows.map(({ s, i }, k) => {
         const gate = Timeline.isGate(s.name), c = counts[String(i)];
-        return `<li><button class="mv-st ${c ? 'has' : ''} ${k === 0 ? 'first' : ''} ${k === rows.length - 1 ? 'last' : ''}" style="--c:var(--ph${pi + 1})" data-action="pipe-station" data-key="${i}" aria-pressed="${sel === String(i)}">
+        return `<li style="--k:${i}"><button class="mv-st ${c ? 'has' : ''} ${k === 0 ? 'first' : ''} ${k === rows.length - 1 ? 'last' : ''}" style="--c:var(--ph${pi + 1})" data-action="pipe-station" data-key="${i}" aria-pressed="${sel === String(i)}">
           <span class="mv-mark">${gate ? `<b>G${Timeline.gateNumber(s.name)}</b>` : '<i></i>'}</span>
           <span class="mv-name">${esc(gate ? `Gate ${Timeline.gateNumber(s.name)} : ${Timeline.gateTitle(s.name)}` : s.name)}</span>
           ${c ? `<span class="mv-count ${c.risk ? 'risk' : ''}">${c.n}</span>` : ''}</button></li>`;
@@ -3078,6 +3219,7 @@ const Pipeline = {
   },
 
   listHTML(items, sel) {
+    Pipeline._n = 0;
     const shown = (sel ? items.filter(x => x.key === sel) : items).slice().sort((a, b) =>
       (b.sg.atRisk - a.sg.atRisk) || (Rules.isProjectLate(b.p) - Rules.isProjectLate(a.p)) ||
       (Pipeline.rank(a.key) - Pipeline.rank(b.key)) || cmp(Dates.key(a.p.launch_date), Dates.key(b.p.launch_date)));
@@ -3103,7 +3245,7 @@ const Pipeline = {
       : `<span class="badge b-gate">Décision Gate ${gateNo} attendue</span>`) : '';
     const stats = step ? Timeline.taskStats(p.id, Store.tasksIn('customer')).get(Timeline.stepKey(step)) : null;
     const state = step && step.status !== 'upcoming' ? `<span class="badge ${risk ? 'b-danger' : 'b-info'}">${esc(CONFIG.stepStatuses[step.status].label)}${step.prog ? ` · ${step.prog} %` : ''}</span>` : '';
-    return `<button class="mrow" data-action="open-project" data-id="${esc(p.id)}" title="Synchronisé avec la version ${esc(p.version || 'v1')} du one-pager${p.updated_at ? ', enregistrée le ' + esc(Dates.fmt(p.updated_at)) : ''}">
+    return `<button class="mrow" style="--i:${Pipeline._n = (Pipeline._n || 0) + 1}" data-action="open-project" data-id="${esc(p.id)}" title="Synchronisé avec la version ${esc(p.version || 'v1')} du one-pager${p.updated_at ? ', enregistrée le ' + esc(Dates.fmt(p.updated_at)) : ''}">
       ${bullet}
       <span class="grow" style="min-width:0"><span class="mrow-name">${esc(p.project_name)}<span class="pipe-ver">${esc(p.version || 'v1')}</span></span>
         <span class="mrow-sub">${esc(p.client_name || 'Client non renseigné')} · ${esc(where)}${lead ? ` · ${esc(lead)}` : ''}</span></span>
@@ -4275,7 +4417,7 @@ const Groups = {
 const Tiles = {
   /** t : { page, param, icon, title, sub, meta, color, avatar } — chaque tuile est un vrai lien. */
   html(items, size = '') {
-    return `<div class="tiles ${size}">${items.map(t => `<a class="tile" href="${Router.href(App.ws, t.page, t.param)}" style="--tc:${t.color || 'var(--bar)'}">
+    return `<div class="tiles ${size}">${items.map((t, i) => `<a class="tile" href="${Router.href(App.ws, t.page, t.param)}" style="--tc:${t.color || 'var(--bar)'};--i:${i}">
       <span class="tile-top">${t.avatar || `<span class="tile-ico" aria-hidden="true">${icon(t.icon || 'folder', 'lg')}</span>`}<span class="tile-go" aria-hidden="true">${icon('right', 'sm')}</span></span>
       <span class="tile-title">${esc(t.title)}</span>
       ${t.sub ? `<span class="tile-sub">${esc(t.sub)}</span>` : ''}
@@ -4317,7 +4459,6 @@ const HomeHub = {
       { page: 'meetings', icon: 'notes', color: 'var(--ph4)', title: 'Meeting Minutes', sub: plural(meetings.length, 'compte-rendu', 'comptes-rendus'), meta: meetings[0]?.meeting_date ? `<span class="chip">Dernier : ${esc(Dates.fmt(meetings[0].meeting_date))}</span>` : '' },
       ...(CONFIG.modules[ws].includes('analytics') ? [{ page: 'analytics', icon: 'chart', color: 'var(--bar)', title: 'Analytiques', sub: 'Lancements par mois, retards par personne' }] : []),
       { page: 'me', icon: 'check', color: 'var(--space)', title: 'Mon espace', sub: `${plural(mine.length, 'tâche', 'tâches')} à traiter pour vous`, meta: mine.filter(t => Rules.isTaskOverdue(t, today)).length ? `<span class="badge b-danger">${mine.filter(t => Rules.isTaskOverdue(t, today)).length} en retard</span>` : '' },
-      { page: 'users', icon: 'users', color: 'var(--neutral)', title: 'Utilisateurs', sub: plural(Store.users.length, 'personne', 'personnes') },
     ];
     const risky = infos.filter(r => r.meteo === 'late' || r.meteo === 'risk').length;
     const alert = (risky || gates) && ws === 'customer' ? `<div class="hub-alert">${icon('alert', 'sm')}<span>${[risky && plural(risky, 'projet demande', 'projets demandent') + ' votre attention', gates && plural(gates, 'Gate est prévue', 'Gates sont prévues') + ` dans les ${Board.GATE_SOON_DAYS} jours`].filter(Boolean).join(' · ')}</span>
@@ -4338,15 +4479,14 @@ const ProjectsHub = {
       { page: 'projects-by', param: 'client', icon: 'building', color: 'var(--ph2)', title: 'Par département', sub: plural(clients, 'département', 'départements') },
       { page: 'projects-by', param: 'lead', icon: 'users', color: 'var(--ph3)', title: 'Par responsable', sub: plural(leads, 'responsable', 'responsables') },
     ] : [
-      { page: 'projects-board', icon: 'kanban', color: 'var(--ph1)', title: 'Synthèse', sub: 'Tous les projets en kanban par phase, export Excel', meta: Tiles.meteoBar(infos.filter(r => r.meteo !== 'done')) + Tiles.counts(infos) },
+      { page: 'projects-board', icon: 'kanban', color: 'var(--ph1)', title: 'Synthèse', sub: 'Tous les projets en kanban, étape par étape, export Excel', meta: Tiles.meteoBar(infos.filter(r => r.meteo !== 'done')) + Tiles.counts(infos) },
       { page: 'projects-by', param: 'client', icon: 'building', color: 'var(--ph2)', title: 'Par client', sub: plural(clients, 'client', 'clients') },
       { page: 'projects-by', param: 'lead', icon: 'users', color: 'var(--ph3)', title: 'Par Project Lead', sub: plural(leads, 'Project Lead', 'Project Leads') },
       { page: 'pipeline', icon: 'layers', color: 'var(--ph4)', title: 'Pipeline', sub: 'Plan du processus : combien de projets à chaque étape' },
-      { page: 'projects-all', icon: 'list', color: 'var(--bar)', title: 'Liste complète', sub: 'Tableau triable et filtrable, export Excel' },
     ];
     view.innerHTML = pageHeader({ title: 'Projets', sub: pdqa ? 'Initiatives internes, qualité et projets transverses.' : 'Choisissez comment parcourir les projets.',
       crumbs: [{ label: 'Projets' }], actions: `<button class="btn btn-primary" data-action="new-project">${icon('plus', 'sm')}Nouveau projet</button>` }) +
-      `<div class="page-body">${Tiles.html(tiles)}</div>`;
+      `<div class="page-body">${pdqa ? '' : Process.bannerHTML()}${Tiles.html(tiles)}</div>`;
   },
 
   /** Niveau 2 : la liste des clients (ou des Project Leads), une tuile chacun. */
@@ -4382,6 +4522,29 @@ const ProjectsHub = {
         <span class="grow"><span class="cell-title truncate" style="display:block">${esc(p.project_name)}</span><span class="cell-sub">${esc(p.pdqa_data.department || 'Département non renseigné')} · ${esc(Rules.projectLeadName(p) || 'Responsable à définir')}</span></span>
         ${UI.projectStatusBadge(p.status)}${Rules.isProjectLate(p) ? '<span class="badge b-danger">En retard</span>' : ''}<span class="list-progress">${UI.progress(Rules.projectProgress(p, tasks))}</span>${UI.projectDue(p)}</button>`).join('')
       : UI.empty({ icon: 'folder', title: 'Aucune initiative ici' })}</section>`;
+  },
+};
+
+/* ---------- Le processus de développement client, en habillage de la page Projets ----------
+   Reprend le visuel de la timeline des one-pagers (flèches par phase, Gates en violet),
+   à partir du modèle CONFIG.timelineTemplate. Purement informatif. */
+const Process = {
+  bannerHTML() {
+    const tpl = CONFIG.timelineTemplate;
+    let k = 0;
+    const rows = CONFIG.phases.map((ph, pi) => {
+      const steps = tpl.filter(s => s.phase === ph.id);
+      const days = steps.filter(s => !s.industrialTest).reduce((n, s) => n + (Number(s.days) || 0), 0);
+      return `<div class="tl-row pr-row"><div class="tl-row-head" style="border-color:var(--ph${pi + 1})"><span class="tl-row-ph">${esc(ph.id)}</span><span class="tl-row-lbl">${esc(ph.label)}</span><span class="tl-row-ph">≈ ${days} j</span></div>
+        <ol class="chev-row">${steps.map((s, i) => {
+          const gate = Timeline.isGate(s.name);
+          return `<li class="chev pr-chev ${gate ? 'is-gate' : `ph${pi + 1}`} ${s.industrialTest ? 'is-opt' : ''} ${i === 0 ? 'first' : ''}" style="--k:${k++}" title="${esc(s.name)} · ${s.days} j${s.industrialTest ? ' · seulement avec test industriel' : ''}">
+            ${gate ? `<span class="chev-gate-no">Gate ${Timeline.gateNumber(s.name)}</span><span class="chev-name">${esc(Timeline.gateTitle(s.name))}</span>` : `<span class="chev-name">${esc(s.name)}</span>`}
+            <span class="chev-foot"><span>${s.days} j</span>${s.industrialTest ? '<span>test indus.</span>' : ''}</span></li>`;
+        }).join('')}</ol></div>`;
+    }).join('');
+    return `<section class="card process" aria-labelledby="procH"><div class="process-head"><h2 class="card-title" id="procH">Le processus de développement client</h2>
+      <span class="muted small">${tpl.length} étapes, 4 Gates de décision · durées indicatives du modèle</span></div><div class="tl-rows">${rows}</div></section>`;
   },
 };
 
