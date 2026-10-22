@@ -1003,6 +1003,58 @@ body.theme-dark { --ph2-ink: #8DB8F0; --ph3-ink: #6FD39A; --ph4-ink: #D9AE80; }
   .board-tools .select { flex: 1 1 140px; min-width: 0; }
 }
 
+/* Navigation en tuiles (accueil et sous-choix) ---------------------------- */
+.tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr)); gap: var(--sp-4); }
+.tiles.lg { grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); }
+.tile { display: flex; flex-direction: column; gap: 6px; min-width: 0; padding: var(--sp-5); border-radius: var(--r-lg);
+  background: var(--surface); border: 1px solid var(--line); color: var(--text); text-decoration: none;
+  transition: border-color var(--t-fast), box-shadow var(--t-fast), transform var(--t-fast) var(--ease); }
+.tile:hover { border-color: var(--line-strong); box-shadow: 0 6px 18px rgba(20,33,61,.08); transform: translateY(-1px); }
+.tile:focus-visible { box-shadow: var(--focus); }
+.tile-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 6px; }
+.tile-ico { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: var(--tc); color: #FFFFFF; flex-shrink: 0;
+  box-shadow: 0 0 0 4px var(--surface), 0 0 0 6px var(--tc); margin: 6px; }
+.tile-ico.initials { font-weight: var(--fw-bold); font-size: 15px; }
+.tile .avatar { margin: 6px; box-shadow: 0 0 0 4px var(--surface), 0 0 0 6px var(--line-strong); }
+.tile-go { color: var(--text-3); transition: transform var(--t-fast), color var(--t-fast); }
+.tile:hover .tile-go { color: var(--text); transform: translateX(3px); }
+.tile-title { font-size: var(--fs-lg); font-weight: var(--fw-bold); line-height: 1.25; overflow-wrap: anywhere; }
+.tiles.lg .tile-title { font-size: var(--fs-xl); }
+.tile-sub { font-size: var(--fs-sm); color: var(--text-3); }
+.tile-meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 6px; }
+.mbar { display: flex; width: 100%; height: 6px; border-radius: 3px; overflow: hidden; gap: 2px; margin-bottom: 4px; }
+.mbar i { display: block; height: 100%; }
+.hub-alert { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-3); padding: var(--sp-3) var(--sp-4); margin-bottom: var(--sp-5);
+  border-radius: var(--r-md); background: var(--warn-soft); color: var(--warn); font-weight: var(--fw-semibold); font-size: var(--fs-md); }
+.hub-alert > span { flex: 1; min-width: 200px; }
+.breadcrumb a, .breadcrumb button { color: var(--text-3); font-weight: var(--fw-medium); text-decoration: none; }
+
+/* Kanban de synthèse : une colonne par phase */
+.bk-scroll { overflow-x: auto; padding-bottom: var(--sp-2); }
+.bk { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(260px, 1fr); gap: var(--sp-3); align-items: start; }
+.bk-col { background: var(--surface-3); border-radius: var(--r-lg); padding: 0 10px 10px; border-top: 5px solid var(--c); }
+.bk-head { display: flex; align-items: baseline; gap: 8px; padding: 12px 4px 10px; flex-wrap: wrap; }
+.bk-title { font-weight: var(--fw-bold); font-size: var(--fs-base); }
+.bk-sub { font-size: var(--fs-xs); color: var(--text-3); }
+.bk-count { margin-left: auto; font-size: var(--fs-sm); font-weight: var(--fw-bold); color: var(--text-2); }
+.bk-cards { display: grid; gap: 8px; }
+.bk-card { display: flex; flex-direction: column; gap: 5px; width: 100%; text-align: left; padding: 12px; border-radius: var(--r-md);
+  background: var(--surface); border: 1px solid var(--line); transition: box-shadow var(--t-fast), transform var(--t-fast); }
+.bk-card:hover { box-shadow: 0 4px 14px rgba(20,33,61,.10); transform: translateY(-1px); }
+.bk-card.m-late { border-color: var(--danger); } .bk-card.m-risk { border-color: var(--warn); }
+.bk-name { font-weight: var(--fw-bold); font-size: var(--fs-md); line-height: 1.3; }
+.bk-card .bl-svg { margin: 4px 0 0; }
+.bk-where { font-size: var(--fs-sm); color: var(--text-2); }
+.bk-foot { display: flex; justify-content: space-between; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 2px; }
+.bk-foot .bg-title, .bk-foot .due { font-size: var(--fs-xs); }
+@media (max-width: 760px) {
+  .bk { grid-auto-flow: row; grid-auto-columns: auto; grid-template-columns: minmax(0, 1fr); }
+  .tile { padding: var(--sp-4); }
+  .tiles.lg { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-3); }
+  .tiles.lg .tile-title { font-size: var(--fs-lg); }
+  .tiles.lg .tile-sub { font-size: var(--fs-xs); }
+}
+
 </style>
 </head>
 <body data-workspace="customer">
@@ -1081,7 +1133,7 @@ const CONFIG = {
     pdqa:     ['home', 'projects', 'tasks', 'kanban', 'calendar', 'meetings'],
   },
   moduleMeta: {
-    home:      { label: 'Tableau de bord', icon: 'home' },
+    home:      { label: 'Accueil', icon: 'home' },
     projects:  { label: 'Projets', icon: 'folder' },
     tasks:     { label: 'Tâches', icon: 'list' },
     kanban:    { label: 'Kanban', icon: 'kanban' },
@@ -1831,8 +1883,9 @@ const Router = {
 
 /** En-tête de page standard. */
 function pageHeader({ title, sub = '', actions = '', crumbs = null }) {
+  if (crumbs && crumbs[0]?.page !== 'home') crumbs = [{ page: 'home', label: 'Accueil' }, ...crumbs];
   const bc = crumbs ? `<nav class="breadcrumb" aria-label="Fil d'Ariane">${crumbs.map((c, i) => i < crumbs.length - 1
-    ? `<button data-action="go" data-page="${c.page}">${esc(c.label)}</button>${icon('right', 'sm')}` : `<span>${esc(c.label)}</span>`).join('')}</nav>` : '';
+    ? `<a href="${Router.href(App.ws, c.page, c.param)}">${esc(c.label)}</a>${icon('right', 'sm')}` : `<span>${esc(c.label)}</span>`).join('')}</nav>` : '';
   return `<header class="page-header"><div>${bc}<h1 class="page-title" tabindex="-1">${esc(title)}</h1>${sub ? `<p class="page-sub">${esc(sub)}</p>` : ''}</div><div class="page-actions">${actions}</div></header>`;
 }
 
@@ -2280,7 +2333,7 @@ const TasksPage = {
     const ws = App.ws, st = App.view('tasks', TasksPage.defaults);
     const all = Store.tasksIn(ws);
     const overdue = all.filter(t => Rules.isTaskOverdue(t)).length;
-    view.innerHTML = pageHeader({ title: 'Tâches', sub: `${all.filter(t => !Rules.isTaskDone(t)).length} ouvertes · ${overdue} en retard · ${all.filter(Rules.isTaskDone).length} terminées`,
+    view.innerHTML = pageHeader({ title: 'Toutes les tâches', crumbs: [{ page: 'tasks', label: 'Tâches' }, { label: 'Toutes les tâches' }], sub: `${all.filter(t => !Rules.isTaskDone(t)).length} ouvertes · ${overdue} en retard · ${all.filter(Rules.isTaskDone).length} terminées`,
       actions: `<button class="btn btn-primary" data-action="new-task">${icon('plus', 'sm')}Nouvelle tâche</button>` }) +
       `<div class="page-body"><div class="toolbar card" role="search">
         <div class="search">${icon('search', 'sm')}<input class="input" type="search" placeholder="Rechercher une tâche" value="${esc(st.q)}" data-input="tasks-filter" data-key="q" aria-label="Rechercher une tâche"></div>
@@ -2320,12 +2373,12 @@ InputActions['tasks-filter'] = ChangeActions['tasks-filter'] = el => { App.view(
 Actions['tasks-reset'] = () => { Object.assign(App.view('tasks', TasksPage.defaults), TasksPage.defaults); TasksPage.render(document.getElementById('view')); };
 /** Tri des colonnes (Tâches, Projets) : la page courante définit sa clé d'état. */
 Actions.sort = el => {
-  const pageKey = App.page === 'projects' ? 'projects' : App.page === 'project' ? 'projectTasks' : 'tasks';
+  const pageKey = App.page === 'projects-all' ? 'projects' : App.page === 'project' ? 'projectTasks' : 'tasks';
   const defaults = pageKey === 'projects' ? ProjectsPage.defaults : TasksPage.defaults;
   const st = App.view(pageKey, defaults);
   st.dir = st.sort === el.dataset.key && st.dir === 'asc' ? 'desc' : 'asc';
   st.sort = el.dataset.key;
-  if (pageKey === 'projects') ProjectsPage.renderList(); else if (pageKey === 'tasks') TasksPage.renderList(); else Router.refresh();
+  if (pageKey === 'projects') ProjectsPage.renderList(); else if (App.page === 'tasks-all') TasksPage.renderList(); else Router.refresh();
 };
 Routes.tasks = { module: 'tasks', render: v => TasksPage.render(v) };
 
@@ -2340,7 +2393,7 @@ const Kanban = {
   pending: new Set(),
   render(view) {
     const ws = App.ws, st = App.view('kanban', Kanban.defaults);
-    view.innerHTML = pageHeader({ title: 'Kanban', sub: 'Glissez une carte pour changer son statut — ou utilisez les flèches de la carte (Alt + ← / →).',
+    view.innerHTML = pageHeader({ title: 'Kanban', crumbs: [{ page: 'tasks', label: 'Tâches' }, { label: 'Kanban' }], sub: 'Glissez une carte pour changer son statut — ou utilisez les flèches de la carte (Alt + ← / →).',
       actions: `<button class="btn btn-primary" data-action="new-task">${icon('plus', 'sm')}Nouvelle tâche</button>` }) +
       `<div class="page-body"><div class="toolbar card">
         <div class="search">${icon('search', 'sm')}<input class="input" type="search" placeholder="Filtrer les cartes" value="${esc(st.q)}" data-input="kb-filter" data-key="q" aria-label="Filtrer les cartes"></div>
@@ -2509,7 +2562,7 @@ const Calendar = {
   render(view) {
     const ws = App.ws, st = Calendar.state();
     const viewBtn = (id, label) => `<button data-action="cal-view" data-view="${id}" aria-pressed="${st.view === id}">${label}</button>`;
-    view.innerHTML = pageHeader({ title: 'Calendrier', sub: 'Tâches, jalons de projets et réunions de cet espace.',
+    view.innerHTML = pageHeader({ title: 'Calendrier', crumbs: [{ label: 'Calendrier' }], sub: 'Tâches, jalons de projets et réunions de cet espace.',
       actions: `<button class="btn btn-primary" data-action="new-task" data-date="${st.view === 'day' ? st.cursor : ''}" data-meeting="1">${icon('plus', 'sm')}Créer</button>` }) +
       `<div class="page-body">
         <div class="toolbar card">
@@ -2604,7 +2657,7 @@ Object.assign(Actions, {
     Calendar.render(document.getElementById('view'));
   },
   'cal-goto': el => { const st = Calendar.state(); st.cursor = el.dataset.date; st.view = 'day'; Calendar.render(document.getElementById('view')); },
-  'tasks-nodue': () => { Object.assign(App.view('tasks', TasksPage.defaults), TasksPage.defaults, { due: 'none', status: 'open' }); Router.go(App.ws, 'tasks'); },
+  'tasks-nodue': () => { Object.assign(App.view('tasks', TasksPage.defaults), TasksPage.defaults, { due: 'none', status: 'open' }); Router.go(App.ws, 'tasks-all'); },
 });
 ChangeActions['cal-filter'] = el => { Calendar.state()[el.dataset.key] = el.value; Calendar.renderBody(); };
 ChangeActions['cal-toggle'] = el => { Calendar.state()[el.dataset.key] = el.checked; Calendar.renderBody(); };
@@ -2659,7 +2712,7 @@ const Home = {
       </section>
       <div class="dash-grid mt-6">
         <section class="card" aria-labelledby="recentH"><div class="card-head"><h2 class="card-title" id="recentH">Projets récents</h2>
-          <button class="btn btn-ghost btn-sm" data-action="go" data-page="projects">Tous les projets${icon('right', 'sm')}</button></div>
+          <button class="btn btn-ghost btn-sm" data-action="go" data-page="projects-all">Tous les projets${icon('right', 'sm')}</button></div>
           ${recent.length ? recent.map(p => `<button class="list-row" data-action="open-project" data-id="${esc(p.id)}">
             <span class="grow"><span class="cell-title truncate" style="display:block">${esc(p.project_name)}</span>
               <span class="cell-sub row-meta"><span>${esc(ws === 'pdqa' ? (Rules.projectLeadName(p) || 'Responsable à définir') : (p.client_name || 'Client non renseigné'))}</span><span class="truncate">${stageOf(p)}</span></span></span>
@@ -2735,9 +2788,11 @@ const Board = {
       phase: step ? CONFIG.phases.find(ph => ph.id === step.phase) : null };
   },
 
-  rows() {
+  /** Périmètre facultatif : { by: 'client' | 'lead', value } (pages « Par client » et « Par Project Lead »). */
+  opts: {},
+  rows(scope = Board.opts.scope) {
     const st = App.view('board', Board.defaults);
-    const all = Store.projectsIn('customer').map(Board.info);
+    const all = Store.projectsIn('customer').filter(p => !scope || Groups.of(p, scope.by) === scope.value).map(Board.info);
     const soon = r => r.gate && r.gate.inDays !== null && r.gate.inDays <= Board.GATE_SOON_DAYS;
     const list = all.filter(r => (!st.client || r.p.client_name === st.client) &&
       (!st.meteo || (st.meteo === 'gate' ? soon(r) : st.meteo === 'open' ? !['done'].includes(r.meteo) : r.meteo === st.meteo)));
@@ -2751,27 +2806,61 @@ const Board = {
     return { all, list: list.sort(by), soon };
   },
 
-  render(box) {
+  /** opts : { scope, hideClient } — la vue (kanban ou lignes) est mémorisée par page. */
+  render(box, opts = {}) {
+    Board.box = box; Board.opts = opts;
     const st = App.view('board', Board.defaults);
+    const mode = App.view('boardMode', {})[App.page] || (opts.scope ? 'lines' : 'kanban');
     const { all, list, soon } = Board.rows();
     const count = k => all.filter(r => r.meteo === k).length;
     const clients = uniqueSorted(all.map(r => r.p.client_name));
     const chip = (value, label, n, tone = '') => `<button class="filter-chip ${tone}" data-action="board-meteo" data-value="${value}" aria-pressed="${st.meteo === value}">${label} <b class="num">${n}</b></button>`;
+    const empty = UI.empty({ icon: 'layers', title: all.length ? 'Aucun projet ne correspond aux filtres' : 'Aucun projet ici', sub: all.length ? 'Modifiez ou retirez les filtres.' : 'Créez un projet pour le voir ici.' });
     box.innerHTML = `<div class="toolbar card board-tools">
         <div class="board-chips" role="group" aria-label="Filtrer par météo">
           ${chip('', 'Tous', all.length)}${chip('ok', 'Dans les temps', count('ok'), 't-ok')}${chip('risk', 'À risque', count('risk'), 't-warn')}${chip('late', 'En retard', count('late'), 't-danger')}${chip('gate', `Gate dans les ${Board.GATE_SOON_DAYS} j`, all.filter(soon).length, 't-gate')}
         </div>
         <span class="spacer"></span>
-        <select class="select" data-change="board-filter" data-key="client" aria-label="Filtrer par client">${UI.options(clients.map(v => ({ value: v, label: v })), st.client, { placeholder: 'Tous les clients' })}</select>
+        ${opts.scope?.by === 'client' ? '' : `<select class="select" data-change="board-filter" data-key="client" aria-label="Filtrer par client">${UI.options(clients.map(v => ({ value: v, label: v })), st.client, { placeholder: 'Tous les clients' })}</select>`}
         <select class="select" data-change="board-filter" data-key="sort" aria-label="Trier">${UI.options([{ value: 'urgency', label: 'Trier : urgence' }, { value: 'gate', label: 'Trier : prochaine Gate' }, { value: 'launch', label: 'Trier : lancement' }, { value: 'client', label: 'Trier : client' }, { value: 'name', label: 'Trier : nom' }], st.sort)}</select>
+        <div class="segmented" role="group" aria-label="Affichage"><button data-action="board-mode" data-mode="kanban" aria-pressed="${mode === 'kanban'}">Kanban</button><button data-action="board-mode" data-mode="lines" aria-pressed="${mode === 'lines'}">Lignes</button></div>
         <button class="btn btn-glass" data-action="board-export">${icon('download', 'sm')}Exporter en Excel</button>
       </div>
-      <section class="card board" aria-labelledby="boardH">
+      ${mode === 'kanban' ? (list.length ? Board.kanbanHTML(list) : `<div class="card">${empty}</div>`) : `<section class="card board" aria-labelledby="boardH">
         <div class="board-head"><h2 class="card-title" id="boardH">Où en est chaque projet</h2>
           <div class="metro-legend">${CONFIG.phases.map((ph, i) => `<span><i style="background:var(--ph${i + 1})"></i>${esc(ph.label)}</span>`).join('')}<span><i class="gate"></i>Gate</span><span><i class="here"></i>Étape actuelle</span></div></div>
         <div class="board-cols" aria-hidden="true"><span>Projet</span><span>Avancement</span><span>Prochaine Gate</span><span>Lancement</span></div>
-        ${list.length ? list.map(Board.rowHTML).join('') : UI.empty({ icon: 'layers', title: all.length ? 'Aucun projet ne correspond aux filtres' : 'Aucun projet client', sub: all.length ? 'Modifiez ou retirez les filtres.' : 'Créez le premier projet pour le voir ici.' })}
-      </section>`;
+        ${list.length ? list.map(Board.rowHTML).join('') : empty}
+      </section>`}`;
+  },
+
+  /** Kanban de synthèse : une colonne par phase, une carte par projet (même tri et mêmes filtres que les lignes). */
+  kanbanHTML(list) {
+    const cols = [{ key: 'unplanned', label: 'À planifier', sub: 'Sans timeline', c: 'var(--neutral)' },
+      ...CONFIG.phases.map((ph, i) => ({ key: ph.id, label: ph.label, sub: ph.id, c: `var(--ph${i + 1})` })),
+      { key: 'launched', label: 'Lancés', sub: 'Toutes les étapes terminées', c: 'var(--neutral)' }];
+    const colOf = r => r.sg.kind === 'step' ? r.step.phase : r.sg.kind;
+    return `<div class="bk-scroll" tabindex="0" aria-label="Kanban des projets par phase"><div class="bk">${cols.map(col => {
+      const items = list.filter(r => colOf(r) === col.key);
+      if (!items.length && (col.key === 'unplanned' || col.key === 'launched')) return '';
+      return `<section class="bk-col" style="--c:${col.c}" aria-label="${esc(col.label)} : ${items.length} projet(s)">
+        <header class="bk-head"><span class="bk-title">${esc(col.label)}</span><span class="bk-sub">${esc(col.sub)}</span><span class="bk-count num">${items.length}</span></header>
+        <div class="bk-cards">${items.map(Board.cardHTML).join('') || '<div class="kb-empty">Aucun projet</div>'}</div></section>`;
+    }).join('')}</div></div>`;
+  },
+
+  cardHTML(r) {
+    const { p, step, gate } = r, m = Board.METEO[r.meteo];
+    const where = step ? (step.gate ? `Gate ${Timeline.gateNumber(step.name)} : ${Timeline.gateTitle(step.label)}` : step.label) : '';
+    return `<button class="bk-card m-${r.meteo}" data-action="open-project" data-id="${esc(p.id)}">
+      <span class="bk-name">${esc(p.project_name)}</span>
+      <span class="cell-sub">${esc(p.client_name || 'Client non renseigné')}${r.lead ? ` · ${esc(r.lead)}` : ''}</span>
+      <span class="brow-meteo"><span class="badge ${m.badge}">${esc(m.label)}</span></span>
+      ${r.steps.length ? Board.lineHTML(r) : ''}
+      ${where ? `<span class="bk-where">${esc(where)} <span class="muted">· ${r.position}/${r.steps.length}</span></span>` : ''}
+      <span class="bk-foot">${gate ? `<span class="bg-title"><span class="gate-mark sm" aria-hidden="true"></span>G${gate.no}${gate.week ? ` · ${esc(gate.week)}` : ''}${gate.inDays !== null && gate.inDays < 0 ? ' <span class="t-danger">dépassée</span>' : ''}</span>` : '<span></span>'}
+        <span class="due ${r.late ? 'overdue' : ''}">${r.late ? icon('alert', 'sm') : icon('rocket', 'sm')}${p.launch_date ? `S${Dates.isoWeek(Dates.key(p.launch_date))} · ${esc(Dates.short(p.launch_date))}` : 'À définir'}</span></span>
+    </button>`;
   },
 
   /** Ligne de métro du projet : ses propres étapes, la position actuelle mise en évidence. */
@@ -2857,16 +2946,18 @@ const Board = {
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, sheet(head, body), 'Avancement');
       XLSX.utils.book_append_sheet(wb, sheet(sHead, sBody), 'Étapes');
-      const file = `${CONFIG.appName}_avancement_projets_${Dates.today()}.xlsx`;
+      const scope = Board.opts.scope ? '_' + String(Board.opts.scope.value).normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^\w-]+/g, '_') : '';
+      const file = `${CONFIG.appName}_avancement_projets${scope}_${Dates.today()}.xlsx`;
       XLSX.writeFile(wb, file);
       Toast.show(`${list.length} projet(s) exporté(s) : ${file}`);
       return { head, body, sHead, sBody, file };
     } catch (e) { Toast.error(e); return null; }
   },
 };
-Actions['board-meteo'] = el => { const st = App.view('board', Board.defaults); st.meteo = st.meteo === el.dataset.value ? '' : el.dataset.value; Board.render(document.getElementById('homeBody')); };
+Actions['board-meteo'] = el => { const st = App.view('board', Board.defaults); st.meteo = st.meteo === el.dataset.value ? '' : el.dataset.value; Board.render(Board.box, Board.opts); };
 Actions['board-export'] = () => Board.exportExcel();
-ChangeActions['board-filter'] = el => { App.view('board', Board.defaults)[el.dataset.key] = el.value; Board.render(document.getElementById('homeBody')); };
+ChangeActions['board-filter'] = el => { App.view('board', Board.defaults)[el.dataset.key] = el.value; Board.render(Board.box, Board.opts); };
+Actions['board-mode'] = el => { App.view('boardMode', {})[App.page] = el.dataset.mode; Board.render(Board.box, Board.opts); };
 
 Actions['home-view'] = el => { App.view('home', Home.defaults).view = el.dataset.view; Home.render(document.getElementById('view')); };
 
@@ -3034,10 +3125,10 @@ Actions['pipe-station'] = el => {
 ChangeActions['pipe-filter'] = el => { App.view('pipeline', Pipeline.defaults)[el.dataset.key] = el.value; Pipeline.renderBoard(); };
 Actions['dash-go'] = el => {
   const t = el.dataset.target;
-  if (t.startsWith('projects')) { Object.assign(App.view('projects', ProjectsPage.defaults), ProjectsPage.defaults, { status: t === 'projects-active' ? 'active' : '' }); Router.go(App.ws, 'projects'); }
+  if (t.startsWith('projects')) { Object.assign(App.view('projects', ProjectsPage.defaults), ProjectsPage.defaults, { status: t === 'projects-active' ? 'active' : '' }); Router.go(App.ws, 'projects-all'); }
   else {
     const preset = { 'tasks-open': { status: 'open' }, 'tasks-overdue': { due: 'overdue' }, 'tasks-mine': { assignee: Store.me.id, status: 'open' } }[t] || {};
-    Object.assign(App.view('tasks', TasksPage.defaults), TasksPage.defaults, preset); Router.go(App.ws, 'tasks');
+    Object.assign(App.view('tasks', TasksPage.defaults), TasksPage.defaults, preset); Router.go(App.ws, 'tasks-all');
   }
 };
 Routes.home = { module: 'home', render: v => Home.render(v) };
@@ -3050,7 +3141,7 @@ const ProjectsPage = {
     const pdqa = ws === 'pdqa';
     const groupValues = uniqueSorted(list.map(p => pdqa ? p.pdqa_data.department : p.client_name));
     const leads = uniqueSorted(list.map(Rules.projectLeadName));
-    view.innerHTML = pageHeader({ title: 'Projets', sub: pdqa ? 'Initiatives internes, qualité et projets transverses.' : 'Projets de développement liés aux clients.',
+    view.innerHTML = pageHeader({ title: pdqa ? 'Toutes les initiatives' : 'Liste complète', crumbs: [{ page: 'projects', label: 'Projets' }, { label: pdqa ? 'Toutes les initiatives' : 'Liste complète' }], sub: pdqa ? 'Initiatives internes, qualité et projets transverses.' : 'Projets de développement liés aux clients.',
       actions: `<button class="btn btn-primary" data-action="new-project">${icon('plus', 'sm')}Nouveau projet</button>` }) +
       `<div class="page-body"><div class="toolbar card" role="search">
         <div class="search">${icon('search', 'sm')}<input class="input" type="search" placeholder="Rechercher un projet" value="${esc(st.q)}" data-input="projects-filter" data-key="q" aria-label="Rechercher un projet par nom"></div>
@@ -3141,7 +3232,7 @@ Object.assign(Actions, {
       Audit.log({ entity: 'project', entityId: p.id, projectId: p.id, action: 'delete', summary: `Projet supprimé : « ${p.project_name} »` });
       await Promise.all([Store.refreshTable('projects'), Store.refreshTable('tasks'), Store.refreshTable('meeting_minutes')]);
       Toast.show('Projet supprimé.');
-      if (App.page === 'projects') Router.refresh(); else Router.go(ws, 'projects');
+      if (App.page === 'projects-all') Router.refresh(); else Router.go(ws, 'projects');
     } catch (err) { Toast.error(err); }
   },
 });
@@ -4143,6 +4234,270 @@ Object.assign(Actions, {
   },
 });
 Routes.users = { module: 'users', render: v => Users.render(v) };
+
+/* ==========================================================================
+   Jalon — 07 · Navigation « poupées russes »
+   Accueil (une tuile par module) → sous-choix du module → groupe (un client,
+   une personne…) → liste → fiche. Chaque niveau a son adresse (#/espace/page/…),
+   donc le bouton Retour du navigateur et le fil d'Ariane fonctionnent partout.
+   ========================================================================== */
+
+/* ---------- Regroupements (client / département, Project Lead / responsable) ---------- */
+const Groups = {
+  clean: v => String(v || '').trim().replace(/\s+/g, ' '),
+  /** Valeur de regroupement d'un projet ('' = non renseigné). */
+  of(p, by) {
+    if (by === 'client') return Groups.clean(p.workspace === 'pdqa' ? p.pdqa_data?.department : p.client_name);
+    return Groups.clean(Rules.projectLeadName(p));
+  },
+  same: (a, b) => Groups.clean(a).toLowerCase() === Groups.clean(b).toLowerCase(),
+  noun(by, ws = App.ws, plural = false) {
+    const n = by === 'client' ? (ws === 'pdqa' ? ['département', 'départements'] : ['client', 'clients'])
+      : (ws === 'pdqa' ? ['responsable', 'responsables'] : ['Project Lead', 'Project Leads']);
+    return n[plural ? 1 : 0];
+  },
+  emptyLabel: by => (by === 'client' ? (App.ws === 'pdqa' ? 'Département non renseigné' : 'Client non renseigné') : 'Sans Project Lead'),
+  /** Liste des groupes d'un espace : [{ value, label, projects }], les plus fournis d'abord. */
+  list(by, ws = App.ws) {
+    const map = new Map();
+    Store.projectsIn(ws).forEach(p => {
+      const v = Groups.of(p, by), k = v.toLowerCase();
+      if (!map.has(k)) map.set(k, { value: v, label: v || Groups.emptyLabel(by), projects: [] });
+      map.get(k).projects.push(p);
+    });
+    return [...map.values()].sort((a, b) => (!a.value) - (!b.value) || b.projects.length - a.projects.length || cmp(a.label, b.label));
+  },
+  /** Utilisateur dont le nom correspond au Project Lead (pour afficher son avatar). */
+  userNamed(name) { return name ? Store.users.find(u => Groups.same(u.name, name) || Groups.same(u.name.split(' ')[0], name)) || null : null; },
+};
+
+/* ---------- Tuiles ---------- */
+const Tiles = {
+  /** t : { page, param, icon, title, sub, meta, color, avatar } — chaque tuile est un vrai lien. */
+  html(items, size = '') {
+    return `<div class="tiles ${size}">${items.map(t => `<a class="tile" href="${Router.href(App.ws, t.page, t.param)}" style="--tc:${t.color || 'var(--bar)'}">
+      <span class="tile-top">${t.avatar || `<span class="tile-ico" aria-hidden="true">${icon(t.icon || 'folder', 'lg')}</span>`}<span class="tile-go" aria-hidden="true">${icon('right', 'sm')}</span></span>
+      <span class="tile-title">${esc(t.title)}</span>
+      ${t.sub ? `<span class="tile-sub">${esc(t.sub)}</span>` : ''}
+      ${t.meta ? `<span class="tile-meta">${t.meta}</span>` : ''}
+    </a>`).join('')}</div>`;
+  },
+  /** Barre de météo : répartition des projets (dans les temps / à risque / en retard / autres). */
+  meteoBar(infos) {
+    if (!infos.length) return '';
+    const n = k => infos.filter(r => r.meteo === k).length;
+    const parts = [['ok', 'var(--ok)'], ['risk', 'var(--warn)'], ['late', 'var(--danger)']].map(([k, c]) => [n(k), c]).filter(([v]) => v);
+    const rest = infos.length - parts.reduce((s, [v]) => s + v, 0);
+    return `<span class="mbar" aria-hidden="true">${parts.map(([v, c]) => `<i style="flex:${v};background:${c}"></i>`).join('')}${rest ? `<i style="flex:${rest};background:var(--line-strong)"></i>` : ''}</span>`;
+  },
+  counts(infos) {
+    const n = k => infos.filter(r => r.meteo === k).length;
+    return [n('late') && `<span class="badge b-danger">${n('late')} en retard</span>`, n('risk') && `<span class="badge b-warn">${n('risk')} à risque</span>`,
+      n('ok') && `<span class="badge b-ok">${n('ok')} dans les temps</span>`].filter(Boolean).join('');
+  },
+};
+const plural = (n, one, many) => `${n} ${n > 1 ? many : one}`;
+const projectInfos = (ws, list = Store.projectsIn(ws)) => (ws === 'customer' ? list.map(Board.info)
+  : list.map(p => ({ p, meteo: p.status === 'done' ? 'done' : p.status === 'paused' ? 'paused' : Rules.isProjectLate(p) ? 'late' : 'ok' })));
+
+/* ---------- Accueil : un choix par module ---------- */
+const HomeHub = {
+  render(view) {
+    const ws = App.ws, me = Store.me, today = Dates.today(), in7 = Dates.addDays(today, 7);
+    const projects = Store.projectsIn(ws), infos = projectInfos(ws), tasks = Store.tasksIn(ws), meetings = Store.meetingsIn(ws);
+    const open = tasks.filter(t => !Rules.isTaskDone(t)), late = open.filter(t => Rules.isTaskOverdue(t, today));
+    const mine = open.filter(t => t.assignee_id === me.id);
+    const week = open.filter(t => t.due_date && Dates.key(t.due_date) >= today && Dates.key(t.due_date) <= in7).length;
+    const gates = ws === 'customer' ? infos.filter(r => r.gate && r.gate.inDays !== null && r.gate.inDays >= 0 && r.gate.inDays <= Board.GATE_SOON_DAYS).length : 0;
+    const active = projects.filter(p => p.status === 'active').length;
+    const tiles = [
+      { page: 'projects', icon: 'folder', color: 'var(--ph1)', title: 'Projets', sub: `${plural(active, 'projet actif', 'projets actifs')} sur ${projects.length}`, meta: Tiles.meteoBar(infos.filter(r => r.meteo !== 'done')) + Tiles.counts(infos) },
+      { page: 'tasks', icon: 'list', color: 'var(--ph2)', title: 'Tâches', sub: `${plural(open.length, 'tâche ouverte', 'tâches ouvertes')}`, meta: late.length ? `<span class="badge b-danger">${late.length} en retard</span>` : '<span class="badge b-ok">Rien en retard</span>' },
+      { page: 'calendar', icon: 'calendar', color: 'var(--ph3)', title: 'Calendrier', sub: `${plural(week, 'échéance', 'échéances')} dans les 7 jours`, meta: gates ? `<span class="badge b-gate">${plural(gates, 'Gate', 'Gates')} dans les ${Board.GATE_SOON_DAYS} j</span>` : '' },
+      { page: 'meetings', icon: 'notes', color: 'var(--ph4)', title: 'Meeting Minutes', sub: plural(meetings.length, 'compte-rendu', 'comptes-rendus'), meta: meetings[0]?.meeting_date ? `<span class="chip">Dernier : ${esc(Dates.fmt(meetings[0].meeting_date))}</span>` : '' },
+      ...(CONFIG.modules[ws].includes('analytics') ? [{ page: 'analytics', icon: 'chart', color: 'var(--bar)', title: 'Analytiques', sub: 'Lancements par mois, retards par personne' }] : []),
+      { page: 'me', icon: 'check', color: 'var(--space)', title: 'Mon espace', sub: `${plural(mine.length, 'tâche', 'tâches')} à traiter pour vous`, meta: mine.filter(t => Rules.isTaskOverdue(t, today)).length ? `<span class="badge b-danger">${mine.filter(t => Rules.isTaskOverdue(t, today)).length} en retard</span>` : '' },
+      { page: 'users', icon: 'users', color: 'var(--neutral)', title: 'Utilisateurs', sub: plural(Store.users.length, 'personne', 'personnes') },
+    ];
+    const risky = infos.filter(r => r.meteo === 'late' || r.meteo === 'risk').length;
+    const alert = (risky || gates) && ws === 'customer' ? `<div class="hub-alert">${icon('alert', 'sm')}<span>${[risky && plural(risky, 'projet demande', 'projets demandent') + ' votre attention', gates && plural(gates, 'Gate est prévue', 'Gates sont prévues') + ` dans les ${Board.GATE_SOON_DAYS} jours`].filter(Boolean).join(' · ')}</span>
+      <a class="btn btn-glass btn-sm" href="${Router.href(ws, 'projects-board')}">Voir la synthèse${icon('right', 'sm')}</a></div>` : '';
+    view.innerHTML = pageHeader({ title: `Bonjour ${(me.name || '').split(' ')[0]}`, sub: `${Dates.long(today)} · ${CONFIG.workspaces[ws].label}`,
+      actions: `<button class="btn btn-glass" data-action="new-task">${icon('plus', 'sm')}Tâche</button><button class="btn btn-primary" data-action="new-project">${icon('plus', 'sm')}Nouveau projet</button>` }) +
+      `<div class="page-body">${alert}${Tiles.html(tiles, 'lg')}</div>`;
+  },
+};
+
+/* ---------- Projets : sous-choix ---------- */
+const ProjectsHub = {
+  render(view) {
+    const ws = App.ws, pdqa = ws === 'pdqa', infos = projectInfos(ws);
+    const clients = Groups.list('client').filter(g => g.value).length, leads = Groups.list('lead').filter(g => g.value).length;
+    const tiles = pdqa ? [
+      { page: 'projects-all', icon: 'list', color: 'var(--space)', title: 'Toutes les initiatives', sub: plural(infos.length, 'initiative', 'initiatives'), meta: Tiles.counts(infos) },
+      { page: 'projects-by', param: 'client', icon: 'building', color: 'var(--ph2)', title: 'Par département', sub: plural(clients, 'département', 'départements') },
+      { page: 'projects-by', param: 'lead', icon: 'users', color: 'var(--ph3)', title: 'Par responsable', sub: plural(leads, 'responsable', 'responsables') },
+    ] : [
+      { page: 'projects-board', icon: 'kanban', color: 'var(--ph1)', title: 'Synthèse', sub: 'Tous les projets en kanban par phase, export Excel', meta: Tiles.meteoBar(infos.filter(r => r.meteo !== 'done')) + Tiles.counts(infos) },
+      { page: 'projects-by', param: 'client', icon: 'building', color: 'var(--ph2)', title: 'Par client', sub: plural(clients, 'client', 'clients') },
+      { page: 'projects-by', param: 'lead', icon: 'users', color: 'var(--ph3)', title: 'Par Project Lead', sub: plural(leads, 'Project Lead', 'Project Leads') },
+      { page: 'pipeline', icon: 'layers', color: 'var(--ph4)', title: 'Pipeline', sub: 'Plan du processus : combien de projets à chaque étape' },
+      { page: 'projects-all', icon: 'list', color: 'var(--bar)', title: 'Liste complète', sub: 'Tableau triable et filtrable, export Excel' },
+    ];
+    view.innerHTML = pageHeader({ title: 'Projets', sub: pdqa ? 'Initiatives internes, qualité et projets transverses.' : 'Choisissez comment parcourir les projets.',
+      crumbs: [{ label: 'Projets' }], actions: `<button class="btn btn-primary" data-action="new-project">${icon('plus', 'sm')}Nouveau projet</button>` }) +
+      `<div class="page-body">${Tiles.html(tiles)}</div>`;
+  },
+
+  /** Niveau 2 : la liste des clients (ou des Project Leads), une tuile chacun. */
+  groups(view, by) {
+    if (by !== 'client' && by !== 'lead') { Router.redirect(App.ws, 'projects'); return; }
+    const ws = App.ws, title = `Par ${Groups.noun(by)}`;
+    const tiles = Groups.list(by).map(g => {
+      const infos = projectInfos(ws, g.projects), user = by === 'lead' ? Groups.userNamed(g.value) : null;
+      const next = ws === 'customer' ? infos.filter(r => r.gate?.date && r.meteo !== 'done').sort((a, b) => cmp(a.gate.date, b.gate.date))[0] : null;
+      return { page: 'projects-group', param: `${by}:${g.value}`, icon: by === 'client' ? 'building' : 'users', color: g.value ? 'var(--bar)' : 'var(--neutral)',
+        avatar: user ? avatar(user, 44) : by === 'lead' && g.value ? `<span class="tile-ico initials" aria-hidden="true">${esc(initials(g.value))}</span>` : '',
+        title: g.label, sub: `${plural(g.projects.filter(p => p.status !== 'done').length, 'projet en cours', 'projets en cours')} · ${g.projects.length} au total`,
+        meta: Tiles.meteoBar(infos.filter(r => r.meteo !== 'done')) + Tiles.counts(infos) + (next ? `<span class="chip">Prochaine Gate : G${next.gate.no}${next.gate.week ? ' · ' + esc(next.gate.week) : ''}</span>` : '') };
+    });
+    view.innerHTML = pageHeader({ title, sub: `Choisissez un ${Groups.noun(by)} pour voir ses projets.`, crumbs: [{ page: 'projects', label: 'Projets' }, { label: title }] }) +
+      `<div class="page-body">${tiles.length ? Tiles.html(tiles) : `<div class="card">${UI.empty({ icon: 'folder', title: 'Aucun projet dans cet espace' })}</div>`}</div>`;
+  },
+
+  /** Niveau 3 : les projets d'un client ou d'un Project Lead. */
+  group(view, param) {
+    const i = String(param || '').indexOf(':'), by = param?.slice(0, i), value = param?.slice(i + 1) ?? '';
+    if (by !== 'client' && by !== 'lead') { Router.redirect(App.ws, 'projects'); return; }
+    const ws = App.ws, list = Store.projectsIn(ws).filter(p => Groups.same(Groups.of(p, by), value));
+    const label = value || Groups.emptyLabel(by), user = by === 'lead' ? Groups.userNamed(value) : null;
+    view.innerHTML = pageHeader({ title: label, sub: `${user?.role ? user.role + ' · ' : ''}${plural(list.length, 'projet', 'projets')}`,
+      crumbs: [{ page: 'projects', label: 'Projets' }, { page: 'projects-by', param: by, label: `Par ${Groups.noun(by)}` }, { label }],
+      actions: `<button class="btn btn-primary" data-action="new-project">${icon('plus', 'sm')}Nouveau projet</button>` }) + '<div class="page-body" id="groupBody"></div>';
+    const body = document.getElementById('groupBody');
+    if (ws === 'customer') { Board.render(body, { scope: { by, value } }); return; }
+    // Espace PDQA : liste simple des initiatives.
+    const tasks = Store.tasksIn(ws);
+    body.innerHTML = `<section class="card">${list.length ? list.map(p => `<button class="list-row" data-action="open-project" data-id="${esc(p.id)}">
+        <span class="grow"><span class="cell-title truncate" style="display:block">${esc(p.project_name)}</span><span class="cell-sub">${esc(p.pdqa_data.department || 'Département non renseigné')} · ${esc(Rules.projectLeadName(p) || 'Responsable à définir')}</span></span>
+        ${UI.projectStatusBadge(p.status)}${Rules.isProjectLate(p) ? '<span class="badge b-danger">En retard</span>' : ''}<span class="list-progress">${UI.progress(Rules.projectProgress(p, tasks))}</span>${UI.projectDue(p)}</button>`).join('')
+      : UI.empty({ icon: 'folder', title: 'Aucune initiative ici' })}</section>`;
+  },
+};
+
+/* ---------- Pages qui reprennent les vues existantes ---------- */
+const SimplePages = {
+  board(view) {
+    view.innerHTML = pageHeader({ title: 'Synthèse des projets', sub: 'Où en est chaque projet, d\'après la dernière version de son one-pager.',
+      crumbs: [{ page: 'projects', label: 'Projets' }, { label: 'Synthèse' }], actions: `<button class="btn btn-primary" data-action="new-project">${icon('plus', 'sm')}Nouveau projet</button>` }) +
+      '<div class="page-body" id="boardBody"></div>';
+    Board.render(document.getElementById('boardBody'), {});
+  },
+  pipeline(view) {
+    view.innerHTML = pageHeader({ title: 'Pipeline', sub: 'Chaque projet est placé à son étape actuelle. Cliquez une station pour voir ses projets.',
+      crumbs: [{ page: 'projects', label: 'Projets' }, { label: 'Pipeline' }], actions: '<span class="result-count" id="pipeCount"></span>' }) +
+      '<div class="page-body" id="pipeBody"></div>';
+    Pipeline.render(document.getElementById('pipeBody'));
+  },
+  me(view) {
+    view.innerHTML = pageHeader({ title: 'Mon espace', sub: 'Vos tâches à traiter et les indicateurs de l\'espace.', crumbs: [{ label: 'Mon espace' }],
+      actions: `<button class="btn btn-primary" data-action="new-task">${icon('plus', 'sm')}Nouvelle tâche</button>` }) +
+      '<div class="page-body" id="homeBody"></div>';
+    Home.summary(document.getElementById('homeBody'));
+  },
+};
+
+/* ---------- Tâches : sous-choix, puis personne ou projet, puis liste ---------- */
+const TasksHub = {
+  render(view) {
+    const ws = App.ws, today = Dates.today(), tasks = Store.tasksIn(ws), open = tasks.filter(t => !Rules.isTaskDone(t));
+    const late = open.filter(t => Rules.isTaskOverdue(t, today)), mine = open.filter(t => t.assignee_id === Store.me.id);
+    const people = new Set(open.map(t => t.assignee_id).filter(Boolean)).size, projs = new Set(open.map(t => t.project_id).filter(Boolean)).size;
+    const lateBadge = n => (n ? `<span class="badge b-danger">${n} en retard</span>` : '');
+    const tiles = [
+      { page: 'tasks-group', param: `person:${Store.me.id}`, icon: 'check', color: 'var(--space)', title: 'Mes tâches', sub: plural(mine.length, 'tâche ouverte', 'tâches ouvertes'), meta: lateBadge(mine.filter(t => Rules.isTaskOverdue(t, today)).length) },
+      { page: 'tasks-group', param: 'late:', icon: 'alert', color: 'var(--danger)', title: 'En retard', sub: plural(late.length, 'tâche en retard', 'tâches en retard') },
+      { page: 'tasks-by', param: 'person', icon: 'users', color: 'var(--ph2)', title: 'Par personne', sub: plural(people, 'personne a des tâches', 'personnes ont des tâches') },
+      { page: 'tasks-by', param: 'project', icon: 'folder', color: 'var(--ph1)', title: 'Par projet', sub: plural(projs, 'projet a des tâches', 'projets ont des tâches') },
+      { page: 'kanban', icon: 'kanban', color: 'var(--ph3)', title: 'Kanban', sub: 'À faire, en cours, terminé : glisser pour changer de statut' },
+      { page: 'tasks-all', icon: 'list', color: 'var(--bar)', title: 'Toutes les tâches', sub: `${plural(tasks.length, 'tâche', 'tâches')}, filtres et tri` },
+    ];
+    view.innerHTML = pageHeader({ title: 'Tâches', sub: 'Choisissez comment parcourir les tâches.', crumbs: [{ label: 'Tâches' }],
+      actions: `<button class="btn btn-primary" data-action="new-task">${icon('plus', 'sm')}Nouvelle tâche</button>` }) +
+      `<div class="page-body">${Tiles.html(tiles)}</div>`;
+  },
+
+  groups(view, by) {
+    if (by !== 'person' && by !== 'project') { Router.redirect(App.ws, 'tasks'); return; }
+    const ws = App.ws, today = Dates.today(), tasks = Store.tasksIn(ws);
+    const stat = list => { const o = list.filter(t => !Rules.isTaskDone(t)); return { open: o.length, late: o.filter(t => Rules.isTaskOverdue(t, today)).length }; };
+    let tiles;
+    if (by === 'person') {
+      tiles = Store.users.map(u => ({ u, s: stat(tasks.filter(t => t.assignee_id === u.id)) })).filter(x => x.s.open)
+        .sort((a, b) => b.s.late - a.s.late || b.s.open - a.s.open || cmp(a.u.name, b.u.name))
+        .map(({ u, s }) => ({ page: 'tasks-group', param: `person:${u.id}`, avatar: avatar(u, 44), title: u.name, sub: `${u.role ? u.role + ' · ' : ''}${plural(s.open, 'tâche ouverte', 'tâches ouvertes')}`,
+          meta: s.late ? `<span class="badge b-danger">${s.late} en retard</span>` : '<span class="badge b-ok">Rien en retard</span>' }));
+      const none = stat(tasks.filter(t => !t.assignee_id));
+      if (none.open) tiles.push({ page: 'tasks-group', param: 'person:', icon: 'users', color: 'var(--neutral)', title: 'Non assignées', sub: plural(none.open, 'tâche ouverte', 'tâches ouvertes') });
+    } else {
+      tiles = Store.projectsIn(ws).map(p => ({ p, s: stat(tasks.filter(t => t.project_id === p.id)) })).filter(x => x.s.open)
+        .sort((a, b) => b.s.late - a.s.late || b.s.open - a.s.open || cmp(a.p.project_name, b.p.project_name))
+        .map(({ p, s }) => ({ page: 'tasks-group', param: `project:${p.id}`, icon: 'folder', color: 'var(--bar)', title: p.project_name,
+          sub: `${p.client_name || p.pdqa_data?.department || ''}${p.client_name || p.pdqa_data?.department ? ' · ' : ''}${plural(s.open, 'tâche ouverte', 'tâches ouvertes')}`,
+          meta: s.late ? `<span class="badge b-danger">${s.late} en retard</span>` : '' }));
+      const none = stat(tasks.filter(t => !t.project_id));
+      if (none.open) tiles.push({ page: 'tasks-group', param: 'project:', icon: 'list', color: 'var(--neutral)', title: 'Sans projet', sub: plural(none.open, 'tâche ouverte', 'tâches ouvertes') });
+    }
+    const title = by === 'person' ? 'Par personne' : 'Par projet';
+    view.innerHTML = pageHeader({ title, sub: by === 'person' ? 'Les personnes qui ont des tâches ouvertes.' : 'Les projets qui ont des tâches ouvertes.', crumbs: [{ page: 'tasks', label: 'Tâches' }, { label: title }] }) +
+      `<div class="page-body">${tiles.length ? Tiles.html(tiles) : `<div class="card">${UI.empty({ icon: 'check', title: 'Aucune tâche ouverte', sub: 'Tout est à jour.' })}</div>`}</div>`;
+  },
+
+  group(view, param) {
+    const i = String(param || '').indexOf(':'), kind = param?.slice(0, i), id = param?.slice(i + 1) ?? '';
+    const ws = App.ws, today = Dates.today(), st = App.view('tasks', TasksPage.defaults), g = App.view('tasksGroup', { done: false });
+    let all, title, crumbs, sub = '', projectId = '';
+    if (kind === 'person') {
+      const u = Store.user(id); if (id && !u) { Router.redirect(ws, 'tasks'); return; }
+      all = Store.tasksIn(ws).filter(t => (id ? t.assignee_id === id : !t.assignee_id));
+      title = id === Store.me.id ? 'Mes tâches' : u ? u.name : 'Non assignées'; sub = u?.role || '';
+      crumbs = id === Store.me.id ? [{ page: 'tasks', label: 'Tâches' }, { label: title }] : [{ page: 'tasks', label: 'Tâches' }, { page: 'tasks-by', param: 'person', label: 'Par personne' }, { label: title }];
+    } else if (kind === 'project') {
+      const p = id ? Store.projectIn(ws, id) : null; if (id && !p) { Router.redirect(ws, 'tasks'); return; }
+      all = Store.tasksIn(ws).filter(t => (id ? t.project_id === id : !t.project_id));
+      title = p ? p.project_name : 'Sans projet'; sub = p ? p.client_name || p.pdqa_data?.department || '' : ''; projectId = id;
+      crumbs = [{ page: 'tasks', label: 'Tâches' }, { page: 'tasks-by', param: 'project', label: 'Par projet' }, { label: title }];
+    } else if (kind === 'late') {
+      all = Store.tasksIn(ws).filter(t => Rules.isTaskOverdue(t, today)); title = 'Tâches en retard';
+      crumbs = [{ page: 'tasks', label: 'Tâches' }, { label: 'En retard' }];
+    } else { Router.redirect(ws, 'tasks'); return; }
+    const done = all.filter(Rules.isTaskDone).length, open = all.length - done;
+    const list = sortTasks(all.filter(t => g.done || !Rules.isTaskDone(t)), st.sort, st.dir);
+    view.innerHTML = pageHeader({ title, sub: [sub, `${plural(open, 'ouverte', 'ouvertes')} · ${plural(done, 'terminée', 'terminées')}`].filter(Boolean).join(' · '), crumbs,
+      actions: `${projectId ? `<button class="btn btn-glass" data-action="open-project" data-id="${esc(projectId)}">${icon('open', 'sm')}Ouvrir le projet</button>` : ''}
+        <button class="btn btn-primary" data-action="new-task" ${projectId ? `data-project="${esc(projectId)}"` : ''}>${icon('plus', 'sm')}Nouvelle tâche</button>` }) +
+      `<div class="page-body"><div class="toolbar card"><label class="check"><input type="checkbox" id="tg_done" data-change="tasks-group-done" ${g.done ? 'checked' : ''}>Afficher les tâches terminées</label>
+        <span class="spacer"></span><span class="result-count">${plural(list.length, 'tâche', 'tâches')}</span></div>
+        ${list.length ? taskTableHTML(list, st, { showProject: kind !== 'project' }) : `<div class="card">${UI.empty({ icon: 'check', title: 'Aucune tâche ouverte ici', sub: done ? 'Cochez « Afficher les tâches terminées » pour voir les autres.' : '' })}</div>`}</div>`;
+  },
+};
+ChangeActions['tasks-group-done'] = el => { App.view('tasksGroup', { done: false }).done = el.checked; Router.refresh(); };
+
+/* ---------- Routes ---------- */
+Object.assign(Routes, {
+  home: { module: 'home', render: v => HomeHub.render(v) },
+  me: { module: 'home', render: v => SimplePages.me(v) },
+  projects: { module: 'projects', render: v => ProjectsHub.render(v) },
+  'projects-all': { module: 'projects', render: v => ProjectsPage.render(v) },
+  'projects-board': { module: 'projects', render: v => (App.ws === 'customer' ? SimplePages.board(v) : Router.redirect(App.ws, 'projects')) },
+  pipeline: { module: 'projects', render: v => (App.ws === 'customer' ? SimplePages.pipeline(v) : Router.redirect(App.ws, 'projects')) },
+  'projects-by': { module: 'projects', render: (v, by) => ProjectsHub.groups(v, by) },
+  'projects-group': { module: 'projects', render: (v, p) => ProjectsHub.group(v, p) },
+  tasks: { module: 'tasks', render: v => TasksHub.render(v) },
+  'tasks-all': { module: 'tasks', render: v => TasksPage.render(v) },
+  'tasks-by': { module: 'tasks', render: (v, by) => TasksHub.groups(v, by) },
+  'tasks-group': { module: 'tasks', render: (v, p) => TasksHub.group(v, p) },
+});
 
 /* ---------- Démarrage ---------- */
 function boot() {
