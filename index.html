@@ -19,11 +19,12 @@
    FOIS ci-dessous (section 1 « Tokens »). Pour changer l'apparence de toute
    l'application, modifier uniquement ces variables.
    Signature visuelle : le losange orange (un « jalon » sur un planning).
-   Il sert de logo et marque les Gates, en violet, dans la timeline et le pipeline.
+   Il sert de logo et marque les Gates, en violet, dans la timeline et la synthèse.
    Ordre du fichier :
      1. Tokens                 5. Navigation
      2. Variantes PDQA/sombre  6. Composants
-     3. Base                   7. Modules (dashboard, pipeline, kanban, calendrier, one-pager…)
+     3. Base                   7. Modules (synthèse, kanban, calendrier, one-pager…)
+     9. Ligne de métro         10. Modules PDQA et Mon espace
      4. Utilitaires            8. Accessibilité, responsive, impression
    ========================================================================== */
 
@@ -157,7 +158,7 @@ svg.ico.lg { width: 22px; height: 22px; }
 [hidden] { display: none !important; }
 :focus-visible { outline: none; box-shadow: var(--focus); border-radius: var(--r-xs); }
 h1[tabindex="-1"]:focus { outline: none; box-shadow: none; }
-.num, .kpi-value, .progress-val, .bar-val, .kb-count, .pipe-count { font-variant-numeric: tabular-nums; }
+.num, .kpi-value, .progress-val, .bar-val, .kb-count { font-variant-numeric: tabular-nums; }
 
 /* 4. UTILITAIRES =========================================================== */
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
@@ -460,48 +461,6 @@ fieldset.field legend { margin-bottom: 0; }
 .history-text { font-size: var(--fs-md); font-weight: var(--fw-medium); margin-top: 2px; }
 .history-changes { list-style: none; margin-top: 4px; display: grid; gap: 2px; font-size: var(--fs-sm); color: var(--text-2); }
 
-/* Pipeline des projets (dashboard) ---------------------------------------------- */
-.pipe-scroll { overflow-x: auto; padding-bottom: var(--sp-3); margin: 0 calc(var(--sp-8) * -1); padding-left: var(--sp-8); padding-right: var(--sp-8); scroll-padding: var(--sp-8); }
-/* Fondu à droite : signale que le pipeline continue */
-.pipe-scroll { -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 56px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 56px), transparent); }
-.pipe-scroll:focus-visible { box-shadow: inset var(--focus); }
-.pipe { display: flex; gap: var(--sp-5); align-items: stretch; width: max-content; position: relative; }
-.pipe-phase { display: flex; flex-direction: column; gap: var(--sp-2); }
-.pipe-phase-head { display: flex; align-items: baseline; gap: var(--sp-2); padding: 0 2px 8px; border-bottom: 2px solid var(--line-strong); }
-.pipe-phase-id { font-weight: var(--fw-semibold); font-size: var(--fs-md); }
-.pipe-phase-sub { color: var(--text-3); font-size: var(--fs-sm); }
-.pipe-cols { display: flex; gap: 8px; flex: 1; }
-.pipe-col { width: 192px; flex-shrink: 0; display: flex; flex-direction: column; border-radius: var(--r-md); background: var(--surface-3); border: 1px solid transparent; }
-.pipe-col-head { display: flex; align-items: flex-start; gap: 8px; padding: 10px 10px 8px; min-height: 58px; }
-.pipe-col-n { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; font-size: 10.5px; font-weight: var(--fw-semibold); background: var(--surface); color: var(--text-3); flex-shrink: 0; }
-.pipe-col-name { display: block; font-size: var(--fs-sm); font-weight: var(--fw-semibold); line-height: 1.3; color: var(--text-2); }
-.pipe-col-opt { display: block; font-size: 10.5px; color: var(--text-3); margin-top: 2px; }
-.pipe-count { font-size: var(--fs-xs); font-weight: var(--fw-semibold); color: var(--text-3); padding-top: 2px; }
-.pipe-cards { display: grid; gap: 6px; padding: 0 6px 6px; align-content: start; flex: 1; min-height: 60px; }
-.pipe-empty { border: 1.5px dashed var(--line-strong); border-radius: var(--r-sm); min-height: 44px; opacity: .6; }
-/* Colonnes « Gate » : violet, bien distinctes */
-.pipe-col.is-gate { background: var(--gate-soft); border-color: var(--gate-border); }
-.pipe-col.is-gate .gate-mark { margin: 5px 3px 0; }
-.pipe-col.is-gate .pipe-col-name { color: var(--gate-ink); }
-.pipe-gate-no { display: block; font-size: var(--fs-xs); font-weight: var(--fw-bold); color: var(--gate); margin-bottom: 1px; }
-.pipe-col.is-gate .pipe-count { color: var(--gate-ink); }
-.pipe-col.is-gate .pipe-empty { border-color: var(--gate-border); }
-.pipe-col.is-gate .pipe-card { border-color: var(--gate-border); }
-.pipe-card { display: grid; gap: 6px; width: 100%; text-align: left; padding: 10px 11px; border-radius: var(--r-sm); background: var(--surface);
-  border: 1px solid var(--line); box-shadow: var(--sh-1); transition: box-shadow var(--t-fast), transform var(--t-fast), border-color var(--t-fast); }
-.pipe-card:hover { box-shadow: var(--sh-2), 0 4px 14px rgba(27,30,36,.08); transform: translateY(-1px); border-color: var(--line-strong); }
-.pipe-card.is-risk { box-shadow: inset 3px 0 0 var(--danger), var(--sh-1); }
-.pipe-card-top { display: flex; gap: 6px; align-items: flex-start; }
-.pipe-card-name { flex: 1; font-weight: var(--fw-semibold); font-size: var(--fs-md); line-height: 1.3; }
-.pipe-ver { font-size: 10.5px; font-weight: var(--fw-semibold); color: var(--text-3); border: 1px solid var(--line-strong); border-radius: 4px; padding: 0 4px; line-height: 16px; }
-.pipe-card-client { font-size: var(--fs-sm); color: var(--text-2); margin-top: -3px; }
-.pipe-card-custom { font-size: var(--fs-xs); color: var(--text-3); font-style: italic; }
-.pipe-card .progress { min-width: 0; }
-.pipe-card-foot { display: flex; justify-content: space-between; align-items: center; gap: 6px; font-size: var(--fs-sm); color: var(--text-3); }
-.pipe-card-foot .due { font-size: var(--fs-xs); }
-.pipe-card-tasks, .pipe-card-slip { display: inline-flex; align-items: center; gap: 5px; font-size: var(--fs-xs); color: var(--text-2); }
-.pipe-card-slip { color: var(--danger); font-weight: var(--fw-semibold); }
-
 /* Kanban des tâches --------------------------------------------------------------- */
 .kanban { display: grid; grid-template-columns: repeat(3, minmax(260px, 1fr)); gap: var(--sp-4); align-items: start; overflow-x: auto; }
 .kb-col { border-radius: var(--r-lg); background: var(--surface-3); border: 1px solid transparent; padding: 10px; min-height: 360px; transition: background var(--t-fast), border-color var(--t-fast), box-shadow var(--t-fast); }
@@ -759,7 +718,6 @@ body.theme-dark .ev-meeting { color: #A9BDCC; background: rgba(169,189,204,.12);
 }
 @media (max-width: 900px) {
   .page-header, .page-body { padding-left: var(--sp-4); padding-right: var(--sp-4); }
-  .pipe-scroll { margin: 0 calc(var(--sp-4) * -1); padding-left: var(--sp-4); padding-right: var(--sp-4); }
   .g3, .g2, .form-grid { grid-template-columns: 1fr; }
   .cal-cell { min-height: 90px; }
   .list-progress { display: none; }
@@ -861,64 +819,11 @@ body.is-projection { zoom: 1.2; }
 /* Actions toujours visibles au doigt (pas de survol sur tablette et téléphone) */
 @media (hover: none) { .kb-moves, .cal-add { opacity: 1; } }
 
-/* Plan du processus (pipeline) ------------------------------------------- */
-.metro { padding: var(--sp-4) var(--sp-5) var(--sp-2); margin-bottom: var(--sp-4); }
-.metro-head { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2) var(--sp-4); margin-bottom: var(--sp-2); }
+/* Légende des lignes de couleur (vue Avancement) ---------------------- */
 .metro-legend { display: flex; flex-wrap: wrap; gap: var(--sp-2) var(--sp-4); font-size: var(--fs-sm); color: var(--text-2); }
 .metro-legend span { display: inline-flex; align-items: center; gap: 7px; }
 .metro-legend i { width: 20px; height: 5px; border-radius: 3px; display: inline-block; }
 .metro-legend i.gate { width: 12px; height: 12px; border-radius: 3px; background: var(--gate); }
-.metro-ends { display: flex; gap: var(--sp-2); margin-left: auto; flex-wrap: wrap; }
-.metro-scroll { overflow-x: auto; margin: 0 calc(var(--sp-5) * -1); padding: 0 var(--sp-5); }
-.metro-svg { display: block; width: 100%; min-width: 1080px; height: auto; font-family: var(--font); }
-.m-seg { fill: none; stroke-width: 8; stroke-linecap: round; }
-.m-ph1 { stroke: var(--ph1); } .m-ph2 { stroke: var(--ph2); } .m-ph3 { stroke: var(--ph3); } .m-ph4 { stroke: var(--ph4); }
-.m-phase { font-size: 13px; font-weight: 700; }
-.m-phase.ph1 { fill: var(--brand-ink); } .m-phase.ph2 { fill: var(--ph2); } .m-phase.ph3 { fill: var(--ph3); } .m-phase.ph4 { fill: var(--ph4); }
-.m-st { cursor: pointer; outline: none; }
-.m-dot { fill: var(--surface); stroke-width: 4; }
-.m-dot.opt { stroke-dasharray: 3 2.5; }
-.m-gate { fill: var(--gate); stroke: var(--surface); stroke-width: 3; }
-.m-gate-t { fill: #FFFFFF; font-size: 11px; font-weight: 800; text-anchor: middle; }
-.m-name { fill: var(--text-2); font-size: 12px; }
-.m-st.is-gate .m-name { fill: var(--gate-ink); font-weight: 700; }
-.m-st.has .m-name { fill: var(--text); font-weight: 700; }
-.m-pill { fill: var(--bar); } .m-pill.risk { fill: var(--danger); }
-.m-pill-t { fill: #FFFFFF; font-size: 12px; font-weight: 800; text-anchor: middle; font-variant-numeric: tabular-nums; }
-.m-halo { fill: transparent; }
-.m-st:hover .m-halo, .m-st:focus-visible .m-halo { fill: var(--surface-3); }
-.m-st.is-sel .m-halo { fill: var(--brand-soft); stroke: var(--brand); stroke-width: 1.5; }
-.m-st:focus-visible .m-halo { stroke: var(--brand); stroke-width: 2.5; }
-
-/* Version verticale (téléphone) */
-.metro-v { display: none; list-style: none; }
-.mv-phase { font-size: var(--fs-sm); font-weight: var(--fw-bold); color: var(--c); padding: 12px 0 4px 34px; }
-.mv-st { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 44px; padding: 4px 8px 4px 0; text-align: left; position: relative; border-radius: var(--r-sm); }
-.mv-st::before { content: ""; position: absolute; left: 11px; top: 0; bottom: 0; width: 6px; background: var(--c); }
-.mv-st.first::before { top: 50%; } .mv-st.last::before { bottom: 50%; }
-.mv-mark { position: relative; z-index: 1; width: 28px; display: grid; place-items: center; flex-shrink: 0; }
-.mv-mark i { width: 16px; height: 16px; border-radius: 50%; background: var(--surface); border: 4px solid var(--c); display: block; }
-.mv-mark b { width: 26px; height: 26px; border-radius: 7px; background: var(--gate); color: #FFFFFF; font-size: 11px; display: grid; place-items: center; border: 2px solid var(--surface); }
-.mv-name { flex: 1; min-width: 0; font-size: var(--fs-md); color: var(--text-2); }
-.mv-st.has .mv-name { color: var(--text); font-weight: var(--fw-semibold); }
-.mv-count { min-width: 26px; height: 22px; padding: 0 7px; border-radius: 11px; background: var(--bar); color: #FFFFFF; font-size: var(--fs-xs); font-weight: var(--fw-bold); display: grid; place-items: center; }
-.mv-count.risk { background: var(--danger); }
-.mv-st[aria-pressed="true"] { background: var(--brand-soft); }
-
-/* Liste des projets sous le plan */
-.mlist-head { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3); padding: 14px var(--sp-5); border-bottom: 1px solid var(--line); flex-wrap: wrap; }
-.mrow { display: grid; grid-template-columns: 32px minmax(0, 1.5fr) minmax(0, 1.2fr) auto; gap: var(--sp-3) var(--sp-4); align-items: center;
-  width: 100%; padding: 12px var(--sp-5); border-bottom: 1px solid var(--line); text-align: left; }
-.mrow:last-child { border-bottom: 0; }
-.mrow:hover { background: var(--surface-2); }
-.mbullet { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; color: #FFFFFF; font-size: 12px; font-weight: var(--fw-bold); background: var(--c); }
-.mbullet.gate { border-radius: 8px; background: var(--gate); }
-.mbullet.risk { background: var(--danger); }
-.mrow-name { font-weight: var(--fw-semibold); font-size: var(--fs-base); display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
-.mrow-sub { font-size: var(--fs-sm); color: var(--text-3); margin-top: 2px; }
-.mrow-info { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; min-width: 0; }
-.mrow-date { text-align: right; white-space: nowrap; }
-.mrow-date .cell-sub { margin-top: 2px; }
 
 /* Responsive ------------------------------------------------------------- */
 @media (max-width: 1100px) { .me-card .txt, .top-btn .txt { display: none; } }
@@ -939,20 +844,11 @@ body.is-projection { zoom: 1.2; }
   .toasts { bottom: calc(80px + env(safe-area-inset-bottom, 0px)); right: var(--sp-4); left: var(--sp-4); }
   .toast { min-width: 0; }
   .view-switch .muted.small { flex-basis: 100%; order: 3; }
-  .mrow { grid-template-columns: 32px minmax(0, 1fr); }
-  .mrow-info { grid-column: 2; } .mrow-date { grid-column: 2; text-align: left; }
 }
 @media (max-width: 760px) {
-  .metro-scroll { display: none; }
-  .metro-v { display: block; }
   .metro-legend { display: none; }
 }
 @media print { .topbar, .modbar, .tabbar { display: none !important; } body::before { display: none; } }
-/* Thème sombre : pastilles de comptage claires pour rester lisibles sur fond sombre */
-body.theme-dark .m-pill, body.theme-dark .mv-count { fill: var(--on-bar); background: var(--on-bar); color: var(--bar); }
-body.theme-dark .m-pill-t { fill: var(--bar); }
-body.theme-dark .m-pill.risk, body.theme-dark .mv-count.risk { fill: var(--danger); background: var(--danger); color: #2A0A06; }
-body.theme-dark .m-pill.risk + .m-pill-t { fill: #2A0A06; }
 
 /* Avancement des projets (vue de synthèse) ------------------------------- */
 :root { --ph1-ink: var(--brand-ink); --ph2-ink: #22548C; --ph3-ink: #1F6B41; --ph4-ink: #6E4520; }
@@ -1132,11 +1028,8 @@ html[data-nav="out"]::view-transition-new(page) { animation-name: vt-in-back; }
 .is-entering .hub-alert { animation: arrive-side 420ms var(--ease-out) both; animation-delay: 60ms; }
 .is-entering .process { animation: arrive 400ms var(--ease-out) both; }
 .is-entering .pr-chev { animation: reveal-x 420ms var(--ease-out) both; animation-delay: calc(140ms + var(--k, 0) * 26ms); }
-.is-entering .bk-card, .is-entering .brow, .is-entering .mrow { animation: arrive 420ms var(--ease-out) both; animation-delay: calc(120ms + min(var(--i, 0), 14) * 28ms); }
+.is-entering .bk-card, .is-entering .brow { animation: arrive 420ms var(--ease-out) both; animation-delay: calc(120ms + min(var(--i, 0), 14) * 28ms); }
 .is-entering .bl-svg { animation: reveal-x 800ms var(--ease-out) both; animation-delay: calc(200ms + min(var(--i, 0), 14) * 28ms); }
-.is-entering .m-seg { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 520ms var(--ease-out) forwards; animation-delay: calc(var(--k, 0) * 32ms); }
-.is-entering .m-st .m-dot, .is-entering .m-st .m-gate, .is-entering .m-pill { transform-box: fill-box; transform-origin: center; animation: pop 360ms var(--ease-out) both; animation-delay: calc(120ms + var(--k, 0) * 32ms); }
-.is-entering .metro-v li { animation: arrive-side 380ms var(--ease-out) both; animation-delay: calc(min(var(--k, 0), 30) * 18ms); }
 .is-entering .chev-row .chev:not(.pr-chev) { animation: reveal-x 380ms var(--ease-out) both; }
 .is-entering .table-wrap { animation: arrive 380ms var(--ease-out) both; animation-delay: 100ms; }
 .is-entering .kb-card, .is-entering .cal-month, .is-entering .cal-week, .is-entering .meeting-card, .is-entering .kpi-strip, .is-entering .dash-grid { animation: arrive 400ms var(--ease-out) both; animation-delay: 120ms; }
@@ -1147,8 +1040,6 @@ html[data-nav="out"]::view-transition-new(page) { animation-name: vt-in-back; }
 .tile-ico { transition: box-shadow 220ms var(--ease-out); }
 .filter-chip, .segmented button { transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast), transform var(--t-fast); }
 .filter-chip:active, .segmented button:active { transform: scale(.96); }
-.m-st .m-dot, .m-st .m-gate { transition: transform 200ms var(--ease-out); transform-box: fill-box; transform-origin: center; }
-.m-st:hover .m-dot, .m-st:hover .m-gate { transform: scale(1.25); }
 
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-old(page), ::view-transition-new(page) { animation: none !important; }
@@ -1159,6 +1050,152 @@ html[data-nav="out"]::view-transition-new(page) { animation-name: vt-in-back; }
 .bk-cols { align-items: flex-start; }
 .bk-col { min-height: 180px; }
 @media (max-width: 1100px) { .process .tl-row { grid-template-columns: 1fr; } }
+
+/* 10. MODULES PDQA ET MON ESPACE ============================================
+   Innovation, Visites / Workshop / Salon, Planning des projets (Gantt),
+   Prévalidation MP, Mon espace. Mêmes tokens que le reste de l'application. */
+
+/* Étiquette d'espace (Mon espace) */
+.ws-tag { display: inline-flex; align-items: center; height: 20px; padding: 0 7px; border-radius: var(--r-xs); font-size: var(--fs-xs); font-weight: var(--fw-semibold); white-space: nowrap; vertical-align: 1px; margin-right: 6px; }
+.ws-tag.customer { color: var(--brand-ink); background: var(--brand-soft); }
+.ws-tag.pdqa { color: #0B5753; background: rgba(15,110,106,.10); }
+body.theme-dark .ws-tag.pdqa { color: #6FD8D1; background: rgba(43,165,158,.16); }
+.filter-chip .ws-dot { display: inline-block; margin-right: 7px; vertical-align: 1px; }
+.my-grid { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: var(--sp-5); align-items: start; }
+.my-grid:not(:has(> aside)) { grid-template-columns: minmax(0, 1fr); }
+.my-group { display: flex; align-items: center; gap: 6px; margin-bottom: var(--sp-3); }
+.my-grid .table-wrap { max-height: none; }
+/* Colonnes identiques d'un groupe à l'autre (En retard, Aujourd'hui…) */
+.my-grid .table { table-layout: fixed; min-width: 720px; }
+.my-grid .table th:nth-child(1) { width: 52px; }
+.my-grid .table th:nth-child(3) { width: 24%; }
+.my-grid .table th:nth-child(4) { width: 130px; }
+.my-grid .table th:nth-child(5) { width: 110px; }
+.my-grid .table th:nth-child(6) { width: 160px; }
+.my-grid .table th:nth-child(7) { width: 56px; }
+.my-grid .table td:nth-child(2) { min-width: 0 !important; }
+/* Téléphone : chaque tâche devient une carte (case, titre, menu ; puis projet et échéance). */
+@media (max-width: 760px) {
+  .my-grid .table-wrap { overflow: visible; }
+  .my-grid .table { min-width: 0; table-layout: auto; }
+  .my-grid .table thead { display: none; }
+  .my-grid .table, .my-grid .table tbody { display: block; }
+  .my-grid .table tr { position: relative; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; padding: 12px 8px 12px 46px; border-bottom: 1px solid var(--line); }
+  .my-grid .table tbody tr:last-child { border-bottom: 0; }
+  .my-grid .table td { padding: 0; border: 0; }
+  .my-grid .table td:nth-child(1) { position: absolute; left: 12px; top: 12px; }
+  .my-grid .table td:nth-child(2) { flex: 1 1 0; }
+  .my-grid .table td:last-child { order: 1; width: auto; }
+  .my-grid .table td:nth-child(n+3):not(:last-child) { order: 2; }
+  .my-grid .table td:nth-child(3) { flex-basis: 100%; font-size: var(--fs-sm); }
+  .my-grid .table tr.is-late { box-shadow: inset 3px 0 0 var(--danger); }
+  .my-grid .table tr.is-late td:first-child { box-shadow: none; }
+}
+.top-me { position: relative; text-decoration: none; }
+.top-me .nav-count { margin-left: 2px; }
+@media (max-width: 1240px) { .my-grid { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 1100px) { .top-me .nav-count { position: absolute; top: 1px; right: -2px; margin: 0; } }
+
+/* Innovation : tableau par étape et matrice potentiel / effort */
+.inno-board { grid-template-columns: repeat(var(--cols, 4), minmax(240px, 1fr)); }
+.inno-card { cursor: default; }
+.inno-pe { font-size: var(--fs-xs); color: var(--text-2); }
+.inno-action { margin-top: 10px; }
+.inno-action .link-muted { display: inline-flex; align-items: center; gap: 5px; }
+.matrix { display: grid; grid-template-columns: 22px 70px minmax(0, 1fr); gap: 6px; }
+.mx-ylab { writing-mode: vertical-rl; transform: rotate(180deg); align-self: center; font-size: var(--fs-sm); font-weight: var(--fw-semibold); color: var(--text-3); }
+.mx-rows, .mx-grid { display: grid; grid-template-rows: repeat(3, minmax(130px, auto)); gap: 6px; }
+.mx-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.mx-rl { display: flex; align-items: center; justify-content: flex-end; padding-right: 4px; font-size: var(--fs-sm); font-weight: var(--fw-semibold); color: var(--text-2); }
+.mx-cell { display: flex; flex-direction: column; gap: 6px; min-width: 0; padding: 10px; border-radius: var(--r-md); background: var(--surface-3); }
+.mx-cell.is-best { background: var(--brand-soft); box-shadow: inset 0 0 0 1.5px var(--brand-border); }
+.mx-hint { font-size: var(--fs-xs); font-weight: var(--fw-semibold); color: var(--text-3); }
+.mx-cell.is-best .mx-hint { color: var(--brand-ink); }
+.mx-item { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding: 8px 10px; border-radius: var(--r-sm); background: var(--surface);
+  border: 1px solid var(--line); text-align: left; font-size: var(--fs-sm); font-weight: var(--fw-semibold); line-height: 1.3; overflow-wrap: break-word; hyphens: auto; -webkit-hyphens: auto; min-width: 0; max-width: 100%;
+  transition: border-color var(--t-fast), box-shadow var(--t-fast); }
+.mx-item:hover { border-color: var(--line-strong); box-shadow: 0 4px 12px rgba(20,33,61,.08); }
+.mx-cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; text-align: center; font-size: var(--fs-sm); font-weight: var(--fw-semibold); color: var(--text-2); }
+.mx-xlab { text-align: center; font-size: var(--fs-sm); font-weight: var(--fw-semibold); color: var(--text-3); }
+@media (max-width: 760px) {
+  .matrix { grid-template-columns: 0 44px minmax(0, 1fr); gap: 4px; }
+  .mx-ylab { visibility: hidden; }
+  .mx-rows, .mx-grid { grid-template-rows: repeat(3, minmax(90px, auto)); gap: 4px; }
+  .mx-cell { padding: 6px; }
+  .mx-item { padding: 6px; font-size: var(--fs-xs); }
+  .mx-item .badge { display: none; }
+  .mx-hint { font-size: 10.5px; }
+  .mx-rl { font-size: var(--fs-xs); }
+}
+
+/* Visites / Workshop / Salon */
+.ev-month { font-size: var(--fs-lg); font-weight: var(--fw-semibold); margin: var(--sp-6) 0 var(--sp-2); }
+.ev-month::first-letter { text-transform: uppercase; }
+#evBody > .ev-month:first-child { margin-top: 0; }
+.ev-card.is-cancelled { opacity: .7; }
+.ev-card.is-cancelled .link-btn { text-decoration: line-through; }
+.ev-event { color: var(--space-ink); background: var(--surface-3); border-left-style: dashed; }
+.legend-swatch.ev-event { background: var(--space); }
+
+/* Planning des projets (Gantt) */
+.gantt-scroll { overflow: auto; max-height: calc(100vh - 260px); padding: 0; }
+.gantt { --g-label: 260px; position: relative; min-width: 860px; }
+.g-row { display: grid; grid-template-columns: var(--g-label) minmax(0, 1fr); min-height: 50px; border-bottom: 1px solid var(--line); }
+.g-body > .g-row:last-child { border-bottom: 0; }
+.g-head { min-height: 40px; position: sticky; top: 0; z-index: 3; background: var(--surface-2); }
+.g-label { position: sticky; left: 0; z-index: 2; display: flex; flex-direction: column; justify-content: center; gap: 2px; min-width: 0;
+  padding: 6px var(--sp-4); text-align: left; background: var(--surface); border-right: 1px solid var(--line); }
+.g-head .g-label { background: var(--surface-2); font-size: var(--fs-sm); font-weight: var(--fw-semibold); color: var(--text-3); }
+button.g-label:hover .g-name { color: var(--space-ink); text-decoration: underline; text-underline-offset: 2px; }
+.g-name, .g-sub { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.g-name { font-size: var(--fs-md); font-weight: var(--fw-semibold); }
+.g-sub { font-size: var(--fs-xs); color: var(--text-3); }
+.g-track { position: relative; min-width: 0; }
+.g-month { position: absolute; top: 0; bottom: 0; display: flex; align-items: center; padding-left: 8px; overflow: hidden; white-space: nowrap;
+  border-left: 1px solid var(--line); font-size: var(--fs-sm); font-weight: var(--fw-semibold); color: var(--text-2); }
+.g-body { position: relative; }
+.g-grid { position: absolute; top: 0; bottom: 0; left: var(--g-label); right: 0; z-index: 0; pointer-events: none; }
+.g-line { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--line); }
+.g-today { position: absolute; top: 0; bottom: 0; width: 2px; margin-left: -1px; background: var(--text); opacity: .7; }
+.g-group { position: relative; z-index: 1; padding: 8px var(--sp-4); background: var(--surface-2); border-bottom: 1px solid var(--line); font-size: var(--fs-sm); font-weight: var(--fw-bold); }
+.g-group > span { position: sticky; left: var(--sp-4); }
+.g-bar { position: absolute; top: 50%; z-index: 1; height: 24px; margin-top: -12px; min-width: 6px; display: flex; align-items: center; overflow: hidden; border-radius: 6px;
+  transition: box-shadow var(--t-fast); }
+.g-bar.clip-l { border-top-left-radius: 0; border-bottom-left-radius: 0; }
+.g-bar.clip-r { border-top-right-radius: 0; border-bottom-right-radius: 0; }
+.g-bar.is-active { background: var(--space-soft); box-shadow: inset 0 0 0 1.5px var(--space); }
+.g-bar.is-active .g-fill { background: var(--space); opacity: .45; }
+.g-bar.is-late { background: var(--danger-soft); box-shadow: inset 0 0 0 1.5px var(--danger); }
+.g-bar.is-late .g-fill { background: var(--danger); opacity: .35; }
+.g-bar.is-paused, .g-paused-sw { background: repeating-linear-gradient(135deg, var(--surface-3) 0 6px, var(--line-strong) 6px 8px); }
+.g-bar.is-paused { box-shadow: inset 0 0 0 1px var(--line-strong); }
+.g-bar.is-done { background: var(--line-strong); }
+.g-bar.is-done .g-fill, .g-bar.is-paused .g-fill { background: var(--text-3); opacity: .3; }
+.g-fill { position: absolute; left: 0; top: 0; bottom: 0; }
+.g-txt { position: relative; z-index: 1; padding: 0 8px; font-size: var(--fs-xs); font-weight: var(--fw-bold); color: var(--text); white-space: nowrap; }
+.g-bar:hover { box-shadow: inset 0 0 0 2px var(--text-2), 0 4px 12px rgba(20,33,61,.14); }
+.g-bar:focus-visible, .g-mark:focus-visible { outline: 3px solid var(--brand); outline-offset: 1px; }
+.g-mark, .g-mark-sw { width: 12px; height: 12px; border-radius: 2px; transform: rotate(45deg); background: var(--surface); border: 2.5px solid var(--text-2); }
+.g-mark { position: absolute; top: 50%; z-index: 2; margin: -6px 0 0 -6px; }
+.g-mark-sw { display: inline-block; width: 10px; height: 10px; border-width: 2px; }
+@media (max-width: 760px) { .gantt { --g-label: 150px; min-width: 720px; } .g-sub { display: none; } .g-label { padding: 6px 10px; } }
+
+/* Prévalidation MP */
+.checklist { display: grid; gap: 4px; margin-top: 6px; }
+.check-row { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: var(--r-sm); border: 1px solid var(--line); background: var(--surface); font-size: var(--fs-md); cursor: pointer; }
+.check-row > span:nth-child(2) { flex: 1; min-width: 0; }
+.check-row input { width: 18px; height: 18px; flex-shrink: 0; accent-color: var(--ok); }
+.check-row:has(input:checked) { background: var(--ok-soft); border-color: rgba(21,127,59,.30); }
+.check-row:has(input:disabled) { cursor: default; }
+.mp-decision { display: grid; gap: var(--sp-3); padding-top: var(--sp-4); border-top: 1px solid var(--line); }
+
+@media print {
+  .gantt-scroll { overflow: visible; max-height: none; }
+  .gantt { min-width: 0; }
+  .g-head, .g-label { position: static; }
+}
+.is-entering .g-row:not(.g-head), .is-entering .ev-card, .is-entering .mx-cell { animation: arrive 400ms var(--ease-out) both; animation-delay: 100ms; }
+.is-entering .g-bar { transform-origin: left; animation: grow-x 600ms var(--ease-out) both; animation-delay: 200ms; }
 
 </style>
 </head>
@@ -1200,6 +1237,11 @@ html[data-nav="out"]::view-transition-new(page) { animation-name: vt-in-back; }
   <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></symbol>
   <symbol id="i-undo" viewBox="0 0 24 24"><path d="M4 9h11a5 5 0 0 1 0 10H9"/><path d="m8 5-4 4 4 4"/></symbol>
   <symbol id="i-present" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M12 16v4M8 20h8"/></symbol>
+  <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.7.6 1.1 1.3 1.1 2.1V17h5v-1.1c0-.8.4-1.5 1.1-2.1A6 6 0 0 0 12 3z"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-6.5-6-6.5-11a6.5 6.5 0 0 1 13 0c0 5-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+  <symbol id="i-gantt" viewBox="0 0 24 24"><path d="M3 4v16h18"/><path d="M7 8h7M10 12h8M8 16h5"/></symbol>
+  <symbol id="i-flask" viewBox="0 0 24 24"><path d="M9 3h6M10 3v6l-5.6 9.6A1.6 1.6 0 0 0 5.8 21h12.4a1.6 1.6 0 0 0 1.4-2.4L14 9V3"/><path d="M7.5 15h9"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
   <symbol id="i-open" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"/></symbol>
 </svg>
 
@@ -1235,7 +1277,7 @@ const CONFIG = {
   // Modules disponibles dans chaque espace (ordre = ordre du menu).
   modules: {
     customer: ['home', 'projects', 'tasks', 'kanban', 'calendar', 'analytics', 'meetings'],
-    pdqa:     ['home', 'projects', 'tasks', 'kanban', 'calendar', 'meetings'],
+    pdqa:     ['home', 'projects', 'tasks', 'kanban', 'calendar', 'meetings', 'innovation', 'events', 'planning', 'mp'],
   },
   moduleMeta: {
     home:      { label: 'Accueil', icon: 'home' },
@@ -1246,6 +1288,53 @@ const CONFIG = {
     analytics: { label: 'Analytiques', icon: 'chart' },
     meetings:  { label: 'Meeting Minutes', icon: 'notes' },
     users:     { label: 'Utilisateurs', icon: 'users' },
+    innovation: { label: 'Innovation', icon: 'bulb' },
+    events:    { label: 'Visites / Workshop / Salon', icon: 'pin' },
+    planning:  { label: 'Planning des projets', short: 'Planning', icon: 'gantt' },
+    mp:        { label: 'Prévalidation MP', icon: 'flask' },
+  },
+
+  /* Modules de l'espace PDQA : listes de référence (modifier ici, nulle part ailleurs). */
+  pdqaModules: {
+    innovationStages: [
+      { id: 'idea',      label: 'Idée',                  badge: 'b-neutral' },
+      { id: 'study',     label: 'En étude',              badge: 'b-info' },
+      { id: 'validated', label: 'Validée',               badge: 'b-ok' },
+      { id: 'project',   label: 'Transformée en projet', badge: 'b-space' },
+      { id: 'rejected',  label: 'Abandonnée',            badge: 'b-danger' },
+    ],
+    innovationCategories: ['Nouveau produit', 'Reformulation', 'Nouvelle matière première', 'Packaging', 'Procédé / équipement', 'Qualité / méthode', 'Durabilité', 'Autre'],
+    levels: { 1: 'Faible', 2: 'Moyen', 3: 'Fort' },
+    eventTypes: [
+      { id: 'visit',    label: 'Visite' },
+      { id: 'workshop', label: 'Workshop' },
+      { id: 'salon',    label: 'Salon' },
+    ],
+    eventStatuses: [
+      { id: 'planned',   label: 'Prévu',   badge: 'b-info' },
+      { id: 'done',      label: 'Réalisé', badge: 'b-ok' },
+      { id: 'cancelled', label: 'Annulé',  badge: 'b-neutral' },
+    ],
+    mpStatuses: [
+      { id: 'requested',    label: 'Demandée',             badge: 'b-neutral' },
+      { id: 'docs_pending', label: 'Documents en attente', badge: 'b-warn' },
+      { id: 'review',       label: 'En revue',             badge: 'b-info' },
+      { id: 'approved',     label: 'Validée',              badge: 'b-ok' },
+      { id: 'rejected',     label: 'Refusée',              badge: 'b-danger' },
+    ],
+    /* Checklist documentaire de prévalidation. required: true = nécessaire pour valider. */
+    mpChecklist: [
+      { id: 'spec',          label: 'Fiche technique / spécification', required: true },
+      { id: 'coa',           label: 'Certificat d\'analyse (CoA)', required: true },
+      { id: 'allergens',     label: 'Déclaration allergènes', required: true },
+      { id: 'gmo',           label: 'Déclaration OGM', required: true },
+      { id: 'origin',        label: 'Origine et traçabilité', required: true },
+      { id: 'contaminants',  label: 'Contaminants (métaux lourds, pesticides, mycotoxines)', required: true },
+      { id: 'regulatory',    label: 'Statut réglementaire (Novel Food, additifs, allégations)', required: true },
+      { id: 'sds',           label: 'Fiche de données de sécurité', required: false },
+      { id: 'certificates',  label: 'Certificats (bio, halal, casher, végan…)', required: false },
+      { id: 'questionnaire', label: 'Questionnaire fournisseur', required: false },
+    ],
   },
 
   taskStatuses: [
@@ -1270,7 +1359,7 @@ const CONFIG = {
   dueSoonDays: 3,
 
   /* Processus de développement client : 4 phases, 4 Gates.
-     Utilisé par le formulaire (modèle), le one-pager et la vue Pipeline du dashboard.
+     Utilisé par le formulaire (modèle), le one-pager et la synthèse des projets.
      « industrialTest: true » = étape présente seulement « avec test industriel ». */
   phases: [
     { id: 'Phase 1', label: 'Étude' },
@@ -1576,8 +1665,9 @@ const Store = {
   db: null,
   me: null,
   users: [], projects: [], tasks: [], meetings: [], gateReviews: [], documents: [],
+  innovations: [], events: [], mpItems: [],   // modules PDQA (chargés seulement si l'accès PDQA est autorisé)
   // Les migrations ont-elles été exécutées ? (null = inconnu, true/false = constaté)
-  schema: { workspace: null, gates: null, documents: null, audit: null, stepKey: null },
+  schema: { workspace: null, gates: null, documents: null, audit: null, stepKey: null, innovations: null, events: null, mp: null },
 
   init() {
     if (!window.supabase?.createClient) throw new Error('La librairie Supabase n\'a pas pu être chargée.');
@@ -1606,7 +1696,7 @@ const Store = {
     Store.meetings = m.data || [];
     if (p.data?.length) Store.schema.workspace = Object.prototype.hasOwnProperty.call(p.data[0], 'workspace');
     if (t.data?.length) Store.schema.stepKey = Object.prototype.hasOwnProperty.call(t.data[0], 'step_key');
-    await Promise.all([Store.loadOptional('gate_reviews', 'gateReviews', 'gates', 'decision_date'), Store.loadOptional('project_documents', 'documents', 'documents', 'created_at')]);
+    await Promise.all([Store.loadOptional('gate_reviews', 'gateReviews', 'gates', 'decision_date'), Store.loadOptional('project_documents', 'documents', 'documents', 'created_at'), PdqaData.loadAll()]);
   },
 
   /** Charge une table ajoutée par la migration 003 ; si elle n'existe pas encore, l'application continue. */
@@ -1630,7 +1720,7 @@ const Store = {
   },
   user: id => (id ? Store.byId(Store.users, id) : null),
   project: id => (id ? Store.byId(Store.projects, id) : null),
-  task: id => Store.tasks.find(t => t.id === id) || null,
+  task: id => (id ? Store.byId(Store.tasks, id) : null),
   meeting: id => Store.meetings.find(m => m.id === id) || null,
   /** Décisions et documents d'un projet (uniquement si le projet est visible dans l'espace). */
   gateReviewsOf(ws, projectId) { return Store.projectIn(ws, projectId) ? Store.gateReviews.filter(g => g.project_id === projectId) : []; },
@@ -1710,6 +1800,8 @@ const Store = {
   async refreshTable(table) {
     if (table === 'gate_reviews') return Store.loadOptional('gate_reviews', 'gateReviews', 'gates', 'decision_date');
     if (table === 'project_documents') return Store.loadOptional('project_documents', 'documents', 'documents', 'created_at');
+    const pdqaKey = Object.keys(PdqaData.TABLES).find(k => PdqaData.TABLES[k].table === table);
+    if (pdqaKey) return PdqaData.load(pdqaKey);
     const order = { projects: ['created_at', false], tasks: ['created_at', false], meeting_minutes: ['meeting_date', false], users: ['name', true] }[table];
     const { data, error } = await Store.db.from(table).select('*').order(order[0], { ascending: order[1] });
     if (error) throw error;
@@ -1791,6 +1883,8 @@ function isMissingTable(err) {
 /** Traduit une erreur technique en message compréhensible. */
 function friendlyError(err) {
   const msg = String(err?.message || err || '');
+  if (/pdqa_innovations|pdqa_events|pdqa_mp_prevalidations|pdqa_ : base/i.test(msg))
+    return 'La base n\'est pas encore à jour : exécutez le script MIGRATION_004_MODULES_PDQA.sql dans Supabase.';
   if (/step_key|gate_reviews|project_documents|audit_log|project-docs|bucket not found/i.test(msg))
     return 'La base n\'est pas encore à jour : exécutez le script MIGRATION_003_GATES_DOCUMENTS_HISTORIQUE.sql dans Supabase.';
   if (/exceeded the maximum allowed size|payload too large|entity too large/i.test(msg))
@@ -1972,7 +2066,8 @@ const Router = {
   },
   /** Profondeur de chaque page dans la navigation « poupées russes ». */
   depth(page) {
-    return { home: 0, me: 1, projects: 1, tasks: 1, calendar: 1, meetings: 1, analytics: 1, users: 1, kanban: 2, pipeline: 2, 'projects-board': 2, 'projects-all': 2,
+    return { home: 0, me: 1, projects: 1, tasks: 1, calendar: 1, meetings: 1, analytics: 1, users: 1, innovation: 1, events: 1, planning: 1, mp: 1,
+      event: 4, 'event-edit': 5, kanban: 2, 'projects-board': 2, 'projects-all': 2,
       'projects-by': 2, 'tasks-by': 2, 'tasks-all': 2, 'projects-group': 3, 'tasks-group': 3, project: 4, meeting: 4, 'project-edit': 5, 'meeting-edit': 5 }[page] ?? 2;
   },
   renderNow() {
@@ -2027,7 +2122,7 @@ const Shell = {
     const current = m => Routes[App.page]?.module === m;
     const link = (m, cls) => {
       const meta = CONFIG.moduleMeta[m];
-      const label = cls === 'tab' ? (Shell.TAB_LABELS[m] || meta.label) : meta.label;
+      const label = cls === 'tab' ? (Shell.TAB_LABELS[m] || meta.short || meta.label) : (meta.short || meta.label);
       const count = m === 'tasks' ? '<span class="nav-count" data-count="overdue" hidden></span>' : '';
       return `<a class="${cls}" href="${Router.href(App.ws, m)}" ${current(m) ? 'aria-current="page"' : ''}>${icon(meta.icon)}<span class="txt">${esc(label)}</span>${count}</a>`;
     };
@@ -2035,6 +2130,7 @@ const Shell = {
       <a class="brand" href="${Router.href(App.ws, 'home')}" aria-label="${esc(CONFIG.appName)}, tableau de bord"><span class="brand-mark" aria-hidden="true"></span><span class="brand-name">${esc(CONFIG.appName)}</span></a>
       ${Shell.switcherHTML() || `<span class="ws-label">${esc(w.short)}</span>`}
       <span class="spacer"></span>
+      <a class="top-btn top-me" href="${Router.href(App.ws, 'me')}" ${App.page === 'me' ? 'aria-current="page"' : ''} title="Mon espace : toutes vos tâches, dans tous les espaces">${icon('user', 'sm')}<span class="txt">Mon espace</span><span class="nav-count" data-count="mine" hidden></span></a>
       <button class="top-btn" data-action="open-search" title="Rechercher (Ctrl+K)">${icon('search', 'sm')}<span class="txt">Rechercher</span><span class="kbd txt">Ctrl K</span></button>
       <button class="top-btn icon-only top-proj" data-action="toggle-projection" aria-pressed="${Projection.on()}" title="Mode projection (texte agrandi pour la réunion)" aria-label="Mode projection">${icon('present', 'sm')}</button>
       <a class="top-btn icon-only top-users" href="${Router.href(App.ws, 'users')}" ${App.page === 'users' ? 'aria-current="page"' : ''} title="Utilisateurs (administration)" aria-label="Utilisateurs">${icon('users', 'sm')}</a>
@@ -2068,12 +2164,17 @@ const Shell = {
         ${wsList.length > 1 ? `<div class="more-sep"></div>${wsList.map(ws => `<button class="more-link" data-action="switch-ws" data-ws="${ws}" ${ws === App.ws ? 'aria-current="page"' : ''}><span class="ws-dot ${ws}" aria-hidden="true"></span>${esc(CONFIG.workspaces[ws].short)}</button>`).join('')}` : ''}
         <div class="more-sep"></div>
         <button class="more-link" data-action="toggle-theme">${icon(document.body.classList.contains('theme-dark') ? 'sun' : 'moon')}${document.body.classList.contains('theme-dark') ? 'Thème clair' : 'Thème sombre'}</button>
+        <a class="more-link" href="${Router.href(App.ws, 'me')}" ${App.page === 'me' ? 'aria-current="page"' : ''}>${icon('user')}Mon espace</a>
         <a class="more-link" href="${Router.href(App.ws, 'users')}" ${App.page === 'users' ? 'aria-current="page"' : ''}>${icon('users')}Utilisateurs</a>
         <button class="more-link" data-action="logout">${icon('logout')}Déconnexion</button>
       </div></div>`, { type: 'drawer', label: 'Plus' });
   },
   updateCounts() {
     const n = Store.tasksIn(App.ws).filter(t => Rules.isTaskOverdue(t)).length;
+    const mine = MySpace.overdueCount();
+    document.querySelectorAll('[data-count="mine"]').forEach(el => {
+      el.hidden = !mine; el.textContent = mine; el.setAttribute('aria-label', `${mine} de vos tâches en retard`);
+    });
     document.querySelectorAll('[data-count="overdue"]').forEach(el => {
       el.hidden = !n; el.textContent = n; el.setAttribute('aria-label', `${n} tâche(s) en retard`);
     });
@@ -2159,7 +2260,7 @@ const Search = {
   results: [], index: -1,
   open() {
     const panel = Overlay.open(`<div class="cmdk-input">${icon('search')}<input id="cmdkInput" type="search" placeholder="Rechercher dans ${esc(CONFIG.workspaces[App.ws].short)}…" autocomplete="off" aria-label="Rechercher" autofocus><span class="kbd">Échap</span></div>
-      <div class="cmdk-results" id="cmdkResults" role="listbox"><div class="empty-sub" style="padding:24px;text-align:center">Projets, tâches et comptes-rendus de cet espace.</div></div>`, { type: 'cmdk', label: 'Recherche' });
+      <div class="cmdk-results" id="cmdkResults" role="listbox"><div class="empty-sub" style="padding:24px;text-align:center">${App.ws === 'pdqa' ? 'Projets, tâches, comptes-rendus, idées, événements et matières premières.' : 'Projets, tâches et comptes-rendus de cet espace.'}</div></div>`, { type: 'cmdk', label: 'Recherche' });
     panel.querySelector('#cmdkInput').addEventListener('input', e => Search.run(e.target.value));
     panel.querySelector('#cmdkInput').addEventListener('keydown', Search.keys);
   },
@@ -2176,6 +2277,14 @@ const Search = {
         .map(t => ({ action: 'edit-task', id: t.id, ic: 'check', title: t.title, sub: [Store.project(t.project_id)?.project_name, Store.user(t.assignee_id)?.name].filter(Boolean).join(' · ') }))],
       ['Meeting Minutes', Store.meetingsIn(ws).filter(m => hit(m.team_name)).slice(0, 4)
         .map(m => ({ action: 'open-meeting', id: m.id, ic: 'notes', title: m.team_name, sub: Dates.fmt(m.meeting_date) }))],
+      ...(ws === 'pdqa' ? [
+        ['Innovation', PdqaData.list('innovations').filter(i => hit(i.title) || hit(i.target)).slice(0, 4)
+          .map(i => ({ action: 'inno-edit', id: i.id, ic: 'bulb', title: i.title, sub: Innovation.stage(i.stage).label }))],
+        ['Visites / Workshop / Salon', PdqaData.list('events').filter(e => hit(e.title) || hit(e.location) || hit(e.organizer)).slice(0, 4)
+          .map(e => ({ action: 'open-event', id: e.id, ic: 'pin', title: e.title, sub: `${Events.type(e.type).label} · ${Events.dates(e)}` }))],
+        ['Prévalidation MP', PdqaData.list('mpItems').filter(i => hit(i.material_name) || hit(i.supplier) || hit(i.internal_code)).slice(0, 4)
+          .map(i => ({ action: 'mp-edit', id: i.id, ic: 'flask', title: i.material_name, sub: [i.supplier, Mp.status(i.status).label].filter(Boolean).join(' · ') }))],
+      ] : []),
     ].filter(([, items]) => items.length);
     Search.results = groups.flatMap(([, items]) => items); Search.index = -1;
     if (!groups.length) { box.innerHTML = `<div class="empty-sub" style="padding:24px;text-align:center">Aucun résultat pour « ${esc(q)} ».</div>`; return; }
@@ -2209,7 +2318,7 @@ const Actions = {
   'open-search': () => Search.open(),
   'close-overlay': () => Overlay.close(),
   'search-pick': el => { Overlay.close(); Actions[el.dataset.target]?.(el); },
-  'open-project': el => Router.go(App.ws, 'project', el.dataset.id),
+  'open-project': el => Router.go(el.dataset.ws || App.ws, 'project', el.dataset.id),
   'open-meeting': el => Router.go(App.ws, 'meeting', el.dataset.id),
 };
 const ChangeActions = {};   // data-change="nom" (listes déroulantes, cases à cocher)
@@ -2249,8 +2358,10 @@ function installGlobalHandlers() {
    Utilisé partout : Tâches, Kanban, Calendrier, fiches projet, dashboard.
    options : { taskId, projectId, dueDate, status, allowMeeting } */
 const TaskEditor = {
+  ws: 'customer',   // espace de la tâche ouverte (peut différer de l'espace courant depuis « Mon espace »)
   open(options = {}) {
-    const ws = App.ws;
+    const ws = options.ws && Perm.canAccessWorkspace(Store.me, options.ws) ? options.ws : App.ws;
+    TaskEditor.ws = ws;
     const task = options.taskId ? Store.taskIn(ws, options.taskId) : null;
     if (options.taskId && !task) { Toast.show('Tâche introuvable dans cet espace.', 'error'); return; }
     const v = task || { title: '', project_id: options.projectId || '', assignee_id: Store.me?.id || '', status: options.status || 'todo',
@@ -2292,7 +2403,7 @@ const TaskEditor = {
             <textarea class="textarea" id="te_desc" name="description" rows="3" placeholder="Détails, critères d'acceptation…">${esc(v.description || '')}</textarea></div>
         </div>
         <div class="drawer-foot">
-          ${task ? `<button type="button" class="btn btn-danger left" data-action="delete-task" data-id="${esc(task.id)}">${icon('trash', 'sm')}Supprimer</button>` : ''}
+          ${task ? `<button type="button" class="btn btn-danger left" data-action="delete-task" data-ws="${ws}" data-id="${esc(task.id)}">${icon('trash', 'sm')}Supprimer</button>` : ''}
           <button type="button" class="btn btn-ghost" data-action="close-overlay">Annuler</button>
           <button type="submit" class="btn btn-primary" id="teSubmit">${task ? 'Enregistrer' : 'Créer la tâche'}</button>
         </div>
@@ -2304,7 +2415,7 @@ const TaskEditor = {
   /** Liste des étapes de la timeline du projet choisi (projets clients avec timeline uniquement). */
   fillSteps(projectId, selected) {
     const field = document.getElementById('te_step_field'), sel = document.getElementById('te_step'); if (!field || !sel) return;
-    const p = projectId ? Store.projectIn(App.ws, projectId) : null;
+    const p = projectId ? Store.projectIn(TaskEditor.ws, projectId) : null;
     const steps = p && Store.schema.stepKey !== false ? Timeline.enrich(p.timeline_steps) : [];
     field.hidden = !steps.length || document.querySelector('#taskForm [name="type"]')?.value === 'meeting';
     sel.innerHTML = `<option value="">— Aucune étape —</option>` + steps.map(s => {
@@ -2339,7 +2450,7 @@ const TaskEditor = {
   },
 
   async save(form, task) {
-    const ws = App.ws;
+    const ws = TaskEditor.ws;
     const val = name => { const els = form.querySelectorAll(`[name="${name}"]`); const el = [...els].find(x => !x.disabled) || els[0]; return el ? el.value.trim() : ''; };
     const submit = document.getElementById('teSubmit');
     TaskEditor.showErrors(form, {});
@@ -2375,30 +2486,32 @@ const TaskEditor = {
   },
 };
 
+/** Espace d'une tâche cliquée : data-ws (Mon espace) ou, à défaut, l'espace courant. */
+const taskWs = el => el.dataset.ws || App.ws;
 Object.assign(Actions, {
   'new-task': el => TaskEditor.open({ projectId: el.dataset.project || '', dueDate: el.dataset.date || '', status: el.dataset.status || '', allowMeeting: el.dataset.meeting === '1', stepKey: el.dataset.step || '' }),
-  'edit-task': el => TaskEditor.open({ taskId: el.dataset.id }),
+  'edit-task': el => TaskEditor.open({ taskId: el.dataset.id, ws: el.dataset.ws }),
   'te-type': el => TaskEditor.setType(el),
   async 'delete-task'(el) {
-    const t = Store.taskIn(App.ws, el.dataset.id); if (!t) return;
+    const t = Store.taskIn(taskWs(el), el.dataset.id); if (!t) return;
     if (!confirm(`Supprimer la tâche « ${t.title} » ? Cette action est définitive.`)) return;
-    try { await Store.deleteTask(t.id, App.ws); if (Overlay.top()?.querySelector('#taskForm')) Overlay.close(); Toast.show('Tâche supprimée.'); Router.refresh(); }
+    try { await Store.deleteTask(t.id, taskWs(el)); if (Overlay.top()?.querySelector('#taskForm')) Overlay.close(); Toast.show('Tâche supprimée.'); Router.refresh(); }
     catch (err) { Toast.error(err); }
   },
   async 'toggle-task'(el) {
-    const t = Store.taskIn(App.ws, el.dataset.id); if (!t) return;
+    const t = Store.taskIn(taskWs(el), el.dataset.id); if (!t) return;
     const prev = t.status; const next = prev === 'done' ? 'todo' : 'done';
     el.disabled = true;
-    try { await Store.updateTask(t.id, { status: next }, App.ws); Toast.show(next === 'done' ? 'Tâche terminée.' : 'Tâche rouverte.'); }
+    try { await Store.updateTask(t.id, { status: next }, taskWs(el)); Toast.show(next === 'done' ? 'Tâche terminée.' : 'Tâche rouverte.'); }
     catch (err) { t.status = prev; Toast.error(err); }
     Router.refresh();
   },
 });
 ChangeActions['task-status'] = async el => {
-  const t = Store.taskIn(App.ws, el.dataset.id); if (!t) return;
+  const t = Store.taskIn(taskWs(el), el.dataset.id); if (!t) return;
   const prev = t.status;
   el.disabled = true;
-  try { await Store.updateTask(t.id, { status: el.value }, App.ws); Toast.show(`Statut : ${Rules.taskStatus(el.value).label}.`); }
+  try { await Store.updateTask(t.id, { status: el.value }, taskWs(el)); Toast.show(`Statut : ${Rules.taskStatus(el.value).label}.`); }
   catch (err) { t.status = prev; Toast.error(err); }
   Router.refresh();
 };
@@ -2425,25 +2538,27 @@ function taskStepLabel(t) {
   const s = p && Timeline.enrich(p.timeline_steps).find(x => Timeline.stepKey(x) === t.step_key);
   return s ? (s.gate ? `Gate ${Timeline.gateNumber(s.name)} : ${Timeline.gateTitle(s.label)}` : s.label) : '';
 }
-function taskTableHTML(tasks, state, { showProject = true, sortable = true, showStep = false } = {}) {
+function taskTableHTML(tasks, state, { showProject = true, sortable = true, showStep = false, showWs = false, showAssignee = true } = {}) {
   const head = (label, key) => sortable ? UI.sortHeader(label, key, state) : `<th>${esc(label)}</th>`;
   const rows = tasks.map(t => {
     const p = Store.project(t.project_id);
     const late = Rules.isTaskOverdue(t), done = Rules.isTaskDone(t);
+    const tws = Store.wsOfTask(t), wa = showWs ? ` data-ws="${tws}"` : '';
+    const tag = showWs ? `<span class="ws-tag ${tws}">${esc(CONFIG.workspaces[tws].tag)}</span>` : '';
     return `<tr class="${late ? 'is-late' : ''} ${done ? 'is-done' : ''}">
-      <td style="width:44px"><button class="task-check" role="checkbox" aria-checked="${done}" data-action="toggle-task" data-id="${esc(t.id)}" aria-label="${done ? 'Rouvrir' : 'Marquer comme terminée'} : ${esc(t.title)}">${icon('check', 'sm')}</button></td>
-      <td style="min-width:240px"><button class="link-btn cell-title" data-action="edit-task" data-id="${esc(t.id)}">${esc(t.title)}</button>${t.description ? `<div class="cell-sub truncate" style="max-width:420px">${esc(t.description)}</div>` : ''}</td>
-      ${showProject ? `<td>${p ? `<button class="link-muted" data-action="open-project" data-id="${esc(p.id)}">${esc(p.project_name)}</button>` : '<span class="muted">—</span>'}${taskStepLabel(t) ? `<div class="cell-sub truncate" style="max-width:220px">${esc(taskStepLabel(t))}</div>` : ''}</td>` : ''}
+      <td style="width:44px"><button class="task-check" role="checkbox" aria-checked="${done}" data-action="toggle-task"${wa} data-id="${esc(t.id)}" aria-label="${done ? 'Rouvrir' : 'Marquer comme terminée'} : ${esc(t.title)}">${icon('check', 'sm')}</button></td>
+      <td style="min-width:240px">${tag}<button class="link-btn cell-title" data-action="edit-task"${wa} data-id="${esc(t.id)}">${esc(t.title)}</button>${t.description ? `<div class="cell-sub truncate" style="max-width:420px">${esc(t.description)}</div>` : ''}</td>
+      ${showProject ? `<td>${p ? `<button class="link-muted" data-action="open-project"${wa} data-id="${esc(p.id)}">${esc(p.project_name)}</button>` : '<span class="muted">—</span>'}${taskStepLabel(t) ? `<div class="cell-sub truncate" style="max-width:220px">${esc(taskStepLabel(t))}</div>` : ''}</td>` : ''}
       ${showStep ? `<td class="small">${taskStepLabel(t) ? esc(taskStepLabel(t)) : '<span class="muted">—</span>'}</td>` : ''}
-      <td>${UI.person(t.assignee_id)}</td>
-      <td><select class="select status-select s-${esc(t.status)}" data-change="task-status" data-id="${esc(t.id)}" aria-label="Statut de ${esc(t.title)}">${UI.options(CONFIG.taskStatuses.map(s => ({ value: s.id, label: s.label })), t.status)}</select></td>
+      ${showAssignee ? `<td>${UI.person(t.assignee_id)}</td>` : ''}
+      <td><select class="select status-select s-${esc(t.status)}" data-change="task-status"${wa} data-id="${esc(t.id)}" aria-label="Statut de ${esc(t.title)}">${UI.options(CONFIG.taskStatuses.map(s => ({ value: s.id, label: s.label })), t.status)}</select></td>
       <td>${UI.taskPriority(t.priority)}</td>
       <td>${UI.due(t)}</td>
-      <td class="col-actions">${Menu.html([{ action: 'edit-task', icon: 'edit', label: 'Modifier', data: { id: t.id } }, { action: 'delete-task', icon: 'trash', label: 'Supprimer', danger: true, data: { id: t.id } }])}</td>
+      <td class="col-actions">${Menu.html([{ action: 'edit-task', icon: 'edit', label: 'Modifier', data: { id: t.id, ...(showWs ? { ws: tws } : {}) } }, { action: 'delete-task', icon: 'trash', label: 'Supprimer', danger: true, data: { id: t.id, ...(showWs ? { ws: tws } : {}) } }])}</td>
     </tr>`;
   }).join('');
   return `<div class="table-wrap"><table class="table"><thead><tr><th><span class="sr-only">Terminée</span></th>
-    ${head('Tâche', 'title')}${showProject ? head('Projet', 'project') : ''}${showStep ? '<th>Étape</th>' : ''}${head('Responsable', 'assignee')}${head('Statut', 'status')}${head('Priorité', 'priority')}${head('Échéance', 'due')}<th><span class="sr-only">Actions</span></th>
+    ${head('Tâche', 'title')}${showProject ? head('Projet', 'project') : ''}${showStep ? '<th>Étape</th>' : ''}${showAssignee ? head('Responsable', 'assignee') : ''}${head('Statut', 'status')}${head('Priorité', 'priority')}${head('Échéance', 'due')}<th><span class="sr-only">Actions</span></th>
     </tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 
@@ -2625,7 +2740,7 @@ Routes.kanban = { module: 'kanban', render: v => Kanban.render(v) };
    vue mois uniquement.
    ========================================================================== */
 const Calendar = {
-  defaults: { view: 'month', cursor: null, person: '', project: '', showTask: true, showProject: true, showMeeting: true, showDone: false },
+  defaults: { view: 'month', cursor: null, person: '', project: '', showTask: true, showProject: true, showMeeting: true, showEvent: true, showDone: false },
   state() { const st = App.view('calendar', Calendar.defaults); if (!st.cursor) st.cursor = Dates.today(); return st; },
 
   /** Construit la liste dédoublonnée des éléments de l'espace courant, groupés par jour. */
@@ -2633,7 +2748,7 @@ const Calendar = {
     const ws = App.ws, st = Calendar.state(), today = Dates.today();
     const byDay = {}, seen = new Set();
     const inRange = k => k && k >= from && k <= to;
-    const add = (key, ev) => { const id = ev.kind + ':' + ev.id; if (seen.has(id) || !inRange(key)) return; seen.add(id); (byDay[key] = byDay[key] || []).push(ev); };
+    const add = (key, ev) => { const id = ev.uid || ev.kind + ':' + ev.id; if (seen.has(id) || !inRange(key)) return; seen.add(id); (byDay[key] = byDay[key] || []).push(ev); };
     const personUser = Store.user(st.person);
     if (st.showTask) Store.tasksIn(ws).forEach(t => {
       if (!t.due_date) return;
@@ -2657,6 +2772,15 @@ const Calendar = {
       if (st.person && !(m.participants || []).includes(st.person)) return;
       add(Dates.key(m.meeting_date), { kind: 'meeting', id: m.id, action: 'open-meeting', cls: 'ev-meeting', ic: 'notes', label: m.team_name,
         state: 'Réunion', order: 2, sub: Store.project(m.project_id)?.project_name || '' });
+    });
+    // Visites, workshops et salons (espace PDQA) : affichés chaque jour de l'événement (31 jours au plus).
+    if (ws === 'pdqa' && st.showEvent) PdqaData.list('events').forEach(e => {
+      if (e.status === 'cancelled' || !Events.start(e) || (st.project && e.project_id !== st.project)) return;
+      if (st.person && !(e.participants || []).includes(st.person)) return;
+      for (let k = Events.start(e), n = 0; k <= Events.end(e) && n < 31; k = Dates.addDays(k, 1), n++) {
+        add(k, { kind: 'event', uid: `event:${e.id}:${k}`, id: e.id, action: 'open-event', cls: 'ev-event', ic: 'pin', label: e.title,
+          state: Events.type(e.type).label, order: 2, sub: [e.location, Store.project(e.project_id)?.project_name].filter(Boolean).join(' · ') });
+      }
     });
     Object.values(byDay).forEach(list => list.sort((a, b) => a.order - b.order || cmp(a.label, b.label)));
     return byDay;
@@ -2694,6 +2818,7 @@ const Calendar = {
           <label class="check"><input type="checkbox" data-change="cal-toggle" data-key="showDone" ${st.showDone ? 'checked' : ''}>Terminées</label>
           <label class="check"><input type="checkbox" data-change="cal-toggle" data-key="showProject" ${st.showProject ? 'checked' : ''}>${ws === 'pdqa' ? 'Fins de projet' : 'Lancements'}</label>
           <label class="check"><input type="checkbox" data-change="cal-toggle" data-key="showMeeting" ${st.showMeeting ? 'checked' : ''}>Réunions</label>
+          ${ws === 'pdqa' ? `<label class="check"><input type="checkbox" data-change="cal-toggle" data-key="showEvent" ${st.showEvent ? 'checked' : ''}>Visites / salons</label>` : ''}
         </div>
         <div class="cal-toolbar">
           <button class="btn btn-glass btn-sm" data-action="cal-today">Aujourd'hui</button>
@@ -2706,7 +2831,7 @@ const Calendar = {
         <div class="cal-legend" aria-label="Légende">
           <span><i class="legend-swatch ev-task"></i>Tâche à venir</span><span><i class="legend-swatch ev-late"></i>Tâche en retard</span>
           <span><i class="legend-swatch ev-done"></i>Tâche terminée</span><span><i class="legend-swatch ev-project"></i>${ws === 'pdqa' ? 'Fin de projet' : 'Lancement projet'}</span>
-          <span><i class="legend-swatch ev-meeting"></i>Réunion</span><span class="muted" id="calNoDue"></span>
+          <span><i class="legend-swatch ev-meeting"></i>Réunion</span>${ws === 'pdqa' ? '<span><i class="legend-swatch ev-event"></i>Visite / workshop / salon</span>' : ''}<span class="muted" id="calNoDue"></span>
         </div>
         <div id="calBody"></div>
       </div>`;
@@ -2760,7 +2885,7 @@ const Calendar = {
 
   dayHTML(key, list) {
     const typeStyle = { 'ev-task': 'background:var(--info-soft);color:var(--info)', 'ev-late': 'background:var(--danger-soft);color:var(--danger)',
-      'ev-done': 'background:var(--surface-3);color:var(--text-3)', 'ev-project': 'background:var(--space-soft);color:var(--space-ink)', 'ev-meeting': 'background:#F2ECFA;color:#6B3FA0' };
+      'ev-done': 'background:var(--surface-3);color:var(--text-3)', 'ev-project': 'background:var(--space-soft);color:var(--space-ink)', 'ev-meeting': 'background:#F2ECFA;color:#6B3FA0', 'ev-event': 'background:var(--space-soft);color:var(--space-ink)' };
     const items = list.map(ev => `<div class="day-item"><span class="day-type" style="${typeStyle[ev.cls]}">${icon(ev.ic)}</span>
       <div class="grow"><button class="link-btn" data-action="${ev.action}" data-id="${esc(ev.id)}">${esc(ev.label)}</button><div class="cell-sub">${esc(ev.state)}${ev.sub ? ' · ' + esc(ev.sub) : ''}</div></div>
       ${ev.kind === 'task' ? UI.taskStatusBadge(Store.task(ev.id)?.status) : ''}</div>`).join('');
@@ -2791,74 +2916,6 @@ Routes.calendar = { module: 'calendar', render: v => Calendar.render(v) };
    formulaire et fiche des projets PDQA.
    ========================================================================== */
 
-/* ---------- Tableau de bord ---------- */
-const Home = {
-  defaults: { view: 'board' },
-  render(view) {
-    const ws = App.ws, me = Store.me, st = App.view('home', Home.defaults);
-    const pipeline = ws === 'customer' && st.view === 'pipeline';
-    const board = ws === 'customer' && st.view === 'board';
-    const first = (me.name || '').split(' ')[0];
-    const toggle = ws === 'customer' ? `<div class="segmented" role="group" aria-label="Vue du tableau de bord">
-        <button data-action="home-view" data-view="board" aria-pressed="${board}">Avancement</button>
-        <button data-action="home-view" data-view="pipeline" aria-pressed="${pipeline}">Pipeline</button>
-        <button data-action="home-view" data-view="summary" aria-pressed="${!pipeline && !board}">Mes tâches</button></div>` : '';
-    view.innerHTML = pageHeader({ title: `Bonjour ${first}`, sub: Dates.long(Dates.today()),
-      actions: `<button class="btn btn-glass" data-action="new-task">${icon('plus', 'sm')}Tâche</button><button class="btn btn-primary" data-action="new-project">${icon('plus', 'sm')}Nouveau projet</button>` }) +
-      `<div class="page-body">${toggle ? `<div class="view-switch">${toggle}${pipeline ? '<span class="muted small grow">Chaque projet est placé à son étape actuelle, d\'après la dernière version de son one-pager. Cliquez une station pour voir ses projets.</span><span class="result-count" id="pipeCount"></span>' : ''}</div>` : ''}<div id="homeBody"></div></div>`;
-    if (board) Board.render(document.getElementById('homeBody')); else if (pipeline) Pipeline.render(document.getElementById('homeBody')); else Home.summary(document.getElementById('homeBody'));
-  },
-  summary(box) {
-    const ws = App.ws, me = Store.me, today = Dates.today();
-    const projects = Store.projectsIn(ws), tasks = Store.tasksIn(ws);
-    const active = projects.filter(p => p.status === 'active').length;
-    const open = tasks.filter(t => !Rules.isTaskDone(t)).length;
-    const overdue = tasks.filter(t => Rules.isTaskOverdue(t, today)).length;
-    const lateProjects = projects.filter(p => Rules.isProjectLate(p, today)).length;
-    const kpi = (target, label, value, foot, cls = '') => `<button class="kpi ${cls}" data-action="dash-go" data-target="${target}">
-      <span class="kpi-label">${esc(label)}</span><span class="kpi-value">${value}</span><span class="kpi-foot">${foot}</span></button>`;
-    const recent = projects.slice().sort((a, b) => cmp(b.updated_at || b.created_at, a.updated_at || a.created_at)).slice(0, 6);
-    const mine = sortTasks(tasks.filter(t => t.assignee_id === me.id && !Rules.isTaskDone(t)), 'due').slice(0, 7);
-    const deptCard = ws === 'pdqa' ? Home.departmentsCard(projects) : '';
-    const stageOf = p => {
-      if (ws === 'pdqa') return esc(p.pdqa_data.department || 'Département non renseigné');
-      const sg = Timeline.stage(p);
-      return sg.kind === 'step' ? `${sg.step.gate ? '<span class="gate-mark sm" aria-hidden="true"></span>' : ''}${esc(sg.step.label)}` : sg.kind === 'launched' ? 'Toutes les étapes terminées' : 'Timeline non planifiée';
-    };
-    box.innerHTML = `<section class="kpi-strip card" aria-label="Indicateurs">
-        ${kpi('projects-active', 'Projets actifs', active, lateProjects ? `<span class="t-danger">${icon('alert', 'sm')}${lateProjects} en retard</span>` : 'Aucun en retard')}
-        ${kpi('projects-all', 'Projets au total', projects.length, `${projects.filter(p => p.status === 'done').length} terminés, ${projects.filter(p => p.status === 'paused').length} en pause`)}
-        ${kpi('tasks-open', 'Tâches ouvertes', open, `${tasks.filter(t => t.status === 'in_progress').length} en cours`)}
-        ${kpi('tasks-overdue', 'Tâches en retard', overdue, overdue ? 'À traiter en priorité' : 'Tout est à jour', overdue ? 'alert' : '')}
-      </section>
-      <div class="dash-grid mt-6">
-        <section class="card" aria-labelledby="recentH"><div class="card-head"><h2 class="card-title" id="recentH">Projets récents</h2>
-          <button class="btn btn-ghost btn-sm" data-action="go" data-page="projects-all">Tous les projets${icon('right', 'sm')}</button></div>
-          ${recent.length ? recent.map(p => `<button class="list-row" data-action="open-project" data-id="${esc(p.id)}">
-            <span class="grow"><span class="cell-title truncate" style="display:block">${esc(p.project_name)}</span>
-              <span class="cell-sub row-meta"><span>${esc(ws === 'pdqa' ? (Rules.projectLeadName(p) || 'Responsable à définir') : (p.client_name || 'Client non renseigné'))}</span><span class="truncate">${stageOf(p)}</span></span></span>
-            ${UI.projectStatusBadge(p.status)}<span class="list-progress">${Rules.projectProgress(p, tasks) === null ? '' : UI.progress(Rules.projectProgress(p, tasks))}</span></button>`).join('')
-            : UI.empty({ icon: 'folder', title: 'Aucun projet pour le moment', sub: 'Créez le premier projet de cet espace.', action: `<button class="btn btn-primary" data-action="new-project">${icon('plus', 'sm')}Nouveau projet</button>` })}
-        </section>
-        <div class="stack">
-          <section class="card" aria-labelledby="mineH"><div class="card-head"><h2 class="card-title" id="mineH">Mes tâches à traiter</h2>
-            <button class="btn btn-ghost btn-sm" data-action="dash-go" data-target="tasks-mine">Toutes${icon('right', 'sm')}</button></div>
-            ${mine.length ? mine.map(t => `<button class="list-row" data-action="edit-task" data-id="${esc(t.id)}"><span class="grow"><span class="cell-title truncate" style="display:block">${esc(t.title)}</span><span class="cell-sub truncate">${esc(Store.project(t.project_id)?.project_name || 'Sans projet')}</span></span>${UI.due(t)}</button>`).join('')
-              : `<div class="card-body muted small">Aucune tâche ouverte ne vous est assignée.</div>`}
-          </section>
-          ${deptCard}
-        </div>
-      </div>`;
-  },
-  departmentsCard(projects) {
-    const counts = {};
-    projects.filter(p => p.status !== 'done').forEach(p => { const d = p.pdqa_data.department || 'Non renseigné'; counts[d] = (counts[d] || 0) + 1; });
-    const rows = Object.entries(counts).sort((a, b) => b[1] - a[1]);
-    const max = Math.max(1, ...rows.map(r => r[1]));
-    return `<section class="card" aria-labelledby="deptH"><div class="card-head"><h2 class="card-title" id="deptH">Initiatives en cours par département</h2></div>
-      <div class="card-body">${rows.length ? rows.map(([d, n]) => `<div class="bar-row"><span class="bar-name">${esc(d)}</span><span class="bar-track"><span class="bar-fill" style="display:block;width:${n / max * 100}%;background:var(--space)"></span></span><span class="bar-val">${n}</span></div>`).join('') : '<span class="muted small">Aucune initiative en cours.</span>'}</div></section>`;
-  },
-};
 /* ---------- Avancement des projets clients : une ligne par projet ----------
    Vue de synthèse : pour chaque projet, sa météo (dans les temps, à risque, en
    retard), sa position sur sa propre ligne de métro, sa prochaine Gate et son
@@ -3099,181 +3156,6 @@ Actions['bk-jump'] = el => {
 ChangeActions['bk-hide'] = el => { App.view('board', Board.defaults).hideEmpty = el.checked; Board.render(Board.box, Board.opts); };
 ChangeActions['board-filter'] = el => { App.view('board', Board.defaults)[el.dataset.key] = el.value; Board.render(Board.box, Board.opts); };
 Actions['board-mode'] = el => { App.view('boardMode', {})[App.page] = el.dataset.mode; Board.render(Board.box, Board.opts); };
-
-Actions['home-view'] = el => { App.view('home', Home.defaults).view = el.dataset.view; Home.render(document.getElementById('view')); };
-
-/* ---------- Pipeline des projets clients : plan du processus ----------
-   Le modèle de timeline client se lit comme un plan de métro : une ligne de couleur
-   par phase, une station par étape, les 4 Gates en correspondances violettes.
-   Chaque projet est placé à son étape actuelle, lue dans timeline_steps du projet,
-   c'est-à-dire la dernière version enregistrée de son one-pager. Cliquer une station
-   filtre la liste des projets en dessous. Lecture seule : pour faire avancer un
-   projet, on met à jour son one-pager. */
-const Pipeline = {
-  defaults: { status: 'open', client: '', lead: '', station: '' },
-  /** Libellés courts des stations, dans l'ordre de CONFIG.timelineTemplate (le libellé complet reste au survol et dans la liste). */
-  SHORT: ['GO / NO GO', 'NPD Brief', 'Faisabilité', 'Commande MP éch.', 'Réception MP éch.', 'PLM + prévalidation', 'Échantillons',
-    'Validation client', 'Kick-off', 'Planif. test indus.', 'Commande MP test', 'Réception MP test', 'Validation du test',
-    'Pricing + contrat', 'Spec définitive', 'BoM Odoo', 'Commande Odoo', 'Artworks reçus', 'Revue artworks', 'Placement P0',
-    'BAT', 'Approbation client', 'Date de production', 'Réunion 1re prod.', 'Date des RMs', '1re production'],
-  phaseClass(phaseId) { return 'ph' + (CONFIG.phases.findIndex(ph => ph.id === phaseId) + 1); },
-
-  render(box) {
-    const st = App.view('pipeline', Pipeline.defaults);
-    const all = Store.projectsIn('customer');
-    const clients = uniqueSorted(all.map(p => p.client_name)), leads = uniqueSorted(all.map(Rules.projectLeadName));
-    box.innerHTML = `<div class="toolbar card">
-        <select class="select" data-change="pipe-filter" data-key="status" aria-label="Filtrer par statut">${UI.options([{ value: 'open', label: 'Actifs et en pause' }, { value: 'active', label: 'Actifs' }, { value: 'paused', label: 'En pause' }, { value: 'done', label: 'Terminés' }], st.status, { placeholder: 'Tous les statuts' })}</select>
-        <select class="select" data-change="pipe-filter" data-key="client" aria-label="Filtrer par client">${UI.options(clients.map(v => ({ value: v, label: v })), st.client, { placeholder: 'Tous les clients' })}</select>
-        <select class="select" data-change="pipe-filter" data-key="lead" aria-label="Filtrer par chef de projet">${UI.options(leads.map(v => ({ value: v, label: v })), st.lead, { placeholder: 'Tous les chefs de projet' })}</select>
-      </div>
-      <section class="card metro" aria-label="Plan du processus" id="pipeMap"></section>
-      <section class="card" aria-labelledby="pipeListH" id="pipeList"></section>`;
-    // Clavier : Entrée ou Espace sur une station du plan.
-    document.getElementById('pipeMap').addEventListener('keydown', e => {
-      const el = e.target.closest?.('[data-action="pipe-station"]');
-      if (el && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); Actions['pipe-station'](el); }
-    });
-    Pipeline.renderBoard();
-  },
-
-  projects() {
-    const st = App.view('pipeline', Pipeline.defaults);
-    return Store.projectsIn('customer').filter(p =>
-      (!st.status || (st.status === 'open' ? p.status !== 'done' : p.status === st.status)) &&
-      (!st.client || p.client_name === st.client) && (!st.lead || Rules.projectLeadName(p) === st.lead));
-  },
-
-  /** Projets placés : { p, sg, key } avec key = index de l'étape modèle, 'unplanned' ou 'launched'. */
-  placed() {
-    return Pipeline.projects().map(p => {
-      const sg = Timeline.stage(p);
-      return { p, sg, key: sg.kind === 'step' ? String(sg.step.anchorIndex) : sg.kind };
-    });
-  },
-
-  renderBoard() {
-    const map = document.getElementById('pipeMap'), listBox = document.getElementById('pipeList'); if (!map || !listBox) return;
-    const st = App.view('pipeline', Pipeline.defaults);
-    const items = Pipeline.placed();
-    const counts = {};
-    items.forEach(({ key, sg }) => { const c = counts[key] || (counts[key] = { n: 0, risk: 0 }); c.n++; if (sg.step?.status === 'warning') c.risk++; });
-    if (st.station && !counts[st.station]) st.station = '';   // la station choisie n'a plus de projet après un filtre
-    const atRisk = items.filter(x => x.sg.atRisk).length;
-    const countEl = document.getElementById('pipeCount');
-    if (countEl) countEl.textContent = `${items.length} projet${items.length > 1 ? 's' : ''}${atRisk ? `, ${atRisk} à risque` : ''}`;
-    map.innerHTML = Pipeline.mapHTML(counts, st.station);
-    listBox.innerHTML = Pipeline.listHTML(items, st.station);
-  },
-
-  mapHTML(counts, sel) {
-    const tpl = CONFIG.timelineTemplate, gap = 44, left = 34, lineY = 112;
-    const x = i => left + i * gap, width = x(tpl.length - 1) + 150, height = 250;
-    const ends = [['unplanned', 'Sans timeline'], ['launched', 'Lancés']].filter(([k]) => counts[k])
-      .map(([k, l]) => `<button class="filter-chip" data-action="pipe-station" data-key="${k}" aria-pressed="${sel === k}">${l} · ${counts[k].n}</button>`).join('');
-    const legend = CONFIG.phases.map((ph, i) => `<span><i style="background:var(--ph${i + 1})"></i>${esc(ph.id)} · ${esc(ph.label)}</span>`).join('') +
-      '<span><i class="gate"></i>Gate (décision)</span>';
-    // Segments : chaque tronçon prend la couleur de la phase de la station d'arrivée.
-    const segs = tpl.slice(1).map((s, i) => `<line class="m-seg m-${Pipeline.phaseClass(s.phase)}" pathLength="1" style="--k:${i}" x1="${x(i)}" y1="${lineY}" x2="${x(i + 1)}" y2="${lineY}"/>`).join('');
-    const phaseLabels = CONFIG.phases.map(ph => {
-      const i = tpl.findIndex(s => s.phase === ph.id);
-      return `<text class="m-phase ${Pipeline.phaseClass(ph.id)}" x="${x(i) - 8}" y="22">${esc(ph.id)} · ${esc(ph.label)}</text>`;
-    }).join('');
-    const stations = tpl.map((s, i) => {
-      const gate = Timeline.isGate(s.name), c = counts[String(i)], cls = Pipeline.phaseClass(s.phase);
-      const full = gate ? `Gate ${Timeline.gateNumber(s.name)} : ${Timeline.gateTitle(s.name)}` : s.name;
-      const label = `${full}${s.industrialTest ? ' (avec test industriel)' : ''} : ${c ? c.n : 0} projet(s)${c?.risk ? `, ${c.risk} à risque` : ''}`;
-      const mark = gate
-        ? `<rect class="m-gate" x="${x(i) - 14}" y="${lineY - 14}" width="28" height="28" rx="8"/><text class="m-gate-t" x="${x(i)}" y="${lineY + 4}">G${Timeline.gateNumber(s.name)}</text>`
-        : `<circle class="m-dot m-${cls} ${s.industrialTest ? 'opt' : ''}" cx="${x(i)}" cy="${lineY}" r="8"/>`;
-      const pill = c ? `<rect class="m-pill ${c.risk ? 'risk' : ''}" x="${x(i) - 14}" y="${lineY - 52}" width="28" height="22" rx="11"/><text class="m-pill-t" x="${x(i)}" y="${lineY - 36.5}">${c.n}</text>` : '';
-      return `<g style="--k:${i}" class="m-st ${gate ? 'is-gate' : ''} ${c ? 'has' : ''} ${sel === String(i) ? 'is-sel' : ''}" data-action="pipe-station" data-key="${i}" tabindex="0" role="button" aria-pressed="${sel === String(i)}" aria-label="${esc(label)}">
-        <title>${esc(label)}</title><rect class="m-halo" x="${x(i) - 20}" y="${lineY - 58}" width="40" height="90" rx="10"/>
-        ${pill}${mark}<text class="m-name" x="${x(i) - 4}" y="${lineY + 30}" transform="rotate(38 ${x(i) - 4} ${lineY + 30})">${esc(Pipeline.SHORT[i] || s.name)}</text></g>`;
-    }).join('');
-    // Version verticale pour le téléphone : même plan, une station par ligne.
-    const vert = CONFIG.phases.map((ph, pi) => {
-      const rows = tpl.map((s, i) => ({ s, i })).filter(({ s }) => s.phase === ph.id);
-      return `<li class="mv-phase" style="--c:var(--ph${pi + 1});--k:${rows[0]?.i ?? 0}">${esc(ph.id)} · ${esc(ph.label)}</li>` + rows.map(({ s, i }, k) => {
-        const gate = Timeline.isGate(s.name), c = counts[String(i)];
-        return `<li style="--k:${i}"><button class="mv-st ${c ? 'has' : ''} ${k === 0 ? 'first' : ''} ${k === rows.length - 1 ? 'last' : ''}" style="--c:var(--ph${pi + 1})" data-action="pipe-station" data-key="${i}" aria-pressed="${sel === String(i)}">
-          <span class="mv-mark">${gate ? `<b>G${Timeline.gateNumber(s.name)}</b>` : '<i></i>'}</span>
-          <span class="mv-name">${esc(gate ? `Gate ${Timeline.gateNumber(s.name)} : ${Timeline.gateTitle(s.name)}` : s.name)}</span>
-          ${c ? `<span class="mv-count ${c.risk ? 'risk' : ''}">${c.n}</span>` : ''}</button></li>`;
-      }).join('');
-    }).join('');
-    return `<div class="metro-head"><div class="metro-legend">${legend}</div><div class="metro-ends">${ends}</div></div>
-      <div class="metro-scroll" tabindex="-1"><svg class="metro-svg" viewBox="0 0 ${width} ${height}" role="group" aria-label="Plan du processus de développement client">
-        ${phaseLabels}${segs}${stations}</svg></div>
-      <ol class="metro-v" aria-label="Plan du processus de développement client">${vert}</ol>`;
-  },
-
-  /** Ordre d'affichage : sans timeline, puis les étapes du modèle, puis les projets lancés. */
-  rank(key) { return /^\d+$/.test(key) ? Number(key) : key === 'launched' ? 999 : -1; },
-
-  stationLabel(key) {
-    if (key === 'unplanned') return 'Sans timeline';
-    if (key === 'launched') return 'Lancés';
-    const s = CONFIG.timelineTemplate[Number(key)];
-    return s ? (Timeline.isGate(s.name) ? `Gate ${Timeline.gateNumber(s.name)} : ${Timeline.gateTitle(s.name)}` : s.name) : '';
-  },
-
-  listHTML(items, sel) {
-    Pipeline._n = 0;
-    const shown = (sel ? items.filter(x => x.key === sel) : items).slice().sort((a, b) =>
-      (b.sg.atRisk - a.sg.atRisk) || (Rules.isProjectLate(b.p) - Rules.isProjectLate(a.p)) ||
-      (Pipeline.rank(a.key) - Pipeline.rank(b.key)) || cmp(Dates.key(a.p.launch_date), Dates.key(b.p.launch_date)));
-    const head = `<div class="mlist-head"><h2 class="card-title" id="pipeListH">${sel ? `${esc(Pipeline.stationLabel(sel))} <span class="muted small">${shown.length} projet${shown.length > 1 ? 's' : ''}</span>` : `Tous les projets <span class="muted small">${shown.length}</span>`}</h2>
-      ${sel ? '<button class="btn btn-glass btn-sm" data-action="pipe-station" data-key="">Afficher tous les projets</button>' : ''}</div>`;
-    if (!items.length) return head + UI.empty({ icon: 'layers', title: 'Aucun projet ne correspond aux filtres', sub: 'Modifiez les filtres du pipeline.' });
-    return head + shown.map(Pipeline.rowHTML).join('');
-  },
-
-  rowHTML({ p, sg }) {
-    const lead = Rules.projectLeadName(p);
-    const step = sg.kind === 'step' ? sg.step : null;
-    const late = Rules.isProjectLate(p), fc = Timeline.forecast(p);
-    const gateNo = step?.gate ? Timeline.gateNumber(step.name) : null;
-    const risk = step?.status === 'warning';
-    const phaseNo = step ? CONFIG.phases.findIndex(ph => ph.id === step.phase) + 1 : 0;
-    const bullet = risk ? '<span class="mbullet risk" aria-hidden="true">!</span>'
-      : gateNo ? `<span class="mbullet gate" aria-hidden="true">G${gateNo}</span>`
-      : `<span class="mbullet" style="--c:${phaseNo ? `var(--ph${phaseNo})` : 'var(--neutral)'}" aria-hidden="true">${phaseNo || '–'}</span>`;
-    const where = step ? (gateNo ? `Gate ${gateNo} : ${Timeline.gateTitle(step.label)}` : step.label) : sg.kind === 'launched' ? 'Toutes les étapes terminées' : 'Timeline non planifiée';
-    const lastDec = gateNo ? Store.lastGateDecision(p.id, gateNo) : null;
-    const gateInfo = gateNo ? (lastDec ? `<span class="badge ${CONFIG.gateDecisions[lastDec.decision]?.badge || 'b-neutral'}">Gate ${gateNo} : ${esc(CONFIG.gateDecisions[lastDec.decision]?.label || lastDec.decision)}</span>`
-      : `<span class="badge b-gate">Décision Gate ${gateNo} attendue</span>`) : '';
-    const stats = step ? Timeline.taskStats(p.id, Store.tasksIn('customer')).get(Timeline.stepKey(step)) : null;
-    const state = step && step.status !== 'upcoming' ? `<span class="badge ${risk ? 'b-danger' : 'b-info'}">${esc(CONFIG.stepStatuses[step.status].label)}${step.prog ? ` · ${step.prog} %` : ''}</span>` : '';
-    return `<button class="mrow" style="--i:${Pipeline._n = (Pipeline._n || 0) + 1}" data-action="open-project" data-id="${esc(p.id)}" title="Synchronisé avec la version ${esc(p.version || 'v1')} du one-pager${p.updated_at ? ', enregistrée le ' + esc(Dates.fmt(p.updated_at)) : ''}">
-      ${bullet}
-      <span class="grow" style="min-width:0"><span class="mrow-name">${esc(p.project_name)}<span class="pipe-ver">${esc(p.version || 'v1')}</span></span>
-        <span class="mrow-sub">${esc(p.client_name || 'Client non renseigné')} · ${esc(where)}${lead ? ` · ${esc(lead)}` : ''}</span></span>
-      <span class="mrow-info">${state}${gateInfo}
-        ${stats && stats.open ? `<span class="pipe-card-tasks">${icon('list', 'sm')}${stats.open} tâche${stats.open > 1 ? 's' : ''} ouverte${stats.open > 1 ? 's' : ''}</span>` : ''}
-        ${fc && fc.slip > 0 ? `<span class="pipe-card-slip">${icon('clock', 'sm')}Glissement ${esc(Timeline.fmtSlip(fc.slip))}</span>` : ''}
-        ${p.status === 'paused' ? '<span class="badge b-warn">En pause</span>' : ''}</span>
-      <span class="mrow-date"><span class="due ${late ? 'overdue' : ''}">${late ? icon('alert', 'sm') : icon('rocket', 'sm')}${esc(p.launch_date ? Dates.fmt(p.launch_date) : 'Lancement à définir')}</span>
-        ${p.launch_date ? `<div class="cell-sub">semaine ${Dates.isoWeek(Dates.key(p.launch_date))}</div>` : ''}</span>
-    </button>`;
-  },
-};
-Actions['pipe-station'] = el => {
-  const st = App.view('pipeline', Pipeline.defaults);
-  st.station = st.station === el.dataset.key ? '' : el.dataset.key;
-  Pipeline.renderBoard();
-  document.getElementById('pipeList')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-};
-ChangeActions['pipe-filter'] = el => { App.view('pipeline', Pipeline.defaults)[el.dataset.key] = el.value; Pipeline.renderBoard(); };
-Actions['dash-go'] = el => {
-  const t = el.dataset.target;
-  if (t.startsWith('projects')) { Object.assign(App.view('projects', ProjectsPage.defaults), ProjectsPage.defaults, { status: t === 'projects-active' ? 'active' : '' }); Router.go(App.ws, 'projects-all'); }
-  else {
-    const preset = { 'tasks-open': { status: 'open' }, 'tasks-overdue': { due: 'overdue' }, 'tasks-mine': { assignee: Store.me.id, status: 'open' } }[t] || {};
-    Object.assign(App.view('tasks', TasksPage.defaults), TasksPage.defaults, preset); Router.go(App.ws, 'tasks-all');
-  }
-};
-Routes.home = { module: 'home', render: v => Home.render(v) };
 
 /* ---------- Liste des projets (vue principale) ---------- */
 const ProjectsPage = {
@@ -4075,6 +3957,18 @@ function loadScript(src) {
 }
 const Export = {
   xlsxUrl: 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js',
+  /** Écrit un classeur : sheets = [[nom de l'onglet, en-têtes, lignes], …]. Colonnes ajustées, filtres activés. */
+  book(sheets, file) {
+    const wb = XLSX.utils.book_new();
+    sheets.forEach(([name, head, rows]) => {
+      const sh = XLSX.utils.aoa_to_sheet([head, ...rows], { cellDates: true, dateNF: 'dd/mm/yyyy' });
+      sh['!cols'] = head.map((h, i) => ({ wch: Math.min(48, Math.max(h.length + 2, ...rows.map(r => String(r[i] instanceof Date ? '00/00/0000' : r[i] ?? '').length + 2))) }));
+      sh['!autofilter'] = { ref: XLSX.utils.encode_range({ s: { r: 0, c: 0 }, e: { r: rows.length, c: head.length - 1 } }) };
+      XLSX.utils.book_append_sheet(wb, sh, name.slice(0, 31));
+    });
+    XLSX.writeFile(wb, file);
+    return file;
+  },
   /** Exporte les projets affichés (filtres et tri de la liste respectés). */
   async projects(rows) {
     try {
@@ -4448,7 +4342,7 @@ const HomeHub = {
     const ws = App.ws, me = Store.me, today = Dates.today(), in7 = Dates.addDays(today, 7);
     const projects = Store.projectsIn(ws), infos = projectInfos(ws), tasks = Store.tasksIn(ws), meetings = Store.meetingsIn(ws);
     const open = tasks.filter(t => !Rules.isTaskDone(t)), late = open.filter(t => Rules.isTaskOverdue(t, today));
-    const mine = open.filter(t => t.assignee_id === me.id);
+    const allMine = MySpace.tasksOf(me.id).filter(t => !Rules.isTaskDone(t));
     const week = open.filter(t => t.due_date && Dates.key(t.due_date) >= today && Dates.key(t.due_date) <= in7).length;
     const gates = ws === 'customer' ? infos.filter(r => r.gate && r.gate.inDays !== null && r.gate.inDays >= 0 && r.gate.inDays <= Board.GATE_SOON_DAYS).length : 0;
     const active = projects.filter(p => p.status === 'active').length;
@@ -4458,7 +4352,9 @@ const HomeHub = {
       { page: 'calendar', icon: 'calendar', color: 'var(--ph3)', title: 'Calendrier', sub: `${plural(week, 'échéance', 'échéances')} dans les 7 jours`, meta: gates ? `<span class="badge b-gate">${plural(gates, 'Gate', 'Gates')} dans les ${Board.GATE_SOON_DAYS} j</span>` : '' },
       { page: 'meetings', icon: 'notes', color: 'var(--ph4)', title: 'Meeting Minutes', sub: plural(meetings.length, 'compte-rendu', 'comptes-rendus'), meta: meetings[0]?.meeting_date ? `<span class="chip">Dernier : ${esc(Dates.fmt(meetings[0].meeting_date))}</span>` : '' },
       ...(CONFIG.modules[ws].includes('analytics') ? [{ page: 'analytics', icon: 'chart', color: 'var(--bar)', title: 'Analytiques', sub: 'Lancements par mois, retards par personne' }] : []),
-      { page: 'me', icon: 'check', color: 'var(--space)', title: 'Mon espace', sub: `${plural(mine.length, 'tâche', 'tâches')} à traiter pour vous`, meta: mine.filter(t => Rules.isTaskOverdue(t, today)).length ? `<span class="badge b-danger">${mine.filter(t => Rules.isTaskOverdue(t, today)).length} en retard</span>` : '' },
+      ...(ws === 'pdqa' ? HomeHub.pdqaTiles(today) : []),
+      { page: 'me', icon: 'user', color: 'var(--space)', title: 'Mon espace', sub: `${plural(allMine.length, 'tâche ouverte', 'tâches ouvertes')}${Perm.workspacesFor(me).length > 1 ? ', tous espaces confondus' : ''}`,
+        meta: allMine.filter(t => Rules.isTaskOverdue(t, today)).length ? `<span class="badge b-danger">${allMine.filter(t => Rules.isTaskOverdue(t, today)).length} en retard</span>` : '' },
     ];
     const risky = infos.filter(r => r.meteo === 'late' || r.meteo === 'risk').length;
     const alert = (risky || gates) && ws === 'customer' ? `<div class="hub-alert">${icon('alert', 'sm')}<span>${[risky && plural(risky, 'projet demande', 'projets demandent') + ' votre attention', gates && plural(gates, 'Gate est prévue', 'Gates sont prévues') + ` dans les ${Board.GATE_SOON_DAYS} jours`].filter(Boolean).join(' · ')}</span>
@@ -4466,6 +4362,23 @@ const HomeHub = {
     view.innerHTML = pageHeader({ title: `Bonjour ${(me.name || '').split(' ')[0]}`, sub: `${Dates.long(today)} · ${CONFIG.workspaces[ws].label}`,
       actions: `<button class="btn btn-glass" data-action="new-task">${icon('plus', 'sm')}Tâche</button><button class="btn btn-primary" data-action="new-project">${icon('plus', 'sm')}Nouveau projet</button>` }) +
       `<div class="page-body">${alert}${Tiles.html(tiles, 'lg')}</div>`;
+  },
+  /** Tuiles des quatre modules PDQA, avec leur indicateur principal. */
+  pdqaTiles(today) {
+    const ideas = PdqaData.list('innovations'), evs = PdqaData.list('events'), mp = PdqaData.list('mpItems');
+    const next = evs.filter(e => e.status !== 'cancelled' && Events.end(e) >= today).sort((a, b) => cmp(Events.start(a), Events.start(b)))[0];
+    const planned = Store.projectsIn('pdqa').filter(p => p.status !== 'done'), unplanned = planned.filter(p => !p.start_date || !p.launch_date).length;
+    const mpOpen = mp.filter(i => !Mp.isDecided(i)), mpLate = mpOpen.filter(i => Mp.isLate(i, today)).length;
+    return [
+      { page: 'innovation', icon: 'bulb', color: 'var(--brand)', title: 'Innovation', sub: plural(ideas.filter(i => ['idea', 'study'].includes(i.stage)).length, 'idée à l\'étude', 'idées à l\'étude'),
+        meta: ideas.some(i => i.stage === 'validated') ? `<span class="badge b-ok">${plural(ideas.filter(i => i.stage === 'validated').length, 'idée validée', 'idées validées')}</span>` : '' },
+      { page: 'events', icon: 'pin', color: 'var(--ph2)', title: 'Visites / Workshop / Salon', sub: next ? `Prochain : ${next.title}` : 'Aucun événement à venir',
+        meta: next ? `<span class="chip">${esc(Events.dates(next))}</span>` : '' },
+      { page: 'planning', icon: 'gantt', color: 'var(--ph3)', title: 'Planning des projets', sub: plural(planned.length, 'initiative en cours', 'initiatives en cours'),
+        meta: unplanned ? `<span class="badge b-warn">${unplanned} à planifier</span>` : '' },
+      { page: 'mp', icon: 'flask', color: 'var(--ph4)', title: 'Prévalidation MP', sub: plural(mpOpen.length, 'matière en revue', 'matières en revue'),
+        meta: mpLate ? `<span class="badge b-danger">${plural(mpLate, 'échéance dépassée', 'échéances dépassées')}</span>` : '' },
+    ];
   },
 };
 
@@ -4482,7 +4395,6 @@ const ProjectsHub = {
       { page: 'projects-board', icon: 'kanban', color: 'var(--ph1)', title: 'Synthèse', sub: 'Tous les projets en kanban, étape par étape, export Excel', meta: Tiles.meteoBar(infos.filter(r => r.meteo !== 'done')) + Tiles.counts(infos) },
       { page: 'projects-by', param: 'client', icon: 'building', color: 'var(--ph2)', title: 'Par client', sub: plural(clients, 'client', 'clients') },
       { page: 'projects-by', param: 'lead', icon: 'users', color: 'var(--ph3)', title: 'Par Project Lead', sub: plural(leads, 'Project Lead', 'Project Leads') },
-      { page: 'pipeline', icon: 'layers', color: 'var(--ph4)', title: 'Pipeline', sub: 'Plan du processus : combien de projets à chaque étape' },
     ];
     view.innerHTML = pageHeader({ title: 'Projets', sub: pdqa ? 'Initiatives internes, qualité et projets transverses.' : 'Choisissez comment parcourir les projets.',
       crumbs: [{ label: 'Projets' }], actions: `<button class="btn btn-primary" data-action="new-project">${icon('plus', 'sm')}Nouveau projet</button>` }) +
@@ -4555,18 +4467,6 @@ const SimplePages = {
       crumbs: [{ page: 'projects', label: 'Projets' }, { label: 'Synthèse' }], actions: `<button class="btn btn-primary" data-action="new-project">${icon('plus', 'sm')}Nouveau projet</button>` }) +
       '<div class="page-body" id="boardBody"></div>';
     Board.render(document.getElementById('boardBody'), {});
-  },
-  pipeline(view) {
-    view.innerHTML = pageHeader({ title: 'Pipeline', sub: 'Chaque projet est placé à son étape actuelle. Cliquez une station pour voir ses projets.',
-      crumbs: [{ page: 'projects', label: 'Projets' }, { label: 'Pipeline' }], actions: '<span class="result-count" id="pipeCount"></span>' }) +
-      '<div class="page-body" id="pipeBody"></div>';
-    Pipeline.render(document.getElementById('pipeBody'));
-  },
-  me(view) {
-    view.innerHTML = pageHeader({ title: 'Mon espace', sub: 'Vos tâches à traiter et les indicateurs de l\'espace.', crumbs: [{ label: 'Mon espace' }],
-      actions: `<button class="btn btn-primary" data-action="new-task">${icon('plus', 'sm')}Nouvelle tâche</button>` }) +
-      '<div class="page-body" id="homeBody"></div>';
-    Home.summary(document.getElementById('homeBody'));
   },
 };
 
@@ -4646,20 +4546,885 @@ const TasksHub = {
 };
 ChangeActions['tasks-group-done'] = el => { App.view('tasksGroup', { done: false }).done = el.checked; Router.refresh(); };
 
+/* ==========================================================================
+   Jalon — 08 · Modules de l'espace PDQA
+   Innovation, Visites / Workshop / Salon, Planning des projets, Prévalidation MP.
+   Les données de ces modules ne sont chargées que pour les fonctions autorisées
+   dans l'espace PDQA (voir PdqaData.load) et toutes les lectures et écritures
+   passent par PdqaData, qui revérifie l'accès à chaque appel.
+   ========================================================================== */
+
+/* ---------- Accès aux données des modules PDQA ---------- */
+const PdqaData = {
+  /** Clé dans Store → table Supabase, indicateur de migration, tri, nom pour l'historique. */
+  TABLES: {
+    innovations: { table: 'pdqa_innovations', flag: 'innovations', order: 'created_at', entity: 'innovation' },
+    events:      { table: 'pdqa_events', flag: 'events', order: 'start_date', entity: 'event' },
+    mpItems:     { table: 'pdqa_mp_prevalidations', flag: 'mp', order: 'created_at', entity: 'mp' },
+  },
+  list(key) { return Store.canSee('pdqa') ? Store[key] : []; },
+  get(key, id) { return id ? PdqaData.list(key).find(x => x.id === id) || null : null; },
+  /** false seulement si la table n'existe pas encore (migration 004 non exécutée). */
+  ready(key) { return Store.schema[PdqaData.TABLES[key].flag] !== false; },
+  load(key) {
+    const t = PdqaData.TABLES[key];
+    if (!Perm.canAccessPDQA(Store.me)) { Store[key] = []; return Promise.resolve(); }   // rien n'est téléchargé sans accès
+    return Store.loadOptional(t.table, key, t.flag, t.order);
+  },
+  loadAll() { return Promise.all(Object.keys(PdqaData.TABLES).map(PdqaData.load)); },
+  guard(key) {
+    if (!Store.canSee('pdqa')) throw new Error('Action réservée à l\'espace PDQA.');
+    if (!PdqaData.ready(key)) throw new Error('pdqa_ : base pas encore à jour');
+  },
+  /** Crée (id vide) ou met à jour une ligne, et vérifie que la base a confirmé l'enregistrement. */
+  async save(key, id, payload, summary) {
+    PdqaData.guard(key);
+    const t = PdqaData.TABLES[key], row = { ...payload, updated_at: new Date().toISOString() };
+    const { data, error } = id
+      ? await Store.db.from(t.table).update(row).eq('id', id).select()
+      : await Store.db.from(t.table).insert({ ...row, created_by: Store.me?.id || null }).select();
+    if (error) throw error;
+    if (!data || !data.length) throw new Error('La base n\'a pas confirmé l\'enregistrement.');
+    const saved = data[0], current = PdqaData.get(key, id);
+    if (current) Object.assign(current, saved); else Store[key].unshift(saved);
+    Audit.log({ entity: t.entity, entityId: saved.id, projectId: saved.project_id || null, action: id ? 'update' : 'create', summary });
+    return saved;
+  },
+  async remove(key, id, summary) {
+    PdqaData.guard(key);
+    const t = PdqaData.TABLES[key], item = PdqaData.get(key, id);
+    if (!item) throw new Error('Élément introuvable.');
+    const { error } = await Store.db.from(t.table).delete().eq('id', id);
+    if (error) throw error;
+    Store[key] = Store[key].filter(x => x.id !== id);
+    Audit.log({ entity: t.entity, entityId: id, projectId: item.project_id || null, action: 'delete', summary });
+  },
+  /** Bandeau affiché tant que la migration 004 n'a pas été exécutée. */
+  notice(key) {
+    return PdqaData.ready(key) ? '' : `<div class="notice mb-4">${icon('alert')}<span>Ce module a besoin de nouvelles tables dans la base.
+      Exécutez une fois le script <b>MIGRATION_004_MODULES_PDQA.sql</b> dans Supabase (SQL Editor → New query → Run), puis rechargez la page.</span></div>`;
+  },
+};
+
+/* ---------- Petits outils de formulaire (panneaux latéraux et pages) ---------- */
+const Form = {
+  field(id, label, control, { req = false, full = false, hint = '' } = {}) {
+    return `<div class="field${full ? ' full' : ''}"><label class="label" for="${id}">${esc(label)}${req ? ' <span class="req" aria-hidden="true">*</span>' : ''}</label>
+      ${control}${hint ? `<span class="hint">${esc(hint)}</span>` : ''}<span class="error-msg" id="err_${id}"></span></div>`;
+  },
+  input: (id, value, attrs = '') => `<input class="input" id="${id}" value="${esc(value ?? '')}" aria-describedby="err_${id}" ${attrs}>`,
+  date: (id, value) => `<input class="input" type="date" id="${id}" value="${esc(Dates.key(value) || '')}" aria-describedby="err_${id}">`,
+  textarea: (id, value, rows = 3, placeholder = '') => `<textarea class="textarea" id="${id}" rows="${rows}" placeholder="${esc(placeholder)}">${esc(value || '')}</textarea>`,
+  select: (id, optionsHtml) => `<select class="select" id="${id}" aria-describedby="err_${id}">${optionsHtml}</select>`,
+  val: (root, id) => (root.querySelector('#' + id)?.value || '').trim(),
+  picked: (root, group) => [...root.querySelectorAll(`[data-group="${group}"][aria-pressed="true"]`)].map(b => b.dataset.value),
+  chips(group, items, selected = []) {
+    return `<div class="part-grid" role="group">${items.map(i => `<button type="button" class="part-chip" data-action="chip-toggle" data-group="${group}" data-value="${esc(i.value)}" aria-pressed="${selected.includes(i.value)}">${i.avatar || ''}${esc(i.label)}</button>`).join('')}</div>`;
+  },
+  /** Affiche les erreurs { id: message } et place le curseur sur le premier champ en erreur. */
+  errors(root, fields = {}) {
+    root.querySelectorAll('.error-msg').forEach(el => { el.textContent = ''; });
+    root.querySelectorAll('[aria-invalid]').forEach(el => el.removeAttribute('aria-invalid'));
+    let first = null;
+    Object.entries(fields).forEach(([id, msg]) => {
+      const out = root.querySelector('#err_' + id), input = root.querySelector('#' + id);
+      if (out) out.textContent = msg;
+      if (input) { input.setAttribute('aria-invalid', 'true'); first = first || input; }
+    });
+    first?.focus();
+    return Object.keys(fields).length > 0;
+  },
+  /** Panneau latéral contenant un formulaire. Renvoie l'élément <form>. */
+  drawer({ id, title, body, foot }) {
+    const panel = Overlay.open(`<form id="${id}" novalidate style="display:contents">
+        <div class="drawer-head"><h2 class="modal-title" style="margin:0">${esc(title)}</h2>
+          <button type="button" class="btn btn-ghost btn-icon" data-action="close-overlay" aria-label="Fermer">${icon('x')}</button></div>
+        <div class="drawer-body">${body}</div><div class="drawer-foot">${foot}</div></form>`, { type: 'drawer', label: title });
+    return panel.querySelector('form');
+  },
+  levelOptions: selected => UI.options(Object.entries(CONFIG.pdqaModules.levels).map(([v, l]) => ({ value: v, label: l })), String(selected || 2)),
+};
+/** Élément d'une liste de référence (CONFIG) par identifiant ; valeur inconnue → premier élément (valeur par défaut). */
+const refItem = (list, id) => list.find(x => x.id === id) || list[0];
+
+/* ==========================================================================
+   Innovation : de l'idée au projet
+   Étapes : Idée → En étude → Validée → Transformée en projet (ou Abandonnée).
+   Deux vues : tableau par étape, et matrice potentiel / effort pour prioriser.
+   ========================================================================== */
+const Innovation = {
+  defaults: { q: '', owner: '', category: '', view: 'board', closed: false },
+  FLOW: ['idea', 'study', 'validated'],      // étapes que l'on peut parcourir avec les flèches
+  stage: id => refItem(CONFIG.pdqaModules.innovationStages, id),
+  level: n => CONFIG.pdqaModules.levels[Number(n) || 2],
+  /** Priorité (1 à 9) : potentiel élevé et effort faible d'abord. */
+  score: i => (Number(i.potential) || 2) * (4 - (Number(i.effort) || 2)),
+  linkedProject: i => (i.project_id ? Store.projectIn('pdqa', i.project_id) : null),
+
+  filtered() {
+    const st = App.view('innovation', Innovation.defaults), q = st.q.toLowerCase();
+    return PdqaData.list('innovations').filter(i => (!q || [i.title, i.description, i.target].some(v => String(v || '').toLowerCase().includes(q))) &&
+      (!st.owner || i.owner_id === st.owner) && (!st.category || i.category === st.category));
+  },
+
+  render(view) {
+    const st = App.view('innovation', Innovation.defaults), all = PdqaData.list('innovations'), cfg = CONFIG.pdqaModules;
+    const open = all.filter(i => ['idea', 'study'].includes(i.stage)).length;
+    view.innerHTML = pageHeader({ title: 'Innovation', crumbs: [{ label: 'Innovation' }],
+      sub: `${plural(open, 'idée à l\'étude', 'idées à l\'étude')} · ${plural(all.filter(i => i.stage === 'validated').length, 'validée', 'validées')} · ${plural(all.filter(i => i.stage === 'project').length, 'devenue projet', 'devenues projets')}`,
+      actions: `<button class="btn btn-primary" data-action="inno-new" ${PdqaData.ready('innovations') ? '' : 'disabled'}>${icon('plus', 'sm')}Nouvelle idée</button>` }) +
+      `<div class="page-body">${PdqaData.notice('innovations')}<div class="toolbar card" role="search">
+        <div class="search">${icon('search', 'sm')}<input class="input" type="search" placeholder="Rechercher une idée" value="${esc(st.q)}" data-input="inno-filter" data-key="q" aria-label="Rechercher une idée"></div>
+        <select class="select" data-change="inno-filter" data-key="owner" aria-label="Filtrer par porteur">${UI.userOptions(st.owner, 'Tous les porteurs')}</select>
+        <select class="select" data-change="inno-filter" data-key="category" aria-label="Filtrer par catégorie">${UI.options(cfg.innovationCategories.map(c => ({ value: c, label: c })), st.category, { placeholder: 'Toutes les catégories' })}</select>
+        <span class="spacer"></span>
+        ${st.view === 'board' ? `<label class="check"><input type="checkbox" data-change="inno-closed" ${st.closed ? 'checked' : ''}>Afficher les idées abandonnées</label>` : ''}
+        <div class="segmented" role="group" aria-label="Affichage"><button data-action="inno-view" data-view="board" aria-pressed="${st.view === 'board'}">Par étape</button><button data-action="inno-view" data-view="matrix" aria-pressed="${st.view === 'matrix'}">Matrice potentiel / effort</button></div>
+      </div><div id="innoBody"></div></div>`;
+    Innovation.renderBody();
+  },
+  renderBody() {
+    const box = document.getElementById('innoBody'); if (!box) return;
+    const st = App.view('innovation', Innovation.defaults), list = Innovation.filtered();
+    if (!PdqaData.list('innovations').length) {
+      box.innerHTML = `<div class="card">${UI.empty({ icon: 'bulb', title: 'Aucune idée pour le moment', sub: 'Notez une piste d\'innovation : elle pourra devenir une initiative PDQA.',
+        action: PdqaData.ready('innovations') ? `<button class="btn btn-primary" data-action="inno-new">${icon('plus', 'sm')}Nouvelle idée</button>` : '' })}</div>`;
+      return;
+    }
+    box.innerHTML = st.view === 'matrix' ? Innovation.matrixHTML(list) : Innovation.boardHTML(list);
+  },
+
+  boardHTML(list) {
+    const st = App.view('innovation', Innovation.defaults);
+    const stages = CONFIG.pdqaModules.innovationStages.filter(s => st.closed || s.id !== 'rejected');
+    return `<div class="kanban inno-board" style="--cols:${stages.length}">${stages.map(s => {
+      const cards = list.filter(i => i.stage === s.id).sort((a, b) => Innovation.score(b) - Innovation.score(a) || cmp(b.created_at, a.created_at));
+      return `<section class="kb-col" aria-labelledby="inh-${s.id}"><div class="kb-col-head"><span class="badge ${s.badge} no-dot" id="inh-${s.id}">${esc(s.label)}</span>
+          <span class="kb-count">${cards.length}</span></div>
+        <div class="kb-list">${cards.map(Innovation.cardHTML).join('') || '<div class="kb-empty">Aucune idée</div>'}</div></section>`;
+    }).join('')}</div>`;
+  },
+
+  cardHTML(i) {
+    const u = Store.user(i.owner_id), pos = Innovation.FLOW.indexOf(i.stage), proj = Innovation.linkedProject(i);
+    const move = (dir, label, ic) => `<button data-action="inno-move" data-id="${esc(i.id)}" data-dir="${dir}" aria-label="${esc(label)}" title="${esc(label)}">${icon(ic, 'sm')}</button>`;
+    const moves = pos < 0 ? '' : `<div class="kb-moves">${pos > 0 ? move(-1, `Revenir à « ${Innovation.stage(Innovation.FLOW[pos - 1]).label} »`, 'left') : ''}${pos < Innovation.FLOW.length - 1 ? move(1, `Passer à « ${Innovation.stage(Innovation.FLOW[pos + 1]).label} »`, 'right') : ''}</div>`;
+    const action = i.stage === 'validated' || (i.stage === 'project' && !proj)
+      ? `<button class="btn btn-glass btn-sm" data-action="inno-project" data-id="${esc(i.id)}">${icon('folder', 'sm')}Créer le projet</button>`
+      : proj ? `<button class="link-muted small" data-action="open-project" data-ws="pdqa" data-id="${esc(proj.id)}">${icon('open', 'sm')} ${esc(proj.project_name)}</button>` : '';
+    return `<article class="kb-card inno-card">${moves}
+      <button class="kb-title link-btn" data-action="inno-edit" data-id="${esc(i.id)}" style="padding-right:56px">${esc(i.title)}</button>
+      ${i.target ? `<div class="cell-sub" style="margin:-4px 0 8px">${esc(i.target)}</div>` : ''}
+      <div class="kb-meta">${i.category ? `<span class="chip">${esc(i.category)}</span>` : ''}
+        <span class="inno-pe" title="Potentiel ${esc(Innovation.level(i.potential))}, effort ${esc(Innovation.level(i.effort))}">Potentiel ${esc(Innovation.level(i.potential).toLowerCase())} · effort ${esc(Innovation.level(i.effort).toLowerCase())}</span>
+        ${u ? `<span title="${esc(u.name)}">${avatar(u, 24)}</span>` : ''}</div>
+      ${action ? `<div class="inno-action">${action}</div>` : ''}</article>`;
+  },
+
+  /** Matrice 3 × 3 : potentiel (lignes, du plus fort au plus faible) × effort (colonnes, du plus faible au plus fort). */
+  matrixHTML(list) {
+    const live = list.filter(i => !['rejected', 'project'].includes(i.stage)), lv = CONFIG.pdqaModules.levels;
+    const cells = [3, 2, 1].map(p => [1, 2, 3].map(e => {
+      const items = live.filter(i => (Number(i.potential) || 2) === p && (Number(i.effort) || 2) === e);
+      const best = p === 3 && e === 1, hint = best ? 'À prioriser' : p === 3 && e === 3 ? 'Projet de fond' : p === 1 && e === 3 ? 'À reconsidérer' : '';
+      return `<div class="mx-cell ${best ? 'is-best' : ''}" role="cell" aria-label="Potentiel ${lv[p]}, effort ${lv[e]} : ${items.length} idée(s)">
+        ${hint ? `<span class="mx-hint">${hint}</span>` : ''}${items.map(i => `<button class="mx-item" data-action="inno-edit" data-id="${esc(i.id)}"><span class="badge ${Innovation.stage(i.stage).badge} no-dot">${esc(Innovation.stage(i.stage).label)}</span>${esc(i.title)}</button>`).join('')}</div>`;
+    }).join('')).join('');
+    return `<section class="card card-pad"><p class="muted small mb-4">Idées en cours (hors idées abandonnées et devenues projets), placées selon leur potentiel et l'effort estimé.</p>
+      <div class="matrix" role="table" aria-label="Matrice potentiel / effort">
+        <div class="mx-ylab" aria-hidden="true">Potentiel</div>
+        <div class="mx-rows">${[3, 2, 1].map(p => `<span class="mx-rl">${lv[p]}</span>`).join('')}</div>
+        <div class="mx-grid">${cells}</div>
+        <div></div><div></div><div class="mx-cols">${[1, 2, 3].map(e => `<span>${lv[e]}</span>`).join('')}</div>
+        <div></div><div></div><div class="mx-xlab" aria-hidden="true">Effort</div>
+      </div></section>`;
+  },
+
+  open(id) {
+    const i = id ? PdqaData.get('innovations', id) : null;
+    if (id && !i) { Toast.show('Idée introuvable.', 'error'); return; }
+    const cfg = CONFIG.pdqaModules, v = i || { title: '', stage: 'idea', potential: 2, effort: 2, owner_id: Store.me.id };
+    const proj = i && Innovation.linkedProject(i);
+    const stages = cfg.innovationStages.filter(s => s.id !== 'project' || v.stage === 'project');
+    const form = Form.drawer({ id: 'innoForm', title: i ? 'Modifier l\'idée' : 'Nouvelle idée',
+      body: `${Form.field('in_title', 'Titre', Form.input('in_title', v.title, 'placeholder="ex : Barre protéinée à base de pois" autofocus required'), { req: true })}
+        ${Form.field('in_desc', 'Description', Form.textarea('in_desc', v.description, 4, 'Le besoin, l\'idée, ce qui la rend intéressante'))}
+        <div class="form-grid">${Form.field('in_cat', 'Catégorie', Form.select('in_cat', UI.options(cfg.innovationCategories.map(c => ({ value: c, label: c })), v.category, { placeholder: '— Choisir —' })))}
+          ${Form.field('in_owner', 'Porteur de l\'idée', Form.select('in_owner', UI.userOptions(v.owner_id, '— Non défini —')))}</div>
+        ${Form.field('in_target', 'Client ou marché visé', Form.input('in_target', v.target, 'placeholder="ex : Herbalife, sport, seniors…"'))}
+        <div class="form-grid">${Form.field('in_pot', 'Potentiel', Form.select('in_pot', Form.levelOptions(v.potential)), { hint: 'Intérêt commercial ou stratégique' })}
+          ${Form.field('in_eff', 'Effort', Form.select('in_eff', Form.levelOptions(v.effort)), { hint: 'Temps, coût, complexité' })}</div>
+        ${Form.field('in_stage', 'Étape', Form.select('in_stage', UI.options(stages.map(s => ({ value: s.id, label: s.label })), v.stage)) )}
+        ${proj ? `<div class="notice info">${icon('folder')}<span>Cette idée est devenue l'initiative <b>${esc(proj.project_name)}</b>.</span><button type="button" class="btn btn-glass btn-sm" data-action="open-project" data-ws="pdqa" data-id="${esc(proj.id)}">Ouvrir</button></div>` : ''}`,
+      foot: `${i ? `<button type="button" class="btn btn-danger left" data-action="inno-delete" data-id="${esc(i.id)}">${icon('trash', 'sm')}Supprimer</button>` : ''}
+        <button type="button" class="btn btn-ghost" data-action="close-overlay">Annuler</button><button type="submit" class="btn btn-primary">${i ? 'Enregistrer' : 'Ajouter l\'idée'}</button>` });
+    form.addEventListener('submit', e => { e.preventDefault(); Innovation.save(form, i); });
+  },
+
+  async save(form, item) {
+    const val = id => Form.val(form, id);
+    if (!val('in_title')) { Form.errors(form, { in_title: 'Le titre est obligatoire.' }); return; }
+    Form.errors(form, {});
+    const payload = { title: val('in_title').slice(0, 200), description: val('in_desc') || null, category: val('in_cat') || null, target: val('in_target') || null,
+      owner_id: val('in_owner') || null, stage: val('in_stage') || 'idea', potential: Number(val('in_pot')) || 2, effort: Number(val('in_eff')) || 2 };
+    const btn = form.querySelector('[type="submit"]'); btn.disabled = true;
+    try {
+      await PdqaData.save('innovations', item?.id, payload, item ? `Idée « ${payload.title} » modifiée` : `Idée ajoutée : « ${payload.title} »`);
+      Overlay.close(); Toast.show(item ? 'Idée enregistrée.' : 'Idée ajoutée.'); Router.refresh();
+    } catch (e) { Toast.error(e); } finally { if (document.contains(btn)) btn.disabled = false; }
+  },
+
+  async move(id, dir) {
+    const i = PdqaData.get('innovations', id), pos = i ? Innovation.FLOW.indexOf(i.stage) : -1, next = Innovation.FLOW[pos + dir];
+    if (!i || pos < 0 || !next) return;
+    try { await PdqaData.save('innovations', id, { stage: next }, `Idée « ${i.title} » : ${Innovation.stage(next).label}`); Toast.show(`« ${i.title} » → ${Innovation.stage(next).label}`); }
+    catch (e) { Toast.error(e); }
+    Innovation.renderBody();
+  },
+
+  /** Crée l'initiative PDQA à partir de l'idée, relie les deux, puis ouvre le formulaire de l'initiative pour compléter ses dates. */
+  converting: new Set(),   // idées en cours de transformation (évite deux initiatives sur un double clic)
+  async toProject(id) {
+    const i = PdqaData.get('innovations', id); if (!i || Innovation.converting.has(id)) return;
+    const existing = Innovation.linkedProject(i);
+    if (existing) { Router.go('pdqa', 'project', existing.id); return; }
+    if (!confirm(`Créer une initiative PDQA à partir de l'idée « ${i.title} » ?`)) return;
+    let projectId = null;
+    Innovation.converting.add(id);
+    try {
+      const { data, error } = await Store.db.from('projects').insert({ project_name: i.title, description: i.description || null, workspace: 'pdqa', status: 'active',
+        priority: Math.min(3, Math.max(1, Number(i.potential) || 2)), start_date: Dates.today(), launch_date: null, created_by: Store.me?.id || null, updated_at: new Date().toISOString(),
+        pdqa_data: { lead_id: i.owner_id || Store.me?.id || null, department: 'Quality & R&D', contributors: [], partners: [], innovation_id: i.id } }).select().single();
+      if (error) throw error;
+      projectId = data.id;
+      await PdqaData.save('innovations', i.id, { stage: 'project', project_id: projectId }, `Idée « ${i.title} » transformée en initiative`);
+      Audit.log({ entity: 'project', entityId: projectId, projectId, action: 'create', summary: `Initiative créée depuis l'idée « ${i.title} »` });
+      await Store.refreshTable('projects');
+      Overlay.closeAll();
+      Toast.show('Initiative créée : complétez ses dates et son équipe.');
+      Router.go('pdqa', 'project-edit', projectId);
+    } catch (e) {
+      // Retour arrière : pas d'initiative orpheline si le lien avec l'idée n'a pas pu être enregistré.
+      if (projectId) await Store.db.from('projects').delete().eq('id', projectId);
+      Toast.error(e);
+    } finally { Innovation.converting.delete(id); }
+  },
+};
+Object.assign(Actions, {
+  'inno-new': () => Innovation.open(),
+  'inno-edit': el => Innovation.open(el.dataset.id),
+  'inno-view': el => { App.view('innovation', Innovation.defaults).view = el.dataset.view; Innovation.render(document.getElementById('view')); },
+  'inno-move': el => Innovation.move(el.dataset.id, Number(el.dataset.dir)),
+  'inno-project': el => Innovation.toProject(el.dataset.id),
+  async 'inno-delete'(el) {
+    const i = PdqaData.get('innovations', el.dataset.id); if (!i || !confirm(`Supprimer l'idée « ${i.title} » ?`)) return;
+    try { await PdqaData.remove('innovations', i.id, `Idée supprimée : « ${i.title} »`); Overlay.close(); Toast.show('Idée supprimée.'); Router.refresh(); } catch (e) { Toast.error(e); }
+  },
+});
+InputActions['inno-filter'] = ChangeActions['inno-filter'] = el => { App.view('innovation', Innovation.defaults)[el.dataset.key] = el.value; Innovation.renderBody(); };
+ChangeActions['inno-closed'] = el => { App.view('innovation', Innovation.defaults).closed = el.checked; Innovation.renderBody(); };
+
+/* ==========================================================================
+   Visites / Workshop / Salon
+   Un événement = type, dates, lieu, participants, contacts externes, objectifs,
+   compte-rendu et actions. Si l'événement est rattaché à une initiative PDQA,
+   chaque action avec un responsable devient une tâche de cette initiative
+   (même logique que les Meeting Minutes : une tâche commencée n'est jamais
+   supprimée). Les événements figurent aussi dans le calendrier PDQA.
+   ========================================================================== */
+const Events = {
+  defaults: { when: 'upcoming', type: '', q: '', project: '' },
+  type: id => refItem(CONFIG.pdqaModules.eventTypes, id),
+  status: id => refItem(CONFIG.pdqaModules.eventStatuses, id),
+  start: e => Dates.key(e.start_date),
+  end: e => (Dates.key(e.end_date) && Dates.key(e.end_date) >= Dates.key(e.start_date) ? Dates.key(e.end_date) : Dates.key(e.start_date)),
+  dates(e) {
+    const s = Events.start(e), en = Events.end(e);
+    return s === en ? Dates.fmt(s) : `${Dates.short(s)} → ${Dates.fmt(en)}`;
+  },
+  tasksOf: e => (e.actions || []).map(a => a.task_id && Store.task(a.task_id)).filter(Boolean),
+
+  filtered(today = Dates.today()) {
+    const st = App.view('events', Events.defaults), q = st.q.toLowerCase();
+    return PdqaData.list('events').filter(e => (st.when === 'all' || (st.when === 'upcoming' ? Events.end(e) >= today : Events.end(e) < today)) &&
+      (!st.type || e.type === st.type) && (!st.project || e.project_id === st.project) &&
+      (!q || [e.title, e.location, e.organizer].some(v => String(v || '').toLowerCase().includes(q))))
+      .sort((a, b) => (st.when === 'past' ? -1 : 1) * cmp(Events.start(a), Events.start(b)));
+  },
+  list(view) {
+    const st = App.view('events', Events.defaults), today = Dates.today(), all = PdqaData.list('events');
+    const next = all.filter(e => Events.end(e) >= today && e.status !== 'cancelled').sort((a, b) => cmp(Events.start(a), Events.start(b)))[0];
+    const chip = (key, value, label) => `<button class="filter-chip" data-action="ev-filter" data-key="${key}" data-value="${value}" aria-pressed="${st[key] === value}">${esc(label)}</button>`;
+    view.innerHTML = pageHeader({ title: 'Visites / Workshop / Salon', crumbs: [{ label: 'Visites / Workshop / Salon' }],
+      sub: next ? `Prochain : ${Events.type(next.type).label} « ${next.title} », ${Events.dates(next)}` : 'Visites clients et fournisseurs, workshops, salons professionnels.',
+      actions: `<button class="btn btn-primary" data-action="ev-new" ${PdqaData.ready('events') ? '' : 'disabled'}>${icon('plus', 'sm')}Nouvel événement</button>` }) +
+      `<div class="page-body">${PdqaData.notice('events')}<div class="toolbar card" role="search">
+        <div class="segmented" role="group" aria-label="Période">${[['upcoming', 'À venir'], ['past', 'Passés'], ['all', 'Tous']].map(([v, l]) => `<button data-action="ev-filter" data-key="when" data-value="${v}" aria-pressed="${st.when === v}">${l}</button>`).join('')}</div>
+        <div class="board-chips" role="group" aria-label="Type">${chip('type', '', 'Tous les types')}${CONFIG.pdqaModules.eventTypes.map(t => chip('type', t.id, t.label)).join('')}</div>
+        <div class="search">${icon('search', 'sm')}<input class="input" type="search" placeholder="Titre, lieu, organisateur" value="${esc(st.q)}" data-input="ev-search" aria-label="Rechercher un événement"></div>
+        <select class="select" data-change="ev-project" aria-label="Filtrer par initiative">${UI.projectOptions('pdqa', st.project, 'Toutes les initiatives')}</select>
+        <span class="spacer"></span><span class="result-count" id="evCount"></span></div><div id="evBody"></div></div>`;
+    Events.renderList();
+  },
+  renderList() {
+    const box = document.getElementById('evBody'); if (!box) return;
+    const today = Dates.today(), all = PdqaData.list('events'), items = Events.filtered(today);
+    document.getElementById('evCount').textContent = plural(items.length, 'événement', 'événements');
+    let month = '';
+    box.innerHTML = items.length ? items.map(e => {
+      const m = Events.start(e).slice(0, 7), head = m !== month ? `<h2 class="ev-month">${esc(Dates.monthLabel(m + '-01'))}</h2>` : '';
+      month = m;
+      return head + Events.cardHTML(e, today);
+    }).join('') : `<div class="card">${UI.empty({ icon: 'pin', title: all.length ? 'Aucun événement ne correspond' : 'Aucun événement enregistré',
+      sub: all.length ? 'Changez la période ou les filtres.' : 'Préparez une visite, un workshop ou un salon : objectifs, participants, puis compte-rendu.',
+      action: !all.length && PdqaData.ready('events') ? `<button class="btn btn-primary" data-action="ev-new">${icon('plus', 'sm')}Nouvel événement</button>` : '' })}</div>`;
+  },
+
+  cardHTML(e, today = Dates.today()) {
+    const t = Events.type(e.type), s = Events.status(e.status), p = Store.projectIn('pdqa', e.project_id);
+    const tasks = Events.tasksOf(e), openTasks = tasks.filter(x => !Rules.isTaskDone(x)).length;
+    const needsReport = e.status !== 'cancelled' && Events.end(e) < today && !e.report;
+    return `<div class="card meeting-card ev-card ${e.status === 'cancelled' ? 'is-cancelled' : ''}" style="--i:0">
+      <div class="date-box"><div class="d">${esc(Dates.fmt(Events.start(e), { day: 'numeric' }))}</div><div class="m">${esc(Dates.fmt(Events.start(e), { month: 'short' }))}</div></div>
+      <div class="grow"><div class="row wrap"><span class="badge b-space no-dot">${esc(t.label)}</span>${e.status !== 'planned' ? `<span class="badge ${s.badge}">${esc(s.label)}</span>` : ''}
+          ${needsReport ? '<span class="badge b-warn">Compte-rendu à rédiger</span>' : ''}</div>
+        <button class="link-btn" style="font-size:var(--fs-lg);margin-top:4px" data-action="open-event" data-id="${esc(e.id)}">${esc(e.title)}</button>
+        <div class="cell-sub">${esc(Events.dates(e))}${e.location ? ' · ' + esc(e.location) : ''}${e.organizer ? ' · ' + esc(e.organizer) : ''}${p ? ' · ' + esc(p.project_name) : ''}</div>
+        <div class="row" style="margin-top:6px">${(e.participants || []).map(Store.user).filter(Boolean).slice(0, 6).map(u => `<span title="${esc(u.name)}">${avatar(u, 22)}</span>`).join('')}
+          ${(e.actions || []).length ? `<span class="chip">${plural(e.actions.length, 'action', 'actions')}${openTasks ? ` · ${openTasks} ouverte${openTasks > 1 ? 's' : ''}` : ''}</span>` : ''}</div></div>
+      ${Menu.html([{ action: 'open-event', icon: 'open', label: 'Ouvrir', data: { id: e.id } }, { action: 'ev-edit', icon: 'edit', label: 'Modifier', data: { id: e.id } }, { action: 'ev-delete', icon: 'trash', label: 'Supprimer', danger: true, data: { id: e.id } }])}</div>`;
+  },
+
+  view(view, e) {
+    const t = Events.type(e.type), s = Events.status(e.status), p = Store.projectIn('pdqa', e.project_id);
+    const parts = (e.participants || []).map(Store.user).filter(Boolean);
+    const acts = (e.actions || []).map((a, n) => {
+      const task = a.task_id ? Store.task(a.task_id) : null;
+      return `<div class="action-item"><span class="action-num">${n + 1}</span><span class="grow">${esc(a.title)}${a.assignee_id && Store.user(a.assignee_id) ? `<div class="cell-sub">${esc(Store.user(a.assignee_id).name)}</div>` : ''}</span>
+        ${a.due_date ? `<span class="due">${icon('clock', 'sm')}${esc(Dates.fmt(a.due_date))}</span>` : ''}${task ? `<button class="btn btn-ghost btn-sm" data-action="edit-task" data-ws="pdqa" data-id="${esc(task.id)}">${UI.taskStatusBadge(task.status)}</button>` : ''}</div>`;
+    }).join('');
+    const section = (title, text) => (text ? `<section class="mv-section card card-pad"><h2 class="section-title">${title}</h2><div class="mv-content">${esc(text)}</div></section>` : '');
+    view.innerHTML = pageHeader({ title: e.title, sub: `${t.label} · ${Events.dates(e)}`, crumbs: [{ page: 'events', label: 'Visites / Workshop / Salon' }, { label: e.title }],
+      actions: `<button class="btn btn-glass" data-action="print">${icon('print', 'sm')}Imprimer</button><button class="btn btn-glass" data-action="ev-delete" data-id="${esc(e.id)}">${icon('trash', 'sm')}Supprimer</button>
+        <button class="btn btn-primary" data-action="ev-edit" data-id="${esc(e.id)}">${icon('edit', 'sm')}${e.report ? 'Modifier' : 'Modifier / compte-rendu'}</button>` }) +
+      `<div class="page-body"><div class="detail-grid"><div>
+          <div class="mv-header"><div class="row wrap"><span class="badge b-space no-dot">${esc(t.label)}</span><span class="badge ${s.badge}">${esc(s.label)}</span></div>
+            <div class="mv-team" style="margin-top:6px">${esc(e.title)}</div><div class="muted">${esc(Events.dates(e))}${e.location ? ' · ' + esc(e.location) : ''}</div></div>
+          ${section('Objectifs', e.objectives)}
+          ${e.report ? section('Compte-rendu', e.report) : `<div class="notice info mv-section">${icon('notes')}<span>Pas encore de compte-rendu.</span><button class="btn btn-glass btn-sm" data-action="ev-edit" data-id="${esc(e.id)}">Rédiger le compte-rendu</button></div>`}
+          ${acts ? `<section class="mv-section card"><div class="card-head"><h2 class="card-title">Actions à suivre</h2></div>${acts}</section>` : ''}
+        </div><aside class="stack"><section class="card card-pad"><h2 class="section-title">Informations</h2><dl class="kv">
+          <dt>Type</dt><dd>${esc(t.label)}</dd><dt>Dates</dt><dd>${esc(Events.dates(e))}</dd><dt>Lieu</dt><dd>${esc(e.location || '—')}</dd>
+          <dt>Organisateur</dt><dd>${esc(e.organizer || '—')}</dd>
+          <dt>Initiative</dt><dd>${p ? `<button class="link-muted" data-action="open-project" data-ws="pdqa" data-id="${esc(p.id)}">${esc(p.project_name)}</button>` : '—'}</dd>
+          <dt>Participants</dt><dd>${parts.length ? parts.map(u => `<div class="person" style="margin-bottom:4px">${avatar(u, 22)}${esc(u.name)}</div>`).join('') : '—'}</dd>
+          <dt>Contacts externes</dt><dd class="mv-content">${esc(e.contacts || '—')}</dd></dl></section></aside></div></div>`;
+  },
+
+  form(view, e) {
+    const cfg = CONFIG.pdqaModules, v = e || { type: 'visit', status: 'planned', start_date: Dates.today(), participants: [Store.me.id] };
+    view.innerHTML = pageHeader({ title: e ? 'Modifier l\'événement' : 'Nouvel événement', sub: 'Visite, workshop ou salon',
+      crumbs: [{ page: 'events', label: 'Visites / Workshop / Salon' }, { label: e ? e.title : 'Nouveau' }],
+      actions: `<button class="btn btn-ghost" data-action="${e ? 'open-event' : 'go'}" data-page="events" data-id="${esc(e?.id || '')}">Annuler</button><button class="btn btn-primary" data-action="ev-save">Enregistrer</button>` }) +
+      `<div class="page-body stack" id="evForm">${PdqaData.notice('events')}<input type="hidden" id="ev_id" value="${esc(e?.id || '')}">
+        <section class="card solid card-pad"><h2 class="section-title">L'essentiel</h2><div class="form-grid">
+          ${Form.field('ev_type', 'Type', Form.select('ev_type', UI.options(cfg.eventTypes.map(t => ({ value: t.id, label: t.label })), v.type)), { req: true })}
+          ${Form.field('ev_status', 'Statut', Form.select('ev_status', UI.options(cfg.eventStatuses.map(s => ({ value: s.id, label: s.label })), v.status)))}
+          ${Form.field('ev_title', 'Titre', Form.input('ev_title', v.title, 'placeholder="ex : Visite fournisseur de protéines de pois"'), { req: true, full: true })}
+          ${Form.field('ev_start', 'Date de début', Form.date('ev_start', v.start_date), { req: true })}
+          ${Form.field('ev_end', 'Date de fin', Form.date('ev_end', v.end_date), { hint: 'Laisser vide si l\'événement dure un jour.' })}
+          ${Form.field('ev_location', 'Lieu', Form.input('ev_location', v.location, 'placeholder="Ville, site, stand…"'))}
+          ${Form.field('ev_org', 'Organisateur / hôte', Form.input('ev_org', v.organizer, 'placeholder="Client, fournisseur, organisateur du salon"'))}
+          ${Form.field('ev_project', 'Initiative PDQA liée', Form.select('ev_project', UI.projectOptions('pdqa', v.project_id, '— Aucune —')), { full: true, hint: 'Nécessaire pour que les actions deviennent des tâches.' })}
+        </div></section>
+        <section class="card solid card-pad"><h2 class="section-title">Participants internes</h2>${Form.chips('participants', Store.users.map(u => ({ value: u.id, label: u.name, avatar: avatar(u, 24) })), v.participants || [])}</section>
+        <section class="card solid card-pad"><div class="form-grid">
+          ${Form.field('ev_contacts', 'Contacts externes', Form.textarea('ev_contacts', v.contacts, 3, 'Nom, fonction, société, e-mail'), { full: true })}
+          ${Form.field('ev_obj', 'Objectifs', Form.textarea('ev_obj', v.objectives, 3, 'Ce que l\'on veut obtenir ou vérifier'), { full: true })}
+          ${Form.field('ev_report', 'Compte-rendu', Form.textarea('ev_report', v.report, 7, 'Constats, échanges, décisions, points d\'attention'), { full: true })}
+        </div></section>
+        <section class="card solid card-pad"><h2 class="section-title">Actions à suivre</h2><p class="hint mb-4">Avec une initiative liée, chaque action qui a un responsable devient une tâche.</p>
+          <div class="mm-action-row label small" style="margin-bottom:8px"><span>Action</span><span>Responsable</span><span>Échéance</span><span></span></div>
+          <div id="actionRows"></div><button class="btn btn-glass btn-sm mt-4" data-action="mm-add">${icon('plus', 'sm')}Ajouter une action</button></section>
+        <p class="error-msg" id="err_ev_form"></p></div>`;
+    const acts = v.actions || [];
+    if (acts.length) acts.forEach(a => Meetings.addRow(a.title, a.assignee_id, a.due_date, a.task_id)); else Meetings.addRow();
+  },
+
+  async save() {
+    const root = document.getElementById('evForm'); if (!root) return;
+    const val = id => Form.val(root, id), id = val('ev_id'), previous = id ? PdqaData.get('events', id) : null;
+    const errors = {};
+    if (!val('ev_title')) errors.ev_title = 'Le titre est obligatoire.';
+    if (!val('ev_start')) errors.ev_start = 'La date de début est obligatoire.';
+    if (val('ev_end') && val('ev_start') && val('ev_end') < val('ev_start')) errors.ev_end = 'La date de fin doit suivre la date de début.';
+    const projectId = val('ev_project') || null;
+    if (projectId && !Store.projectIn('pdqa', projectId)) errors.ev_project = 'Initiative non disponible.';
+    if (Form.errors(root, errors)) return;
+    const actions = [...root.querySelectorAll('#actionRows .mm-action-row')].map(r => ({ title: r.querySelector('.ma-title').value.trim(), assignee_id: r.querySelector('.ma-assign').value || null,
+      due_date: r.querySelector('.ma-due').value || null, task_id: r.dataset.taskId || null })).filter(a => a.title);
+    const payload = { type: val('ev_type'), status: val('ev_status'), title: val('ev_title').slice(0, 200), start_date: val('ev_start'), end_date: val('ev_end') || null,
+      location: val('ev_location') || null, organizer: val('ev_org') || null, project_id: projectId, participants: Form.picked(root, 'participants'),
+      contacts: val('ev_contacts') || null, objectives: val('ev_obj') || null, report: val('ev_report') || null, actions };
+    const btn = document.querySelector('[data-action="ev-save"]'); if (btn) btn.disabled = true;
+    try {
+      const saved = await PdqaData.save('events', id, payload, `${Events.type(payload.type).label} « ${payload.title} » ${id ? 'modifié' : 'créé'}`);
+      const r = await Events.syncTasks(saved, actions, previous);
+      if (r.linked) { const { error } = await Store.db.from('pdqa_events').update({ actions }).eq('id', saved.id); if (error) throw error; saved.actions = actions; }
+      await Store.refreshTable('tasks');
+      const parts = [r.created && `${r.created} tâche(s) créée(s)`, r.updated && `${r.updated} mise(s) à jour`, r.removed && `${r.removed} supprimée(s)`, r.kept && `${r.kept} conservée(s) car déjà commencée(s)`].filter(Boolean);
+      Toast.show(`Événement enregistré${parts.length ? ' : ' + parts.join(', ') : ''}.${r.noProject ? ' Liez une initiative pour transformer les actions en tâches.' : ''}`);
+      Router.go('pdqa', 'event', saved.id);
+    } catch (e) { Toast.error(e); } finally { if (btn && document.contains(btn)) btn.disabled = false; }
+  },
+
+  /** Crée, met à jour ou retire les tâches issues des actions. Une tâche déjà commencée est toujours conservée. */
+  async syncTasks(e, actions, previous) {
+    const out = { created: 0, updated: 0, removed: 0, kept: 0, linked: false, noProject: false };
+    const projectId = e.project_id && Store.projectIn('pdqa', e.project_id) ? e.project_id : null;
+    const name = a => `[${e.title}] ${a.title}`, kept = new Set();
+    for (const a of actions) {
+      const task = a.task_id ? Store.task(a.task_id) : null;
+      if (task) {
+        kept.add(task.id);
+        const patch = { title: name(a), assignee_id: a.assignee_id || task.assignee_id, due_date: a.due_date || null, ...(projectId ? { project_id: projectId } : {}) };
+        if (Object.keys(patch).some(k => String(patch[k] ?? '') !== String(task[k] ?? ''))) {
+          const { error } = await Store.db.from('tasks').update(patch).eq('id', task.id); if (error) throw error; out.updated++;
+        }
+      } else if (a.assignee_id && projectId) {
+        const { data, error } = await Store.db.from('tasks').insert({ title: name(a), project_id: projectId, assignee_id: a.assignee_id, due_date: a.due_date || null, priority: 'medium',
+          status: 'todo', description: `Action issue de : ${Events.type(e.type).label} « ${e.title} » du ${Dates.fmt(e.start_date)}` }).select().single();
+        if (error) throw error;
+        a.task_id = data.id; kept.add(data.id); out.linked = true; out.created++;
+      } else {
+        if (a.task_id) { a.task_id = null; out.linked = true; }
+        if (a.assignee_id && !projectId) out.noProject = true;
+      }
+    }
+    for (const a of previous?.actions || []) {
+      const t = a.task_id && !kept.has(a.task_id) ? Store.task(a.task_id) : null; if (!t) continue;
+      if (t.status === 'todo') { const { error } = await Store.db.from('tasks').delete().eq('id', t.id); if (error) throw error; out.removed++; } else out.kept++;
+    }
+    return out;
+  },
+};
+const eventNotFound = view => { view.innerHTML = pageHeader({ title: 'Événement introuvable', crumbs: [{ page: 'events', label: 'Visites / Workshop / Salon' }, { label: 'Introuvable' }] }) +
+  `<div class="page-body"><div class="card">${UI.empty({ icon: 'alert', title: 'Cet événement n\'existe pas ou a été supprimé', action: '<button class="btn btn-glass" data-action="go" data-page="events">Retour</button>' })}</div></div>`; };
+Object.assign(Actions, {
+  'ev-new': () => Router.go('pdqa', 'event-edit', 'new'),
+  'ev-edit': el => Router.go('pdqa', 'event-edit', el.dataset.id),
+  'open-event': el => Router.go('pdqa', 'event', el.dataset.id),
+  'ev-save': () => Events.save(),
+  'ev-filter': el => { App.view('events', Events.defaults)[el.dataset.key] = el.dataset.value; Router.refresh(); },
+  async 'ev-delete'(el) {
+    const e = PdqaData.get('events', el.dataset.id); if (!e) return;
+    const started = Events.tasksOf(e).filter(t => t.status !== 'todo').length;
+    if (!confirm(`Supprimer « ${e.title} » ?${started ? `\n${started} tâche(s) déjà commencée(s) seront conservées.` : ''}`)) return;
+    try {
+      for (const t of Events.tasksOf(e).filter(x => x.status === 'todo')) { const { error } = await Store.db.from('tasks').delete().eq('id', t.id); if (error) throw error; }
+      await PdqaData.remove('events', e.id, `Événement supprimé : « ${e.title} »`);
+      await Store.refreshTable('tasks');
+      Toast.show('Événement supprimé.');
+      if (App.page === 'events') Router.refresh(); else Router.go('pdqa', 'events');
+    } catch (err) { Toast.error(err); }
+  },
+});
+InputActions['ev-search'] = el => { App.view('events', Events.defaults).q = el.value; Events.renderList(); };
+ChangeActions['ev-project'] = el => { App.view('events', Events.defaults).project = el.value; Events.renderList(); };
+
+/* ==========================================================================
+   Planning des projets : diagramme de Gantt des initiatives PDQA
+   Une barre par initiative, de sa date de début à sa date de fin visée ; le
+   remplissage montre l'avancement (tâches terminées). Les événements liés à
+   l'initiative apparaissent en repères sur sa ligne.
+   ========================================================================== */
+const Planning = {
+  defaults: { span: 6, from: null, lead: '', dept: '', status: 'open', group: '' },
+  state() {
+    const st = App.view('planning', Planning.defaults);
+    if (!st.from) st.from = Dates.startOfMonth(Dates.addMonths(Dates.today(), -1));
+    return st;
+  },
+  range() { const st = Planning.state(); return [st.from, Dates.addDays(Dates.addMonths(st.from, st.span), -1)]; },
+
+  rows() {
+    const st = Planning.state();
+    return Store.projectsIn('pdqa').filter(p => (!st.status || (st.status === 'open' ? p.status !== 'done' : p.status === st.status)) &&
+      (!st.lead || p.pdqa_data?.lead_id === st.lead) && (!st.dept || p.pdqa_data?.department === st.dept));
+  },
+
+  render(view) {
+    const st = Planning.state(), [from, to] = Planning.range(), all = Store.projectsIn('pdqa');
+    const depts = uniqueSorted(all.map(p => p.pdqa_data?.department));
+    const leads = uniqueSorted(all.map(p => p.pdqa_data?.lead_id)).map(Store.user).filter(Boolean);
+    view.innerHTML = pageHeader({ title: 'Planning des projets', crumbs: [{ label: 'Planning des projets' }], sub: 'Les initiatives PDQA dans le temps : début, fin visée et avancement.',
+      actions: `<button class="btn btn-glass" data-action="print">${icon('print', 'sm')}Imprimer</button><button class="btn btn-primary" data-action="new-project">${icon('plus', 'sm')}Nouvelle initiative</button>` }) +
+      `<div class="page-body"><div class="toolbar card no-print">
+          <select class="select" data-change="plan-filter" data-key="status" aria-label="Filtrer par statut">${UI.options([{ value: 'open', label: 'En cours et en pause' }, ...Object.entries(CONFIG.projectStatuses).map(([v, s]) => ({ value: v, label: s.label }))], st.status, { placeholder: 'Tous les statuts' })}</select>
+          <select class="select" data-change="plan-filter" data-key="lead" aria-label="Filtrer par responsable">${UI.options(leads.map(u => ({ value: u.id, label: u.name })), st.lead, { placeholder: 'Tous les responsables' })}</select>
+          <select class="select" data-change="plan-filter" data-key="dept" aria-label="Filtrer par département">${UI.options(depts.map(d => ({ value: d, label: d })), st.dept, { placeholder: 'Tous les départements' })}</select>
+          <select class="select" data-change="plan-filter" data-key="group" aria-label="Regrouper">${UI.options([{ value: 'lead', label: 'Grouper par responsable' }, { value: 'dept', label: 'Grouper par département' }], st.group, { placeholder: 'Sans regroupement' })}</select>
+        </div>
+        <div class="cal-toolbar no-print">
+          <button class="btn btn-glass btn-sm" data-action="plan-today">Aujourd'hui</button>
+          <div class="row"><button class="btn btn-glass btn-sm btn-icon" data-action="plan-move" data-dir="-1" aria-label="Mois précédent">${icon('left', 'sm')}</button>
+            <button class="btn btn-glass btn-sm btn-icon" data-action="plan-move" data-dir="1" aria-label="Mois suivant">${icon('right', 'sm')}</button></div>
+          <h2 class="cal-label" aria-live="polite">${esc(Dates.monthLabel(from))} – ${esc(Dates.monthLabel(to))}</h2><span class="spacer grow"></span>
+          <div class="segmented" role="group" aria-label="Durée affichée">${[3, 6, 12].map(n => `<button data-action="plan-span" data-span="${n}" aria-pressed="${st.span === n}">${n} mois</button>`).join('')}</div>
+        </div>
+        <div class="cal-legend"><span><i class="legend-swatch" style="background:var(--space)"></i>En cours</span><span><i class="legend-swatch" style="background:var(--danger)"></i>En retard</span>
+          <span><i class="legend-swatch g-paused-sw"></i>En pause</span><span><i class="legend-swatch" style="background:var(--line-strong)"></i>Terminée</span>
+          <span><i class="legend-swatch" style="background:var(--text);width:2px"></i>Aujourd'hui</span><span><span class="g-mark-sw" aria-hidden="true"></span>Visite / salon lié</span></div>
+        <div id="planBody"></div></div>`;
+    Planning.renderBody();
+  },
+
+  renderBody() {
+    const box = document.getElementById('planBody'); if (!box) return;
+    const st = Planning.state(), [from, to] = Planning.range(), list = Planning.rows();
+    const valid = p => { const s = Dates.key(p.start_date), e = Dates.key(p.launch_date); return s && e && e >= s; };
+    const planned = list.filter(valid), unplanned = list.filter(p => !valid(p));
+    const visible = planned.filter(p => Dates.key(p.start_date) <= to && Dates.key(p.launch_date) >= from)
+      .sort((a, b) => cmp(Dates.key(a.start_date), Dates.key(b.start_date)) || cmp(a.project_name, b.project_name));
+    const outside = planned.length - visible.length;
+    const groupOf = p => (st.group === 'lead' ? Store.user(p.pdqa_data?.lead_id)?.name || 'Sans responsable' : st.group === 'dept' ? p.pdqa_data?.department || 'Département non renseigné' : '');
+    const groups = [];
+    visible.forEach(p => { const g = groupOf(p); let entry = groups.find(x => x.label === g); if (!entry) groups.push(entry = { label: g, rows: [] }); entry.rows.push(p); });
+    groups.sort((a, b) => cmp(a.label, b.label));
+    const gantt = visible.length ? Planning.ganttHTML(groups, from, to)
+      : `<div class="card">${UI.empty({ icon: 'gantt', title: list.length ? 'Aucune initiative sur cette période' : 'Aucune initiative à planifier', sub: list.length ? 'Changez de période ou de filtres.' : 'Créez une initiative avec une date de début et une date de fin.' })}</div>`;
+    const todo = unplanned.length ? `<section class="card mt-4"><div class="card-head"><h2 class="card-title">À planifier <span class="muted small">${unplanned.length}</span></h2><span class="muted small">Date de début ou de fin manquante, ou fin avant le début</span></div>
+      ${unplanned.map(p => `<button class="list-row" data-action="edit-project" data-id="${esc(p.id)}"><span class="grow"><span class="cell-title">${esc(p.project_name)}</span><span class="cell-sub" style="display:block">${esc(Store.user(p.pdqa_data?.lead_id)?.name || 'Responsable à définir')} · début ${esc(Dates.fmt(p.start_date))} · fin ${esc(Dates.fmt(p.launch_date))}</span></span>${icon('edit', 'sm')}</button>`).join('')}</section>` : '';
+    box.innerHTML = gantt + (outside ? `<p class="muted small mt-4">${plural(outside, 'initiative est', 'initiatives sont')} en dehors de la période affichée.</p>` : '') + todo;
+  },
+
+  ganttHTML(groups, from, to) {
+    const total = Dates.diffDays(from, to) + 1, today = Dates.today(), tasks = Store.tasksIn('pdqa');
+    const pct = k => (Dates.diffDays(from, k) / total) * 100;
+    const months = [];
+    for (let m = from; m <= to; m = Dates.addMonths(m, 1)) months.push(m);
+    const span = Planning.state().span;
+    const monthLabel = m => Dates.fmt(m, span > 6 ? { month: 'short' } : { month: 'long' }) + (m.slice(5, 7) === '01' || m === from ? ` ${m.slice(0, 4)}` : '');
+    const eventsBy = new Map();
+    PdqaData.list('events').filter(e => e.project_id && e.status !== 'cancelled').forEach(e => { (eventsBy.get(e.project_id) || eventsBy.set(e.project_id, []).get(e.project_id)).push(e); });
+    const bar = p => {
+      const s = Dates.key(p.start_date), e = Dates.key(p.launch_date), cs = s < from ? from : s, ce = e > to ? to : e;
+      const left = pct(cs), width = ((Dates.diffDays(cs, ce) + 1) / total) * 100;
+      const late = Rules.isProjectLate(p, today), prog = Rules.projectProgress(p, tasks);
+      const cls = p.status === 'done' ? 'is-done' : p.status === 'paused' ? 'is-paused' : late ? 'is-late' : 'is-active';
+      const tip = `${p.project_name} : ${Dates.fmt(s)} → ${Dates.fmt(e)}${prog !== null ? ` · ${prog} % d'avancement` : ''}${late ? ' · en retard' : ''}`;
+      const marks = (eventsBy.get(p.id) || []).filter(ev => Events.start(ev) >= from && Events.start(ev) <= to)
+        .map(ev => `<button class="g-mark" style="left:${pct(Events.start(ev))}%" data-action="open-event" data-id="${esc(ev.id)}" title="${esc(`${Events.type(ev.type).label} : ${ev.title} · ${Events.dates(ev)}`)}" aria-label="${esc(`${Events.type(ev.type).label} : ${ev.title}`)}"></button>`).join('');
+      return `<button class="g-bar ${cls} ${s < from ? 'clip-l' : ''} ${e > to ? 'clip-r' : ''}" style="left:${left}%;width:${width}%" data-action="open-project" data-id="${esc(p.id)}" title="${esc(tip)}" aria-label="${esc(tip)}">
+        ${prog !== null ? `<span class="g-fill" style="width:${prog}%"></span>` : ''}<span class="g-txt">${prog !== null && width > 7 ? `${prog} %` : ''}</span></button>${marks}`;
+    };
+    const row = p => {
+      const lead = Store.user(p.pdqa_data?.lead_id);
+      return `<div class="g-row" role="row"><button class="g-label" role="rowheader" data-action="open-project" data-id="${esc(p.id)}"><span class="g-name">${esc(p.project_name)}</span>
+        <span class="g-sub">${esc([lead?.name, p.pdqa_data?.department].filter(Boolean).join(' · ') || '—')}</span></button><div class="g-track" role="cell">${bar(p)}</div></div>`;
+    };
+    const lines = months.slice(1).map(m => `<i class="g-line" style="left:${pct(m)}%"></i>`).join('') +
+      (today >= from && today <= to ? `<i class="g-today" style="left:${pct(today)}%" title="Aujourd'hui"></i>` : '');
+    return `<div class="gantt-scroll card" tabindex="0" aria-label="Diagramme de Gantt, défilement horizontal"><div class="gantt" role="table" aria-label="Planning des initiatives">
+      <div class="g-row g-head" role="row"><span class="g-label" role="columnheader">Initiative</span><div class="g-track" role="columnheader">${months.map(m => {
+        const end = Dates.addDays(Dates.addMonths(m, 1), -1);
+        return `<span class="g-month" style="left:${pct(m)}%;width:${((Dates.diffDays(m, end) + 1) / total) * 100}%">${esc(monthLabel(m))}</span>`;
+      }).join('')}</div></div>
+      <div class="g-body"><div class="g-grid" aria-hidden="true">${lines}</div>
+        ${groups.map(g => (g.label ? `<div class="g-group" role="row"><span role="cell">${esc(g.label)} <span class="muted">${g.rows.length}</span></span></div>` : '') + g.rows.map(row).join('')).join('')}</div>
+    </div></div>`;
+  },
+};
+Object.assign(Actions, {
+  'plan-span': el => { Planning.state().span = Number(el.dataset.span); Planning.render(document.getElementById('view')); },
+  'plan-move': el => { const st = Planning.state(); st.from = Dates.addMonths(st.from, Number(el.dataset.dir)); Planning.render(document.getElementById('view')); },
+  'plan-today': () => { Planning.state().from = Dates.startOfMonth(Dates.addMonths(Dates.today(), -1)); Planning.render(document.getElementById('view')); },
+});
+ChangeActions['plan-filter'] = el => { Planning.state()[el.dataset.key] = el.value; Planning.renderBody(); };
+
+/* ==========================================================================
+   Prévalidation MP (matières premières)
+   Une fiche par matière : fournisseur, projet, demandeur, échéance et une
+   checklist documentaire. Le statut avance seul (Demandée → Documents en
+   attente → En revue) au fil des documents reçus ; la validation exige tous les
+   documents obligatoires, le refus exige un motif.
+   ========================================================================== */
+const Mp = {
+  defaults: { q: '', status: 'open', supplier: '', project: '' },
+  status: id => refItem(CONFIG.pdqaModules.mpStatuses, id),
+  isDecided: i => i.status === 'approved' || i.status === 'rejected',
+  /** Qui peut valider ou refuser : le responsable de la revue désigné ; à défaut, toute personne autre que le demandeur.
+      Le PDQA Manager peut toujours décider. (Contrôle d'interface : la base sera verrouillée avec la connexion par mot de passe.) */
+  canDecide(i, me = Store.me) {
+    if (!i || !me) return false;
+    if (normalizeRole(me.role) === normalizeRole('PDQA Manager')) return true;
+    return i.reviewer_id ? i.reviewer_id === me.id : i.requester_id !== me.id;
+  },
+  decisionRule(i) {
+    const rev = Store.user(i.reviewer_id);
+    return rev ? `Décision réservée à ${rev.name} (responsable de la revue) ou au PDQA Manager.` : 'Le demandeur ne peut pas valider sa propre demande : désignez un responsable de la revue.';
+  },
+  isLate: (i, today = Dates.today()) => !!i.due_date && !Mp.isDecided(i) && Dates.key(i.due_date) < today,
+  /** Bilan de la checklist : documents reçus, obligatoires reçus, obligatoires manquants. */
+  docs(checklist = {}) {
+    const items = CONFIG.pdqaModules.mpChecklist, req = items.filter(d => d.required);
+    return { done: items.filter(d => checklist[d.id]).length, total: items.length, reqDone: req.filter(d => checklist[d.id]).length, reqTotal: req.length,
+      missing: req.filter(d => !checklist[d.id]).map(d => d.label) };
+  },
+  /** Statut proposé d'après les documents reçus (les décisions ne sont jamais changées ici). */
+  autoStatus(status, checklist) {
+    if (status === 'approved' || status === 'rejected') return status;
+    const d = Mp.docs(checklist);
+    if (d.reqDone === d.reqTotal) return 'review';
+    if (d.done > 0 && status === 'requested') return 'docs_pending';
+    return status === 'review' ? 'docs_pending' : status;
+  },
+  filtered() {
+    const st = App.view('mp', Mp.defaults), q = st.q.toLowerCase();
+    return PdqaData.list('mpItems').filter(i => (!q || [i.material_name, i.supplier, i.supplier_ref, i.internal_code].some(v => String(v || '').toLowerCase().includes(q))) &&
+      (!st.status || (st.status === 'open' ? !Mp.isDecided(i) : st.status === 'late' ? Mp.isLate(i) : i.status === st.status)) &&
+      (!st.supplier || i.supplier === st.supplier) && (!st.project || i.project_id === st.project))
+      .sort((a, b) => Mp.isDecided(a) - Mp.isDecided(b) || Mp.isLate(b) - Mp.isLate(a) || cmp(Dates.key(a.due_date), Dates.key(b.due_date)) || cmp(b.created_at, a.created_at));
+  },
+
+  render(view) {
+    const st = App.view('mp', Mp.defaults), all = PdqaData.list('mpItems'), cfg = CONFIG.pdqaModules;
+    const n = s => all.filter(i => i.status === s).length, late = all.filter(i => Mp.isLate(i)).length;
+    const chip = (value, label, count, tone = '') => `<button class="filter-chip ${tone}" data-action="mp-status" data-value="${value}" aria-pressed="${st.status === value}">${esc(label)} <b class="num">${count}</b></button>`;
+    view.innerHTML = pageHeader({ title: 'Prévalidation MP', crumbs: [{ label: 'Prévalidation MP' }], sub: 'Revue documentaire des matières premières avant leur utilisation.',
+      actions: `<button class="btn btn-glass" data-action="mp-export" ${all.length ? '' : 'disabled'}>${icon('download', 'sm')}Exporter en Excel</button><button class="btn btn-primary" data-action="mp-new" ${PdqaData.ready('mpItems') ? '' : 'disabled'}>${icon('plus', 'sm')}Nouvelle demande</button>` }) +
+      `<div class="page-body">${PdqaData.notice('mpItems')}<div class="toolbar card board-tools" role="search">
+        <div class="board-chips" role="group" aria-label="Filtrer par statut">${chip('open', 'En cours', all.filter(i => !Mp.isDecided(i)).length)}${chip('late', 'Échéance dépassée', late, 't-danger')}
+          ${cfg.mpStatuses.map(s => chip(s.id, s.label, n(s.id), s.id === 'approved' ? 't-ok' : s.id === 'rejected' ? 't-danger' : '')).join('')}${chip('', 'Toutes', all.length)}</div>
+        <span class="spacer"></span>
+        <div class="search">${icon('search', 'sm')}<input class="input" type="search" placeholder="Matière, fournisseur, code" value="${esc(st.q)}" data-input="mp-filter" data-key="q" aria-label="Rechercher une matière"></div>
+        <select class="select" data-change="mp-filter" data-key="supplier" aria-label="Filtrer par fournisseur">${UI.options(uniqueSorted(all.map(i => i.supplier)).map(s => ({ value: s, label: s })), st.supplier, { placeholder: 'Tous les fournisseurs' })}</select>
+        <select class="select" data-change="mp-filter" data-key="project" aria-label="Filtrer par initiative">${UI.projectOptions('pdqa', st.project, 'Toutes les initiatives')}</select>
+      </div><div id="mpBody"></div></div>`;
+    Mp.renderList();
+  },
+
+  renderList() {
+    const box = document.getElementById('mpBody'); if (!box) return;
+    const list = Mp.filtered(), all = PdqaData.list('mpItems'), today = Dates.today();
+    if (!list.length) {
+      box.innerHTML = `<div class="card">${UI.empty({ icon: 'flask', title: all.length ? 'Aucune matière ne correspond aux filtres' : 'Aucune demande de prévalidation',
+        sub: all.length ? 'Changez de statut ou de filtres.' : 'Ajoutez une matière première à faire valider : la checklist des documents est prête.',
+        action: !all.length && PdqaData.ready('mpItems') ? `<button class="btn btn-primary" data-action="mp-new">${icon('plus', 'sm')}Nouvelle demande</button>` : '' })}</div>`;
+      return;
+    }
+    box.innerHTML = `<div class="table-wrap"><table class="table"><thead><tr><th>Matière première</th><th>Fournisseur</th><th>Initiative</th><th>Documents obligatoires</th><th>Statut</th><th>Échéance</th><th><span class="sr-only">Actions</span></th></tr></thead><tbody>
+      ${list.map(i => {
+        const d = Mp.docs(i.checklist), s = Mp.status(i.status), p = Store.projectIn('pdqa', i.project_id), late = Mp.isLate(i, today);
+        const pct = d.reqTotal ? Math.round(d.reqDone / d.reqTotal * 100) : 0;
+        return `<tr class="is-clickable ${late ? 'is-late' : ''}" data-action="mp-edit" data-id="${esc(i.id)}">
+          <td style="min-width:200px"><button class="link-btn cell-title" data-action="mp-edit" data-id="${esc(i.id)}">${esc(i.material_name)}</button><div class="cell-sub">${esc([i.internal_code, Store.user(i.requester_id)?.name].filter(Boolean).join(' · ') || '—')}</div></td>
+          <td>${esc(i.supplier || '—')}${i.supplier_ref ? `<div class="cell-sub">Réf. ${esc(i.supplier_ref)}</div>` : ''}</td>
+          <td>${p ? esc(p.project_name) : '<span class="muted">—</span>'}</td>
+          <td><div class="progress" role="img" aria-label="${d.reqDone} documents obligatoires sur ${d.reqTotal}"><div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div><span class="progress-val">${d.reqDone}/${d.reqTotal}</span></div></td>
+          <td><span class="badge ${s.badge}">${esc(s.label)}</span></td>
+          <td>${i.due_date ? `<span class="due ${late ? 'overdue' : ''}">${late ? icon('alert', 'sm') : icon('clock', 'sm')}${esc(Dates.fmt(i.due_date))}</span>` : '<span class="due none">—</span>'}${Mp.isDecided(i) && i.decision_date ? `<div class="cell-sub">Décision le ${esc(Dates.short(i.decision_date))}</div>` : ''}</td>
+          <td class="col-actions">${Menu.html([{ action: 'mp-edit', icon: 'edit', label: 'Ouvrir', data: { id: i.id } }, { action: 'mp-delete', icon: 'trash', label: 'Supprimer', danger: true, data: { id: i.id } }])}</td></tr>`;
+      }).join('')}</tbody></table></div>`;
+  },
+
+  open(id) {
+    const i = id ? PdqaData.get('mpItems', id) : null;
+    if (id && !i) { Toast.show('Fiche introuvable.', 'error'); return; }
+    const v = i || { status: 'requested', checklist: {}, requester_id: Store.me.id }, s = Mp.status(v.status), decided = Mp.isDecided(v);
+    const list = CONFIG.pdqaModules.mpChecklist, d = Mp.docs(v.checklist || {});
+    const form = Form.drawer({ id: 'mpForm', title: i ? i.material_name : 'Nouvelle demande de prévalidation',
+      body: `${i ? `<div class="row wrap"><span class="badge ${s.badge}">${esc(s.label)}</span>${Mp.isLate(i) ? '<span class="badge b-danger">Échéance dépassée</span>' : ''}</div>` : ''}
+        ${Form.field('mp_name', 'Matière première', Form.input('mp_name', v.material_name, 'placeholder="ex : Protéine de pois 80 %" autofocus'), { req: true })}
+        <div class="form-grid">${Form.field('mp_code', 'Code interne', Form.input('mp_code', v.internal_code, 'placeholder="ex : MP-01234"'))}
+          ${Form.field('mp_due', 'Échéance', Form.date('mp_due', v.due_date))}
+          ${Form.field('mp_supplier', 'Fournisseur', Form.input('mp_supplier', v.supplier, 'list="mpSuppliers"'))}
+          ${Form.field('mp_ref', 'Référence fournisseur', Form.input('mp_ref', v.supplier_ref))}
+          ${Form.field('mp_req', 'Demandeur', Form.select('mp_req', UI.userOptions(v.requester_id, '— Non défini —')))}
+          ${Form.field('mp_rev', 'Responsable de la revue', Form.select('mp_rev', UI.userOptions(v.reviewer_id, '— Non défini —')))}</div>
+        <datalist id="mpSuppliers">${uniqueSorted(PdqaData.list('mpItems').map(x => x.supplier)).map(x => `<option value="${esc(x)}">`).join('')}</datalist>
+        ${Form.field('mp_project', 'Initiative PDQA liée', Form.select('mp_project', UI.projectOptions('pdqa', v.project_id, '— Aucune —')))}
+        <fieldset class="field"><legend class="label">Documents reçus <span class="muted" id="mpDocCount">${d.reqDone}/${d.reqTotal} obligatoires</span></legend>
+          <div class="checklist">${list.map(doc => `<label class="check-row"><input type="checkbox" data-doc="${doc.id}" data-change="mp-doc" ${v.checklist?.[doc.id] ? 'checked' : ''} ${decided ? 'disabled' : ''}>
+            <span>${esc(doc.label)}</span>${doc.required ? '<span class="badge b-neutral no-dot">Obligatoire</span>' : '<span class="muted small">Facultatif</span>'}</label>`).join('')}</div></fieldset>
+        ${Form.field('mp_notes', 'Notes', Form.textarea('mp_notes', v.notes, 3, 'Points d\'attention, échanges avec le fournisseur'))}
+        <section class="mp-decision"><h3 class="label">Décision</h3>
+          ${decided ? `<p class="small">${esc(s.label)} le ${esc(Dates.fmt(v.decision_date))}${Store.user(v.decided_by || v.reviewer_id) ? ` par ${esc(Store.user(v.decided_by || v.reviewer_id).name)}` : ''}.</p>${v.decision_comment ? `<p class="small mv-content">${esc(v.decision_comment)}</p>` : ''}
+            ${Mp.canDecide(i) ? `<button type="button" class="btn btn-glass btn-sm" data-action="mp-decide" data-decision="reopen">${icon('undo', 'sm')}Rouvrir la revue</button>` : ''}`
+          : !i ? '<p class="hint">La décision se prend une fois la demande enregistrée et les documents reçus.</p>'
+          : !Mp.canDecide(i) ? `<p class="hint">${esc(Mp.decisionRule(i))}</p>`
+          : `${Form.field('mp_comment', 'Commentaire de décision', Form.textarea('mp_comment', v.decision_comment, 2, 'Obligatoire en cas de refus'))}
+            <div class="row wrap"><button type="button" class="btn btn-glass btn-sm" data-action="mp-decide" data-decision="approved">${icon('check', 'sm')}Valider la matière</button>
+              <button type="button" class="btn btn-danger btn-sm" data-action="mp-decide" data-decision="rejected">${icon('x', 'sm')}Refuser</button></div>
+            <p class="error-msg" id="err_mp_decision" role="alert"></p>`}</section>`,
+      foot: `${i ? `<button type="button" class="btn btn-danger left" data-action="mp-delete" data-id="${esc(i.id)}">${icon('trash', 'sm')}Supprimer</button>` : ''}
+        <button type="button" class="btn btn-ghost" data-action="close-overlay">Annuler</button><button type="submit" class="btn btn-primary">${i ? 'Enregistrer' : 'Créer la demande'}</button>` });
+    form.dataset.id = i?.id || '';
+    form.addEventListener('submit', e => { e.preventDefault(); Mp.save(form); });
+  },
+
+  checklistOf(form) { const out = {}; form.querySelectorAll('[data-doc]').forEach(c => { if (c.checked) out[c.dataset.doc] = true; }); return out; },
+
+  /** decision : undefined (simple enregistrement) | 'approved' | 'rejected' | 'reopen'. */
+  async save(form, decision) {
+    const val = id => Form.val(form, id), item = PdqaData.get('mpItems', form.dataset.id);
+    const errors = {};
+    if (!val('mp_name')) errors.mp_name = 'Le nom de la matière est obligatoire.';
+    const checklist = item && Mp.isDecided(item) && decision !== 'reopen' ? item.checklist || {} : Mp.checklistOf(form);
+    const docs = Mp.docs(checklist);
+    if (decision && !Mp.canDecide(item)) { Toast.show(Mp.decisionRule(item), 'error'); return; }
+    if (decision === 'rejected' && !val('mp_comment')) errors.mp_comment = 'Indiquez le motif du refus.';
+    if (decision === 'approved' && docs.missing.length) errors.mp_decision = `Validation impossible, documents obligatoires manquants : ${docs.missing.join(', ')}.`;
+    if (Form.errors(form, errors)) return;
+    const payload = { material_name: val('mp_name').slice(0, 200), internal_code: val('mp_code') || null, supplier: val('mp_supplier') || null, supplier_ref: val('mp_ref') || null,
+      requester_id: val('mp_req') || null, reviewer_id: val('mp_rev') || null, project_id: val('mp_project') || null, due_date: val('mp_due') || null, notes: val('mp_notes') || null, checklist };
+    // La décision est attribuée à la personne connectée, quelle que soit la valeur du champ « Responsable de la revue ».
+    if (decision === 'approved' || decision === 'rejected') Object.assign(payload, { status: decision, decision_date: Dates.today(), decision_comment: val('mp_comment') || null, decided_by: Store.me.id, reviewer_id: payload.reviewer_id || Store.me.id });
+    else if (decision === 'reopen') Object.assign(payload, { status: Mp.autoStatus('docs_pending', checklist), decision_date: null, decided_by: null });
+    else Object.assign(payload, { status: Mp.autoStatus(item?.status || 'requested', checklist), ...(item && !Mp.isDecided(item) ? { decision_comment: val('mp_comment') || null } : {}) });
+    const label = decision === 'approved' ? 'validée' : decision === 'rejected' ? 'refusée' : decision === 'reopen' ? 'rouverte' : item ? 'modifiée' : 'créée';
+    const buttons = [...form.querySelectorAll('button[type="submit"], [data-action="mp-decide"]')];
+    buttons.forEach(b => { b.disabled = true; });
+    try {
+      await PdqaData.save('mpItems', item?.id, payload, `Prévalidation « ${payload.material_name} » ${label}`);
+      Overlay.close(); Toast.show(`Prévalidation ${label}.`); Router.refresh();
+    } catch (e) { Toast.error(e); buttons.forEach(b => { b.disabled = false; }); }
+  },
+
+  async exportExcel() {
+    try {
+      if (!window.XLSX) await loadScript(Export.xlsxUrl);
+      const list = Mp.filtered(), docs = CONFIG.pdqaModules.mpChecklist, d = v => (v ? Dates.parse(v) : null);
+      const head = ['Matière première', 'Code interne', 'Fournisseur', 'Référence fournisseur', 'Initiative', 'Demandeur', 'Responsable de la revue', 'Statut', 'Échéance', 'Échéance dépassée',
+        'Documents obligatoires', 'Décision prise par', ...docs.map(x => x.label), 'Date de décision', 'Commentaire de décision', 'Notes'];
+      const body = list.map(i => { const k = Mp.docs(i.checklist); return [i.material_name, i.internal_code || '', i.supplier || '', i.supplier_ref || '', Store.project(i.project_id)?.project_name || '',
+        Store.user(i.requester_id)?.name || '', Store.user(i.reviewer_id)?.name || '', Mp.status(i.status).label, d(i.due_date), Mp.isLate(i) ? 'Oui' : 'Non', `${k.reqDone}/${k.reqTotal}`, Store.user(i.decided_by)?.name || '',
+        ...docs.map(x => (i.checklist?.[x.id] ? 'Reçu' : '')), d(i.decision_date), i.decision_comment || '', i.notes || '']; });
+      const file = Export.book([['Prévalidation MP', head, body]], `${CONFIG.appName}_prevalidation_MP_${Dates.today()}.xlsx`);
+      Toast.show(`${list.length} matière(s) exportée(s) : ${file}`);
+    } catch (e) { Toast.error(e); }
+  },
+};
+Object.assign(Actions, {
+  'mp-new': () => Mp.open(),
+  'mp-edit': el => Mp.open(el.dataset.id),
+  'mp-export': () => Mp.exportExcel(),
+  'mp-status': el => { App.view('mp', Mp.defaults).status = el.dataset.value; Mp.render(document.getElementById('view')); },
+  'mp-decide': el => { const form = el.closest('form'); if (form) Mp.save(form, el.dataset.decision); },
+  async 'mp-delete'(el) {
+    const i = PdqaData.get('mpItems', el.dataset.id); if (!i || !confirm(`Supprimer la fiche « ${i.material_name} » ?`)) return;
+    try { await PdqaData.remove('mpItems', i.id, `Prévalidation supprimée : « ${i.material_name} »`); if (Overlay.top()?.querySelector('#mpForm')) Overlay.close(); Toast.show('Fiche supprimée.'); Router.refresh(); } catch (e) { Toast.error(e); }
+  },
+});
+InputActions['mp-filter'] = ChangeActions['mp-filter'] = el => { App.view('mp', Mp.defaults)[el.dataset.key] = el.value; Mp.renderList(); };
+ChangeActions['mp-doc'] = el => {
+  const form = el.closest('form'), d = Mp.docs(Mp.checklistOf(form)), out = form.querySelector('#mpDocCount');
+  if (out) out.textContent = `${d.reqDone}/${d.reqTotal} obligatoires`;
+};
+
+/* ==========================================================================
+   Jalon — 09 · Mon espace
+   Toutes les tâches d'une personne, espace Clients et espace PDQA réunis, par
+   échéance. Les tâches PDQA n'apparaissent que si la personne qui consulte a
+   accès à l'espace PDQA (Store.tasksIn applique cette règle).
+   ========================================================================== */
+const MySpace = {
+  defaults: { person: '', ws: '', done: false },
+  /** Espaces visibles par la personne connectée. */
+  spaces: () => Perm.workspacesFor(Store.me),
+  tasksOf(userId, ws = '') {
+    return MySpace.spaces().filter(w => !ws || w === ws).flatMap(w => Store.tasksIn(w)).filter(t => t.assignee_id === userId);
+  },
+  /** Tâches en retard de la personne connectée, tous espaces confondus (pastille du bandeau). */
+  overdueCount: () => (Store.me ? MySpace.tasksOf(Store.me.id).filter(t => Rules.isTaskOverdue(t)).length : 0),
+  BUCKETS: [
+    { id: 'overdue', label: 'En retard', test: (k, t, today) => k && k < today },
+    { id: 'today', label: 'Aujourd\'hui', test: (k, t, today) => k === today },
+    { id: 'week', label: 'Dans les 7 prochains jours', test: (k, t, today) => k && k > today && k <= Dates.addDays(today, 7) },
+    { id: 'later', label: 'Plus tard', test: k => !!k },
+    { id: 'none', label: 'Sans échéance', test: () => true },
+  ],
+
+  render(view) {
+    const st = App.view('mySpace', MySpace.defaults), today = Dates.today(), spaces = MySpace.spaces();
+    const personId = st.person && Store.user(st.person) ? st.person : Store.me.id, person = Store.user(personId) || Store.me, self = personId === Store.me.id;
+    const all = MySpace.tasksOf(personId, st.ws), open = all.filter(t => !Rules.isTaskDone(t));
+    const late = open.filter(t => Rules.isTaskOverdue(t, today)).length, week = open.filter(t => { const k = Dates.key(t.due_date); return k && k >= today && k <= Dates.addDays(today, 7); }).length;
+    const kpi = (label, value, foot, cls = '') => `<div class="kpi ${cls}"><span class="kpi-label">${esc(label)}</span><span class="kpi-value">${value}</span><span class="kpi-foot">${foot}</span></div>`;
+    const wsChip = (value, label) => `<button class="filter-chip" data-action="my-ws" data-value="${value}" aria-pressed="${st.ws === value}">${value ? `<span class="ws-dot ${value}" aria-hidden="true"></span>` : ''}${esc(label)}</button>`;
+    view.innerHTML = pageHeader({ title: self ? 'Mon espace' : `Espace de ${person.name}`, crumbs: [{ label: 'Mon espace' }],
+      sub: spaces.length > 1 ? 'Toutes les tâches, espace Clients et espace PDQA réunis.' : 'Toutes les tâches de l\'espace Clients.',
+      actions: `<button class="btn btn-primary" data-action="new-task">${icon('plus', 'sm')}Nouvelle tâche</button>` }) +
+      `<div class="page-body"><div class="toolbar card">
+          <label class="label" for="my_person" style="margin:0">Personne</label>
+          <select class="select" id="my_person" data-change="my-person" aria-label="Voir les tâches de">${UI.options(Store.users.map(u => ({ value: u.id, label: u.id === Store.me.id ? `${u.name} (moi)` : u.name })), personId)}</select>
+          ${spaces.length > 1 ? `<div class="board-chips" role="group" aria-label="Espace">${wsChip('', 'Tous les espaces')}${spaces.map(w => wsChip(w, CONFIG.workspaces[w].tag)).join('')}</div>` : ''}
+          <span class="spacer"></span><label class="check"><input type="checkbox" data-change="my-done" ${st.done ? 'checked' : ''}>Afficher les tâches terminées</label></div>
+        <section class="kpi-strip card" aria-label="Indicateurs">${kpi('Tâches ouvertes', open.length, spaces.length > 1 && !st.ws ? spaces.map(w => `${open.filter(t => Store.wsOfTask(t) === w).length} ${CONFIG.workspaces[w].tag}`).join(' · ') : CONFIG.workspaces[st.ws || 'customer'].short)}
+          ${kpi('En retard', late, late ? 'À traiter en priorité' : 'Tout est à jour', late ? 'alert' : '')}${kpi('Cette semaine', week, 'échéances dans les 7 jours')}
+          ${kpi('Terminées', all.length - open.length, 'au total')}</section>
+        <div class="my-grid mt-6"><div class="stack" id="myLists">${MySpace.listsHTML(all, st, today)}</div>${self ? MySpace.asideHTML(today) : ''}</div></div>`;
+  },
+
+  listsHTML(all, st, today) {
+    const open = sortTasks(all.filter(t => !Rules.isTaskDone(t)), 'due', 'asc'), placed = new Set(), out = [];
+    MySpace.BUCKETS.forEach(b => {
+      const list = open.filter(t => !placed.has(t.id) && b.test(Dates.key(t.due_date), t, today));
+      list.forEach(t => placed.add(t.id));
+      if (list.length) out.push(MySpace.groupHTML(b.label, list, b.id === 'overdue'));
+    });
+    if (st.done) { const done = sortTasks(all.filter(Rules.isTaskDone), 'due', 'desc'); if (done.length) out.push(MySpace.groupHTML('Terminées', done)); }
+    return out.join('') || `<div class="card">${UI.empty({ icon: 'check', title: 'Aucune tâche ouverte', sub: 'Tout est à jour.' })}</div>`;
+  },
+  groupHTML(label, list, alert = false) {
+    return `<section aria-label="${esc(label)}"><h2 class="section-title my-group ${alert ? 't-danger' : ''}">${alert ? icon('alert', 'sm') : ''}${esc(label)} <span class="muted">${list.length}</span></h2>
+      ${taskTableHTML(list, {}, { sortable: false, showWs: MySpace.spaces().length > 1, showAssignee: false })}</section>`;
+  },
+
+  /** Colonne « Aussi pour vous » : ce qui attend la personne dans les modules PDQA. */
+  asideHTML(today) {
+    if (!Store.canSee('pdqa')) return '';
+    const me = Store.me.id, in30 = Dates.addDays(today, 30);
+    const mp = PdqaData.list('mpItems').filter(i => !Mp.isDecided(i) && (i.reviewer_id === me || i.requester_id === me));
+    const evs = PdqaData.list('events').filter(e => e.status !== 'cancelled' && (e.participants || []).includes(me) && Events.end(e) >= today && Events.start(e) <= in30)
+      .sort((a, b) => cmp(Events.start(a), Events.start(b)));
+    const ideas = PdqaData.list('innovations').filter(i => i.owner_id === me && ['idea', 'study', 'validated'].includes(i.stage));
+    const leads = Store.projectsIn('pdqa').filter(p => p.pdqa_data?.lead_id === me && p.status !== 'done');
+    const block = (title, page, rows) => `<section class="card"><div class="card-head"><h2 class="card-title">${esc(title)} <span class="muted small">${rows.length}</span></h2>
+      <a class="btn btn-ghost btn-sm" href="${Router.href('pdqa', page)}">Voir${icon('right', 'sm')}</a></div>${rows.slice(0, 5).join('') || '<div class="card-body muted small">Rien en attente.</div>'}</section>`;
+    return `<aside class="stack" aria-label="Aussi pour vous dans l'espace PDQA"><h2 class="section-title" style="margin:0">Aussi pour vous <span class="muted">· PDQA</span></h2>
+      ${block('Mes initiatives', 'projects', leads.map(p => `<button class="list-row" data-action="open-project" data-ws="pdqa" data-id="${esc(p.id)}"><span class="grow"><span class="cell-title truncate" style="display:block">${esc(p.project_name)}</span><span class="cell-sub">${esc(p.pdqa_data?.department || '')}</span></span>${UI.projectDue(p)}</button>`))}
+      ${block('Prévalidations MP en cours', 'mp', mp.map(i => `<button class="list-row" data-action="mp-edit" data-id="${esc(i.id)}"><span class="grow"><span class="cell-title truncate" style="display:block">${esc(i.material_name)}</span><span class="cell-sub">${esc(i.supplier || '')}${i.reviewer_id === me ? ' · à revoir par vous' : ''}</span></span><span class="badge ${Mp.status(i.status).badge}">${esc(Mp.status(i.status).label)}</span></button>`))}
+      ${block('Visites et salons à venir', 'events', evs.map(e => `<button class="list-row" data-action="open-event" data-id="${esc(e.id)}"><span class="grow"><span class="cell-title truncate" style="display:block">${esc(e.title)}</span><span class="cell-sub">${esc(Events.type(e.type).label)} · ${esc(Events.dates(e))}</span></span></button>`))}
+      ${block('Mes idées', 'innovation', ideas.map(i => `<button class="list-row" data-action="inno-edit" data-id="${esc(i.id)}"><span class="grow"><span class="cell-title truncate" style="display:block">${esc(i.title)}</span></span><span class="badge ${Innovation.stage(i.stage).badge} no-dot">${esc(Innovation.stage(i.stage).label)}</span></button>`))}
+    </aside>`;
+  },
+};
+Object.assign(Actions, {
+  'my-ws': el => { App.view('mySpace', MySpace.defaults).ws = el.dataset.value; Router.refresh(); },
+});
+ChangeActions['my-person'] = el => { App.view('mySpace', MySpace.defaults).person = el.value; Router.refresh(); };
+ChangeActions['my-done'] = el => { App.view('mySpace', MySpace.defaults).done = el.checked; Router.refresh(); };
+
 /* ---------- Routes ---------- */
 Object.assign(Routes, {
   home: { module: 'home', render: v => HomeHub.render(v) },
-  me: { module: 'home', render: v => SimplePages.me(v) },
+  me: { module: 'home', render: v => MySpace.render(v) },
   projects: { module: 'projects', render: v => ProjectsHub.render(v) },
   'projects-all': { module: 'projects', render: v => ProjectsPage.render(v) },
   'projects-board': { module: 'projects', render: v => (App.ws === 'customer' ? SimplePages.board(v) : Router.redirect(App.ws, 'projects')) },
-  pipeline: { module: 'projects', render: v => (App.ws === 'customer' ? SimplePages.pipeline(v) : Router.redirect(App.ws, 'projects')) },
   'projects-by': { module: 'projects', render: (v, by) => ProjectsHub.groups(v, by) },
   'projects-group': { module: 'projects', render: (v, p) => ProjectsHub.group(v, p) },
   tasks: { module: 'tasks', render: v => TasksHub.render(v) },
   'tasks-all': { module: 'tasks', render: v => TasksPage.render(v) },
   'tasks-by': { module: 'tasks', render: (v, by) => TasksHub.groups(v, by) },
   'tasks-group': { module: 'tasks', render: (v, p) => TasksHub.group(v, p) },
+  innovation: { module: 'innovation', render: v => Innovation.render(v) },
+  events: { module: 'events', render: v => Events.list(v) },
+  event: { module: 'events', render: (v, id) => { const e = PdqaData.get('events', id); if (e) Events.view(v, e); else eventNotFound(v); } },
+  'event-edit': { module: 'events', render: (v, id) => { const e = id && id !== 'new' ? PdqaData.get('events', id) : null; if (id && id !== 'new' && !e) eventNotFound(v); else Events.form(v, e); } },
+  planning: { module: 'planning', render: v => Planning.render(v) },
+  mp: { module: 'mp', render: v => Mp.render(v) },
 });
 
 /* ---------- Démarrage ---------- */
@@ -4674,7 +5439,7 @@ function boot() {
       .catch(() => Login.render());
   } else Login.render();
 }
-window.Jalon = { CONFIG, Dates, Rules, Timeline, Perm, Store, App, Router, Kanban, Calendar };   // utile pour le diagnostic et les tests
+window.Jalon = { CONFIG, Dates, Rules, Timeline, Perm, Store, App, Router, Kanban, Calendar, PdqaData, Innovation, Events, Planning, Mp, MySpace };   // utile pour le diagnostic et les tests
 boot();
 
 </script>
